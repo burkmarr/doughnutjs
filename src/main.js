@@ -1,8 +1,4 @@
 import * as d3 from "d3";
-// import foo from './foo.js';
-// export default function () {
-// 	console.log(foo);
-// }
 
 const imgSize = 500
 const svgWidth = imgSize * 1.6
@@ -18,7 +14,8 @@ svg.style('border-style', ' solid')
 //svg.style('width', svgWidth).attr('height', svgHeight)
 svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
 svg.style('overflow', 'visible')
-const img = svg.append('image').attr('xlink:href', 'images/rockstrom-base.png')
+//const img = svg.append('image').attr('xlink:href', 'images/rockstrom-base.png')
+const img = svg.append('image').attr('xlink:href', 'images/stockholm-1.png')
 img.style('width', imgSize).style('height', imgSize)
 img.attr('transform', `translate(${(svgWidth-imgSize)/2} ${(svgHeight-imgSize)/2})`)
 

@@ -7,6 +7,7 @@ import terser from '@rollup/plugin-terser'
 export default {
 	input: 'src/main.js',
 	output: {
+    name: 'doughnutjs',
 		file: 'build/js/doughnutjs.umd.js',
 		format: 'umd', //cjs, iife
     sourcemap: true

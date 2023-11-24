@@ -1,0 +1,13 @@
+canvas:
+  width: 800
+  height: 625
+images:
+  - id: earth1
+    width: 500
+    location: ../images/rockstrom-earth.png
+  - id: earth2
+    width: 300
+    location: ../images/stockholm-earth.png
+
+
+

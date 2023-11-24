@@ -15,5 +15,9 @@
 <body>
   <div id="donut-div" style="width: 600px"></div>
   <script src="./build/js/doughnutjs.umd.js"></script>
+  <script>
+    const chart = doughnutjs.doughnut({selector:'#donut-div'})
+    chart.loadYaml('./data/test1.yaml')
+  </script>
 </body>
 </html>

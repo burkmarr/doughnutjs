@@ -1,13 +1,16 @@
 import * as d3 from 'd3'
 import { addDef, fetchYaml } from './general'
+import { expandData } from './data'
 
 function createChart(selector, data) {
 
   console.log('data', data)
-  
+  expandData(data)
+  console.log('expandData', data)
+
   const imgSize = 500
-  const svgWidth = imgSize * 1.6
-  const svgHeight = imgSize * 1.25
+  const svgWidth = data.canvas.width
+  const svgHeight = data.canvas.height
   const earthRadius = imgSize / 2
   const textSize = imgSize / 30
 

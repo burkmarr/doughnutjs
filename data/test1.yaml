@@ -1,6 +1,6 @@
 canvas:
   width: 800
-  height: 625
+  height: 600
 images:
   - id: earth1
     width: 500

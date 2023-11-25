@@ -1,18 +1,21 @@
 import * as d3 from 'd3'
 import { addDef, fetchYaml } from './general'
-import { expandData } from './data'
+import { postprocessData } from './data'
 
 function createChart(selector, data) {
 
-  console.log('data', data)
-  expandData(data)
-  console.log('expandData', data)
+  console.log('data', JSON.parse(JSON.stringify(data)))
+  postprocessData(data)
+  console.log('postprocessData', data)
 
-  const imgSize = 500
+  const imgSize = 300
   const svgWidth = data.canvas.width
   const svgHeight = data.canvas.height
+  const cUnit = data.canvas.c_unit/100
+  const angle0 = data.canvas.angle0
   const earthRadius = imgSize / 2
   const textSize = imgSize / 30
+
 
   // Five marked zones
   const zoneDeltaRadius = earthRadius / 5
@@ -22,10 +25,6 @@ function createChart(selector, data) {
   //svg.style('width', svgWidth).attr('height', svgHeight)
   svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
   svg.style('overflow', 'visible')
-  const img = svg.append('image').attr('xlink:href', 'images/rockstrom-earth.png')
-  //const img = svg.append('image').attr('xlink:href', 'images/stockholm-earth.png')
-  img.style('width', imgSize).style('height', imgSize)
-  img.attr('transform', `translate(${(svgWidth-imgSize)/2} ${(svgHeight-imgSize)/2})`)
 
   // Text style for Rockstrom 2009
   addDef(svg, 'whiteOutlineEffect')
@@ -471,14 +470,43 @@ function createChart(selector, data) {
 
 
   // https://observablehq.com/@d3/selection-join
+  const gImages = svg.append('g')
   const gArcs = svg.append('g')
   const gSpokes = svg.append('g')
   const gText = svg.append('g')
+  gImages.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gArcs.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gSpokes.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gText.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
   const t = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+ 
+  gImages.selectAll('.img')
+  .data(data.charts[0].images, d => d.key)
+  .join(
+    enter => enter.append('image')
+      .classed('img', true)
+      .attr('xlink:href', d => d.location)
+      .attr('id', d => `img-${d.key}`)
+      .attr('transform', d => {
+        let dx = 0
+        let dy = 0
+        if (d.angle != null && d.offset ) {
+          const oxy = getOffset(d.angle, d.offset)
+          dx = oxy[0]
+          dy = oxy[1]
+        }
+        return `translate(${dx-d.width * cUnit / 2} ${dy - d.width * cUnit / 2})`
+      })
+      .style('width', d => d.width * cUnit)
+      .style('height', d => d.width * cUnit)
+      .style('opacity', d => d.opacity),
+    update => update
+  )
+  // Doesn't seem to be possible to transition the opacity of an image
+  // .call(remaining => remaining.transition(t)
+  //   .attr('opacity', 1)
+  // )
 
   gArcs.selectAll('.arc')
     .data(arcs, d => d.key)
@@ -554,6 +582,13 @@ function createChart(selector, data) {
       remaining.transition(t).style('opacity', 1)
     })
     
+  function getOffset(angle, offset) {
+    const angleRad = (angle + angle0 - 90) * Math.PI / 180
+    const x0 = offset * Math.cos(angleRad)
+    const y0 = offset * Math.sin(angleRad)
+    return [x0,y0]
+  }
+
   function getSpoke(angleRad, startDistance, endDistance) {
     const x0 = startDistance * Math.cos(angleRad)
     const y0 = startDistance * Math.sin(angleRad)

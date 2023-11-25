@@ -10,14 +10,18 @@ export default {
     name: 'doughnutjs',
 		file: 'build/js/doughnutjs.umd.js',
 		format: 'umd', //cjs, iife
-    sourcemap: true
+    sourcemap: true 
 	},
-	// sourcemap: true,
 	plugins: [
-	  resolve(), // so Rollup can find node libs
-    commonjs(), // so Rollup can convert CommonJS modules to an ES modules
-    babel({ babelHelpers: 'bundled', presets: ['@babel/preset-env'] }),
-    terser()
+		resolve(), // So Rollup can find node libs
+		commonjs(), // So Rollup can convert CommonJS modules to an ES modules
+		babel({ 
+			babelHelpers: 'bundled', 
+			presets: ['@babel/preset-env'],
+			// sourceMaps: true,
+			// inputSourceMap: true
+		}),
+		terser()
 	]
 }
 

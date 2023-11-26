@@ -1,31 +1,32 @@
 import * as d3 from 'd3'
-import { addDef, fetchYaml } from './general'
-import { postprocessData } from './data'
+import { addDef, fetchYaml } from './general.js'
+import { postprocessData } from './data.js'
 
-function createChart(selector, data) {
+async function createChart(selector, data) {
 
   console.log('data', JSON.parse(JSON.stringify(data)))
-  postprocessData(data)
+  await postprocessData(data)
   console.log('postprocessData', data)
 
   const imgSize = 300
-  const svgWidth = data.canvas.width
-  const svgHeight = data.canvas.height
-  const cUnit = data.canvas.c_unit/100
-  const angle0 = data.canvas.angle0
   const earthRadius = imgSize / 2
   const textSize = imgSize / 30
-
 
   // Five marked zones
   const zoneDeltaRadius = earthRadius / 5
 
+  const svgWidth = data.canvas.width
+  const svgHeight = data.canvas.height
+
   const svg = d3.select(selector).append('svg')
-  svg.style('border-style', ' solid')
-  //svg.style('width', svgWidth).attr('height', svgHeight)
   svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
   svg.style('overflow', 'visible')
 
+  const cUnit = data.canvas.c_unit
+  const angle0 = data.canvas.angle0
+  const svgRealWidth = d3.select(selector).node().offsetWidth
+
+  console.log('svgRealWidth', svgRealWidth)
   // Text style for Rockstrom 2009
   addDef(svg, 'whiteOutlineEffect')
 
@@ -474,39 +475,51 @@ function createChart(selector, data) {
   const gArcs = svg.append('g')
   const gSpokes = svg.append('g')
   const gText = svg.append('g')
-  gImages.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
+  //gImages.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gArcs.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gSpokes.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
   gText.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
   const t = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
- 
+
+
   gImages.selectAll('.img')
   .data(data.charts[0].images, d => d.key)
   .join(
-    enter => enter.append('image')
+    enter => {
+      const sel = enter.append('image')
       .classed('img', true)
       .attr('xlink:href', d => d.location)
       .attr('id', d => `img-${d.key}`)
-      .attr('transform', d => {
-        let dx = 0
-        let dy = 0
-        if (d.angle != null && d.offset ) {
-          const oxy = getOffset(d.angle, d.offset)
-          dx = oxy[0]
-          dy = oxy[1]
-        }
-        return `translate(${dx-d.width * cUnit / 2} ${dy - d.width * cUnit / 2})`
-      })
-      .style('width', d => d.width * cUnit)
-      .style('height', d => d.width * cUnit)
-      .style('opacity', d => d.opacity),
-    update => update
+      //.style('outline', '2px red solid')
+
+      return imageCommonAttrs(sel, 0)
+    },
+    update => update,
+    exit => imageCommonAttrs(exit.transition(t), 2)
   )
-  // Doesn't seem to be possible to transition the opacity of an image
-  // .call(remaining => remaining.transition(t)
-  //   .attr('opacity', 1)
-  // )
+  .call(remaining => imageCommonAttrs(remaining.transition(t), 1))
+
+  function imageCommonAttrs(selection, i) {
+
+    return selection
+      .attr('width', d => d.width[i] / 100 * cUnit)
+      .attr('transform-origin', d => {
+        const imgWidth = d.width[i] / 100 * cUnit
+        const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+        return `${imgWidth/2}px ${imgHeight/2}px`
+      })
+      .attr('transform', d => {
+        const oxy = getOffset(d.angle[i], d.offset[i])
+        const imgWidth = d.width[i] / 100 * cUnit
+        const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+        return `
+          translate(${(svgWidth - imgWidth) / 2 + oxy[0]}, ${(svgHeight - imgHeight) / 2  + oxy[1]}) 
+          rotate(${d.rotate[i]}) 
+        `
+      })
+      .style('opacity', d => d.opacity[i])
+  }
 
   gArcs.selectAll('.arc')
     .data(arcs, d => d.key)
@@ -583,7 +596,9 @@ function createChart(selector, data) {
     })
     
   function getOffset(angle, offset) {
+    console.log('getOffset', angle, offset)
     const angleRad = (angle + angle0 - 90) * Math.PI / 180
+
     const x0 = offset * Math.cos(angleRad)
     const y0 = offset * Math.sin(angleRad)
     return [x0,y0]

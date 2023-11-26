@@ -13,10 +13,21 @@
 </head>
 
 <body>
-  <div id="donut-div" style="width: 600px"></div>
-  <script src="./build/js/doughnutjs.umd.js"></script>
-  <script>
-    const chart = doughnutjs.doughnut({selector:'#donut-div'})
+  <div id="donut-div" style="width: 100%"></div>
+  <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
+  
+  <!-- Allows us to test without having to build first -->
+  <script type="importmap">
+    {
+      "imports": {
+        "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm",
+        "js-yaml": "https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.mjs"
+      }
+    }
+  </script>
+  <script type="module">
+    import { doughnut } from "./src/main.js"
+    const chart = doughnut({selector:'#donut-div'})
     chart.loadYaml('./data/test1.yaml')
   </script>
 </body>

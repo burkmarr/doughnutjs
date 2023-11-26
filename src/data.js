@@ -1,5 +1,5 @@
 
-export function postprocessData(data) {
+export async function postprocessData(data) {
 
   // Canvas default values
   dv(data, 'canvas', {})
@@ -15,18 +15,47 @@ export function postprocessData(data) {
   // Propagate properties down object??
 
   // Charts
+  const pp = []
   dv(data.charts, {})
-  data.charts.forEach(chart => {
+  data.charts.forEach(async chart => {
     dv(chart, 'id', null)
     
-    // Images warn if values missing
-    chart.images.forEach((img, i) => {
+    // Images
+    chart.images.forEach(async (img, i) => {
+      // Default values
       dv(img, 'id', null)
-      dv(img, 'opacity', 1)
+      dv(img, 'opacity', [1, 1, 1])
+      dv(img, 'angle', [0, 0, 0])
+      dv(img, 'offset', [0, 0, 0])
+      dv(img, 'rotate', [0, 0, 0])
+      // Missing data warnings
       wm(img.width, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the width attribute. It will be ignored.`)
       wm(img.location, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the location attribute. It will be ignored.`)
+
+      if (img.location) {
+        // Update data with aspect ratio of image
+        pp.push(getImageWidth(img.location, img))
+      }
+
       //cr(chart.images, i, 'width', 'location')
     })
+  })
+
+  await Promise.all(pp)
+}
+
+function getImageWidth(src, dataImage){
+  return new Promise((resolve, reject) => {
+    let img = new Image()
+    img.onload = () => {
+      // dataImage.origWidth = img.width
+      // dataImage.origHeight = img.height
+      dataImage.aspectRatio = img.width / img.height
+      img = null
+      resolve()
+    }
+    img.onerror = reject
+    img.src = src
   })
 }
 
@@ -71,12 +100,14 @@ function cr(parent, idexOrName, ...props) {
 function updateNumericForUnits (obj, r_unit, c_unit) {
   if (r_unit) {
     Object.keys(obj).forEach(key => {
-      if (typeof obj[key] !== 'object') {
-        //console.log(`key: ${key}, value: ${obj[key]}`)
-        if (key.endsWith('_ru')) {
-          const newKey = key.substring(0,key.length-3)
-          obj[newKey] = obj[key] / r_unit * c_unit
-        }
+      //console.log(`key: ${key}, value: ${obj[key]}`)
+      if (key.endsWith('_ru')) {
+        const newKey = key.substring(0,key.length-3)
+        obj[newKey] = [
+          obj[key][0] / r_unit * c_unit,
+          obj[key][1] / r_unit * c_unit,
+          obj[key][2] / r_unit * c_unit
+        ]
       }
       if (typeof obj[key] === 'object' && obj[key] !== null) {
         updateNumericForUnits(obj[key], r_unit, c_unit)

@@ -19,6 +19,7 @@ export async function postprocessData(data) {
   dv(data.charts, {})
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
+    dv(chart, 'images', [])
     
     // Images
     chart.images.forEach(async (img, i) => {

@@ -2,7 +2,16 @@ import * as d3 from 'd3'
 import { addDef, fetchYaml } from './general.js'
 import { postprocessData } from './data.js'
 
-async function createChart(selector, data) {
+export async function doughnut({
+  selector = 'body',
+  data = []
+} = {}) {
+
+  let iLastChart = null
+  let svg, gImages, cUnit, angle0, svgWidth, svgHeight
+
+  // Load test data
+  data = await loadYaml('./data/test1.yaml')
 
   console.log('data', JSON.parse(JSON.stringify(data)))
   await postprocessData(data)
@@ -15,15 +24,15 @@ async function createChart(selector, data) {
   // Five marked zones
   const zoneDeltaRadius = earthRadius / 5
 
-  const svgWidth = data.canvas.width
-  const svgHeight = data.canvas.height
+  svgWidth = data.canvas.width
+  svgHeight = data.canvas.height
 
-  const svg = d3.select(selector).append('svg')
+  svg = d3.select(selector).append('svg')
   svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
   svg.style('overflow', 'visible')
 
-  const cUnit = data.canvas.c_unit
-  const angle0 = data.canvas.angle0
+  cUnit = data.canvas.c_unit
+  angle0 = data.canvas.angle0
   const svgRealWidth = d3.select(selector).node().offsetWidth
 
   console.log('svgRealWidth', svgRealWidth)
@@ -471,7 +480,7 @@ async function createChart(selector, data) {
 
 
   // https://observablehq.com/@d3/selection-join
-  const gImages = svg.append('g')
+  gImages = svg.append('g')
   const gArcs = svg.append('g')
   const gSpokes = svg.append('g')
   const gText = svg.append('g')
@@ -481,45 +490,6 @@ async function createChart(selector, data) {
   gText.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
   const t = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
-
-
-  gImages.selectAll('.img')
-  .data(data.charts[0].images, d => d.key)
-  .join(
-    enter => {
-      const sel = enter.append('image')
-      .classed('img', true)
-      .attr('xlink:href', d => d.location)
-      .attr('id', d => `img-${d.key}`)
-      //.style('outline', '2px red solid')
-
-      return imageCommonAttrs(sel, 0)
-    },
-    update => update,
-    exit => imageCommonAttrs(exit.transition(t), 2)
-  )
-  .call(remaining => imageCommonAttrs(remaining.transition(t), 1))
-
-  function imageCommonAttrs(selection, i) {
-
-    return selection
-      .attr('width', d => d.width[i] / 100 * cUnit)
-      .attr('transform-origin', d => {
-        const imgWidth = d.width[i] / 100 * cUnit
-        const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
-        return `${imgWidth/2}px ${imgHeight/2}px`
-      })
-      .attr('transform', d => {
-        const oxy = getOffset(d.angle[i], d.offset[i])
-        const imgWidth = d.width[i] / 100 * cUnit
-        const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
-        return `
-          translate(${(svgWidth - imgWidth) / 2 + oxy[0]}, ${(svgHeight - imgHeight) / 2  + oxy[1]}) 
-          rotate(${d.rotate[i]}) 
-        `
-      })
-      .style('opacity', d => d.opacity[i])
-  }
 
   gArcs.selectAll('.arc')
     .data(arcs, d => d.key)
@@ -594,15 +564,6 @@ async function createChart(selector, data) {
         .text(d => d.text),
       remaining.transition(t).style('opacity', 1)
     })
-    
-  function getOffset(angle, offset) {
-    console.log('getOffset', angle, offset)
-    const angleRad = (angle + angle0 - 90) * Math.PI / 180
-
-    const x0 = offset * Math.cos(angleRad)
-    const y0 = offset * Math.sin(angleRad)
-    return [x0,y0]
-  }
 
   function getSpoke(angleRad, startDistance, endDistance) {
     const x0 = startDistance * Math.cos(angleRad)
@@ -626,21 +587,113 @@ async function createChart(selector, data) {
     const path =  `M ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2}`
     return path
   }
-}
 
-export function doughnut({
-  selector = 'body'
-} = {}) {
+  function getOffset(angle, offset) {
+    console.log('getOffset', angle, offset)
+    const angleRad = (angle + angle0 - 90) * Math.PI / 180
+  
+    const x0 = offset * Math.cos(angleRad)
+    const y0 = offset * Math.sin(angleRad)
+    return [x0,y0]
+  }
 
   // Return API
-  function loadYaml(file) {
-    const data = fetchYaml(file).then(data => {
-      createChart(selector, data)
-    })
-    
+
+  function updateChart(iChart) {
+
+    console.log("Display chart", iChart)
+
+    const trans = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+
+    // Remeber this chart as the last chart
+    iLastChart = iChart
+
+    gImages.selectAll('.img')
+    .data(data.charts[iChart].images, d => d.id)
+    .join(
+      enter => {
+        const sel = enter.append('image')
+        .classed('img', true)
+        .attr('xlink:href', d => d.location)
+        //.attr('id', d => `img-${d.key}`)
+        //.style('outline', '2px red solid')
+
+        return imageCommonAttrs(sel, 0)
+      },
+      update => update,
+      exit => imageCommonAttrs(exit.transition(trans), 2).remove()
+    )
+    .call(remaining => imageCommonAttrs(remaining.transition(trans), 1))
+
+    function imageCommonAttrs(selection, i) {
+
+      return selection
+        .attr('width', d => d.width[i] / 100 * cUnit)
+        .attr('transform-origin', d => {
+          const imgWidth = d.width[i] / 100 * cUnit
+          const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+          return `${imgWidth/2}px ${imgHeight/2}px`
+        })
+        .attr('transform', d => {
+          const oxy = getOffset(d.angle[i], d.offset[i])
+          const imgWidth = d.width[i] / 100 * cUnit
+          const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+          return `
+            translate(${(svgWidth - imgWidth) / 2 + oxy[0]}, ${(svgHeight - imgHeight) / 2  + oxy[1]}) 
+            rotate(${d.rotate[i]}) 
+          `
+        })
+        .style('opacity', d => d.opacity[i])
+    }
+  }
+
+  async function loadYaml(file) {
+    const json = await fetchYaml(file)
+    return json
+  }
+
+  function displayChart(i) {
+    let iChart
+    if (i === null) {
+      iChart = 0
+    } else if (i > data.charts.length - 1 ) {
+      iChart =  data.charts.length - 1
+    } else if (i < 1){
+      iChart = 0
+    } else {
+      iChart = i-1
+    }
+    updateChart(iChart)
+  }
+
+  function displayNextChart() {
+    let iChart
+    if (iLastChart === null) {
+      iChart = 0
+    } else if (iLastChart === data.charts.length - 1 ) {
+      iChart = 0
+    } else {
+      iChart = iLastChart + 1
+    }
+    updateChart(iChart)
+  }
+
+  function displayPreviousChart() {
+    let iChart
+    if (iLastChart === null) {
+      iChart = 0
+    } else if (iLastChart === 0 ) {
+      iChart = data.charts.length - 1
+    } else {
+      iChart = iLastChart - 1
+    }
+    updateChart(iChart)
   }
 
   return {
     loadYaml: loadYaml,
+    displayChart: displayChart,
+    displayNextChart: displayNextChart,
+    displayPreviousChart: displayPreviousChart
   }
 }

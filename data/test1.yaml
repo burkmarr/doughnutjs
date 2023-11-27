@@ -2,26 +2,37 @@ canvas:
   width: 800 # pixels
   height: 600 # pixles
   angle0: 90 # Base angle from which others are measured
-  c_unit: 200 # 1 chart unit in pixels
+  c_unit: 180 # 1 chart unit in pixels
   r_unit: 1000 # real world units corresponding to 1 chart unit
 charts:
   - id: chart1
     images:
     - id: rock 
       location: images/rockstrom-earth.png
-      width: [100, 100, 50]
-      opacity: [0, 1, 0.5]
-      angle: [180, 270, 0]
-      offset: [100, 100, 100]
-      rotate: [0, 90, 0]
+      width: [0, 100, 0]
+      opacity: [0, 1, 0]
+      # angle: [180, 180, 180]
+      # offset: [100, 100, 100]
+      rotate: [0, 180, 0]
     # - id: stock
     #   width: 80
     #   location: images/stockholm-earth.png
   - id: chart2
     images:
-    - id: rock 
-      location: images/rockstrom-earth.png
-      width: 20
-    - id: stock
-      width: 100
+    # - id: rock2
+    #   location: images/rockstrom-earth.png
+    #   width: [0, 50, 50]
+    #   angle: [180, 180, 0]
+    #   offset: [200, 200, 100]
+    - id: stock2
+      width: [100, 50, 0]
       location: images/stockholm-earth.png
+
+  - id: chart3
+    images:
+    - id: rock
+      location: images/rockstrom-earth.png
+      width: [0, 50, 50]
+      angle: [0, 0, 0]
+      offset: [100, 100, 100]
+      rotate: [0, 90, 0]

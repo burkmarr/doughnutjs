@@ -13,6 +13,10 @@
 </head>
 
 <body>
+  <button type="button" onclick="nextChart()">Next</button>
+  <button type="button" onclick="previousChart()">Previous</button>
+  <button type="button" onclick="displayChart()">Chart</button>
+  <input type="number" id="chartno" name="chartno" min="0" />
   <div id="donut-div" style="width: 100%"></div>
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
   
@@ -27,8 +31,18 @@
   </script>
   <script type="module">
     import { doughnut } from "./src/main.js"
-    const chart = doughnut({selector:'#donut-div'})
-    chart.loadYaml('./data/test1.yaml')
+    const chart = await doughnut({selector:'#donut-div'})
+    window.nextChart = function() {
+      chart.displayNextChart()
+    }
+    window.previousChart = function() {
+      chart.displayPreviousChart()
+    }
+    window.displayChart = function() {
+      chart.displayChart(document.getElementById("chartno").value)
+    }
+
+    displayChart
   </script>
 </body>
 </html>

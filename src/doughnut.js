@@ -491,38 +491,38 @@ export async function doughnut({
 
   const t = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
-  gArcs.selectAll('.arc')
-    .data(arcs, d => d.key)
-    .join(
-      enter => enter.append('path')
-        .classed('arc', true)
-        .attr('id', d => `arc-path-${d.key}`)
-        .attr('d', d => {
-          if (d.type === 'system') {
-            const ed = {...d}
-            ed.outerRadius = 1
-            return d3.arc()(ed)
-          } else {
-            return d3.arc()(d)
-          }
-        })
-        .style('fill', d => d.colour)
-        .style('opacity', d => {
-          if (typeof(d.opacity) !== 'undefined') {
-            return d.opacity
-          } else if(d.type === 'zone') {
-            return 0.9
-          } else {
-            return 0.6
-          }
-        }),
-      update => update
-    )
-    .call(remaining => remaining.transition(t)
-      .attr('d', d => {
-        return d3.arc()(d)
-      })
-    )
+  // gArcs.selectAll('.arc')
+  //   .data(arcs, d => d.key)
+  //   .join(
+  //     enter => enter.append('path')
+  //       .classed('arc', true)
+  //       .attr('id', d => `arc-path-${d.key}`)
+  //       .attr('d', d => {
+  //         if (d.type === 'system') {
+  //           const ed = {...d}
+  //           ed.outerRadius = 1
+  //           return d3.arc()(ed)
+  //         } else {
+  //           return d3.arc()(d)
+  //         }
+  //       })
+  //       .style('fill', d => d.colour)
+  //       .style('opacity', d => {
+  //         if (typeof(d.opacity) !== 'undefined') {
+  //           return d.opacity
+  //         } else if(d.type === 'zone') {
+  //           return 0.9
+  //         } else {
+  //           return 0.6
+  //         }
+  //       }),
+  //     update => update
+  //   )
+  //   .call(remaining => remaining.transition(t)
+  //     .attr('d', d => {
+  //       return d3.arc()(d)
+  //     })
+  //   )
 
   gSpokes.selectAll('.spoke')
     .data(spokes, d => d.key)
@@ -608,6 +608,7 @@ export async function doughnut({
     // Remeber this chart as the last chart
     iLastChart = iChart
 
+    // Images
     gImages.selectAll('.img')
     .data(data.charts[iChart].images, d => d.id)
     .join(
@@ -645,6 +646,32 @@ export async function doughnut({
         })
         .style('opacity', d => d.opacity[i])
     }
+
+    // Arcs
+    const arc =  d3.arc()
+    gArcs.selectAll('.arc')
+    .data(data.charts[iChart].arcs, d => d.id)
+    .join(
+      enter => enter.append('path')
+        .classed('arc', true)
+        .attr('id', d => `arc-path-${d.id}`)
+        .attr('d', d => {
+          console.log('rad', d.rad2 / 100 * cUnit)
+          return arc({
+            innerRadius: d.rad1 / 100 * cUnit,
+            outerRadius: d.rad2 / 100 * cUnit,
+            startAngle: (angle0 + d.ang1) * Math.PI / 180,
+            endAngle: (angle0 + d.ang2) * Math.PI / 180
+          })
+        })
+        .style('fill', d => d.colour)
+        .style('opacity', d => {
+          // zone = 0.9
+          // other = 0.6
+          return 0.6
+        }),
+      update => update
+    )
   }
 
   async function loadYaml(file) {

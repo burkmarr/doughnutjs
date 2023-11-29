@@ -166,10 +166,10 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
 
         // Arc transitions don't work if the enter or exit radius is zero
         // so reset to small value.
-        if (units === 'px' && newVal[0] === 0 && newVal[2] === 0 && newVal[1] > 0) {
-          newVal[0] = 1
-          newVal[2] = 1
-        }
+        // if (units === 'px' && newVal[0] === 0 && newVal[2] === 0 && newVal[1] > 0) {
+        //   newVal[0] = 1
+        //   newVal[2] = 1
+        // }
         // Update value
         obj[key] = newVal
       }

@@ -6,27 +6,40 @@ canvas:
   radius_px: 150 # 1 chart unit in pixels
   radius_real: 400 # real world units corresponding to 1 chart unit
 charts:
-  - id: chart01
-    images:
-    - id: rock0 
-      location: images/rockstrom-earth.png
-      width: 100 %
-      opacity: 0 1 0
-      rad: 0 200 0 %
-      ang: 0 90 0
-      rot: 0 180 0
-  # - id: chart02
+  # - id: chart01
   #   images:
   #   - id: rock0 
   #     location: images/rockstrom-earth.png
-  #     width: 0 100 0 %
+  #     width: 100 %
   #     opacity: 0 1 0
+  #     rad: 0 200 0 %
+  #     ang: 0 90 0
+  #     rot: 0 180 0
+  - id: chart02
+    # images:
+    # - id: rock0 
+    #   location: images/rockstrom-earth.png
+    #   width: 0 100 0 %
+    #   opacity: 0 1 0
+    arcs:
+    - id: climate-change
+      colour: red
+      rad1: 0
+      rad2: 0 60 0 %
+      ang1: 100
+      ang2: 160
+    - id: ocean-acidification
+      colour: red
+      rad1: 0
+      rad2: 0 30 0 %
+      ang1: 40
+      ang2: 80
   - id: chart1
-    images:
-    - id: rock 
-      location: images/rockstrom-earth.png
-      width: 0 200 0 %
-      opacity: 0 1 0
+    # images:
+    # - id: rock 
+    #   location: images/rockstrom-earth.png
+    #   width: 0 200 0 %
+    #   opacity: 0 1 0
     arcs:
     - id: safe-zone
       colour: "#6D9100"
@@ -43,7 +56,7 @@ charts:
     - id: ocean-acidification
       colour: red
       rad1: 0
-      rad2: 0 35 0 %
+      rad2: 0 30 0 %
       ang1: 40
       ang2: 80
     - id: ozone-depletion

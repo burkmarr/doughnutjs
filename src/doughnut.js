@@ -478,7 +478,6 @@ export async function doughnut({
     },
   ]
 
-
   // https://observablehq.com/@d3/selection-join
   gImages = svg.append('g')
   const gArcs = svg.append('g')
@@ -491,38 +490,6 @@ export async function doughnut({
 
   const t = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
-  // gArcs.selectAll('.arc')
-  //   .data(arcs, d => d.key)
-  //   .join(
-  //     enter => enter.append('path')
-  //       .classed('arc', true)
-  //       .attr('id', d => `arc-path-${d.key}`)
-  //       .attr('d', d => {
-  //         if (d.type === 'system') {
-  //           const ed = {...d}
-  //           ed.outerRadius = 1
-  //           return d3.arc()(ed)
-  //         } else {
-  //           return d3.arc()(d)
-  //         }
-  //       })
-  //       .style('fill', d => d.colour)
-  //       .style('opacity', d => {
-  //         if (typeof(d.opacity) !== 'undefined') {
-  //           return d.opacity
-  //         } else if(d.type === 'zone') {
-  //           return 0.9
-  //         } else {
-  //           return 0.6
-  //         }
-  //       }),
-  //     update => update
-  //   )
-  //   .call(remaining => remaining.transition(t)
-  //     .attr('d', d => {
-  //       return d3.arc()(d)
-  //     })
-  //   )
 
   gSpokes.selectAll('.spoke')
     .data(spokes, d => d.key)
@@ -535,35 +502,35 @@ export async function doughnut({
         .style('stroke-opacity', d => d.opacity ? d.opacity : 0.7)
     )
 
-  gText.selectAll('.text-path')
-    .data(text, d => d.key)
-    .join(
-      enter => enter.append('path')
-        .classed('text-path', true)
-        .attr('id', d => `text-path-${d.key}`)
-        .attr('d', d => getArc(d.startAngle, d.endAngle, d.distance))
-        .attr('stroke', 'none')
-        .attr('fill', 'none')
-    )
+  // gText.selectAll('.text-path')
+  //   .data(text, d => d.key)
+  //   .join(
+  //     enter => enter.append('path')
+  //       .classed('text-path', true)
+  //       .attr('id', d => `text-path-${d.key}`)
+  //       .attr('d', d => getArc(d.startAngle, d.endAngle, d.distance))
+  //       .attr('stroke', 'none')
+  //       .attr('fill', 'none')
+  //   )
 
-  gText.selectAll('.text-text')
-    .data(text, d => d.key)
-    .join(
-      enter => enter.append("text")
-        .classed('text-text', true)
-        .style('font-family', 'arial')
-        .style('font-size', textSize)
-        .style('filter', 'url(#whiteOutlineEffect)')
-        .style('opacity', 0),
-      update => update
-    ).call(remaining => {
-      remaining.append('textPath') 
-        .attr('xlink:href', d => `#text-path-${d.key}`) 
-        .style('text-anchor','middle') 
-        .attr('startOffset', '50%')
-        .text(d => d.text),
-      remaining.transition(t).style('opacity', 1)
-    })
+  // gText.selectAll('.text-text')
+  //   .data(text, d => d.key)
+  //   .join(
+  //     enter => enter.append("text")
+  //       .classed('text-text', true)
+  //       .style('font-family', 'arial')
+  //       .style('font-size', textSize)
+  //       .style('filter', 'url(#whiteOutlineEffect)')
+  //       .style('opacity', 0),
+  //     update => update
+  //   ).call(remaining => {
+  //     remaining.append('textPath') 
+  //       .attr('xlink:href', d => `#text-path-${d.key}`) 
+  //       .style('text-anchor','middle') 
+  //       .attr('startOffset', '50%')
+  //       .text(d => d.text),
+  //     remaining.transition(t).style('opacity', 1)
+  //   })
 
   function getSpoke(angleRad, startDistance, endDistance) {
     const x0 = startDistance * Math.cos(angleRad)
@@ -658,14 +625,13 @@ export async function doughnut({
         return arcCommonAttrs(sel, 0)
       },
       update => update,
-      exit => arcCommonAttrs(exit.transition(trans), 2).remove()
+      exit => arcCommonAttrs(exit, 2).remove()
     )
-    .call(remaining => arcCommonAttrs(remaining.transition(trans), 1))
+    .call(remaining => arcCommonAttrs(remaining, 1))
 
     function arcCommonAttrs(selection, i) {
-
-      return selection
-        .attr('d', d => {
+      if (i === 0) {
+        selection.attr('d', d => {
           return arc({
             innerRadius: d.rad1[i],
             outerRadius: d.rad2[i],
@@ -673,11 +639,43 @@ export async function doughnut({
             endAngle: (angle_origin + d.ang2[i]) * Math.PI / 180
           })
         })
-        .style('fill', d => d.colour)
+      } else {
+        selection.transition(trans)
+          .attrTween('d', d => {
+            return arcTween(d, i)
+          })
+      }
+      return selection.style('fill', d => d.colour)
         .style('opacity', d => {
-          //return d.opacity[i]
           return 0.6
         })
+    }
+  }
+
+  function arcTween(d, i) {
+
+    function getMetrics(j) {
+      return ({
+        innerRadius: d.rad1[j],
+        outerRadius: d.rad2[j],
+        startAngle: (angle_origin + d.ang1[j]) * Math.PI / 180,
+        endAngle: (angle_origin + d.ang2[j]) * Math.PI / 180
+      })
+    }
+    const s = getMetrics(i-1)
+    const e = getMetrics(i)
+    const iInnerRadius = d3.interpolate(s.innerRadius, e.innerRadius)
+    const iOuterRadius = d3.interpolate(s.outerRadius, e.outerRadius)
+    const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
+    const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
+
+    return function(t) {
+      const arc = d3.arc()
+        .innerRadius(iInnerRadius(t))
+        .outerRadius(iOuterRadius(t))
+        .startAngle(iStartAngle(t))
+        .endAngle(iEndAngle(t))
+      return arc()
     }
   }
 
@@ -729,12 +727,5 @@ export async function doughnut({
     displayChart: displayChart,
     displayNextChart: displayNextChart,
     displayPreviousChart: displayPreviousChart
-  }
-
-  function arcTween(b) {
-    var i = d3.interpolate({value: b.previous}, b);
-    return function(t) {
-      return arc(i(t));
-    };
   }
 }

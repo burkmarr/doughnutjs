@@ -8,7 +8,7 @@ export async function doughnut({
 } = {}) {
 
   let iLastChart = null
-  let svg, gImages, cUnit, angle0, svgWidth, svgHeight
+  let svg, gImages, radius_px, angle_origin, svgWidth, svgHeight
 
   // Load test data
   data = await loadYaml('./data/test1.yaml')
@@ -24,18 +24,18 @@ export async function doughnut({
   // Five marked zones
   const zoneDeltaRadius = earthRadius / 5
 
-  svgWidth = data.canvas.width
-  svgHeight = data.canvas.height
+  svgWidth = data.canvas.width_px
+  svgHeight = data.canvas.height_px
 
   svg = d3.select(selector).append('svg')
   svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
   svg.style('overflow', 'visible')
 
-  cUnit = data.canvas.c_unit
-  angle0 = data.canvas.angle0
-  const svgRealWidth = d3.select(selector).node().offsetWidth
+  radius_px = data.canvas.radius_px
+  angle_origin = data.canvas.angle_origin
+  //const svgRealWidth = d3.select(selector).node().offsetWidth
 
-  console.log('svgRealWidth', svgRealWidth)
+  //console.log('svgRealWidth', svgRealWidth)
   // Text style for Rockstrom 2009
   addDef(svg, 'whiteOutlineEffect')
 
@@ -588,12 +588,10 @@ export async function doughnut({
     return path
   }
 
-  function getOffset(angle, offset) {
-    console.log('getOffset', angle, offset)
-    const angleRad = (angle + angle0 - 90) * Math.PI / 180
-  
-    const x0 = offset * Math.cos(angleRad)
-    const y0 = offset * Math.sin(angleRad)
+  function getOffset(angle, rad) {
+    const angleRad = (angle + angle_origin - 90) * Math.PI / 180
+    const x0 = rad * Math.cos(angleRad)
+    const y0 = rad * Math.sin(angleRad)
     return [x0,y0]
   }
 
@@ -605,7 +603,7 @@ export async function doughnut({
 
     const trans = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
-    // Remeber this chart as the last chart
+    // Remeber current chart as the last chart
     iLastChart = iChart
 
     // Images
@@ -629,19 +627,19 @@ export async function doughnut({
     function imageCommonAttrs(selection, i) {
 
       return selection
-        .attr('width', d => d.width[i] / 100 * cUnit)
+        .attr('width', d => d.width[i])
         .attr('transform-origin', d => {
-          const imgWidth = d.width[i] / 100 * cUnit
-          const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+          const imgWidth = d.width[i] 
+          const imgHeight = d.width[i] / d.aspectRatio
           return `${imgWidth/2}px ${imgHeight/2}px`
         })
         .attr('transform', d => {
-          const oxy = getOffset(d.angle[i], d.offset[i])
-          const imgWidth = d.width[i] / 100 * cUnit
-          const imgHeight = d.width[i] / 100 * cUnit / d.aspectRatio
+          const oxy = getOffset(d.ang[i], d.rad[i])
+          const imgWidth = d.width[i]
+          const imgHeight = d.width[i] / d.aspectRatio
           return `
             translate(${(svgWidth - imgWidth) / 2 + oxy[0]}, ${(svgHeight - imgHeight) / 2  + oxy[1]}) 
-            rotate(${d.rotate[i]}) 
+            rotate(${d.rot[i]}) 
           `
         })
         .style('opacity', d => d.opacity[i])
@@ -652,26 +650,35 @@ export async function doughnut({
     gArcs.selectAll('.arc')
     .data(data.charts[iChart].arcs, d => d.id)
     .join(
-      enter => enter.append('path')
+      enter => {
+        const sel = enter.append('path')
         .classed('arc', true)
         .attr('id', d => `arc-path-${d.id}`)
+
+        return arcCommonAttrs(sel, 0)
+      },
+      update => update,
+      exit => arcCommonAttrs(exit.transition(trans), 2).remove()
+    )
+    .call(remaining => arcCommonAttrs(remaining.transition(trans), 1))
+
+    function arcCommonAttrs(selection, i) {
+
+      return selection
         .attr('d', d => {
-          console.log('rad', d.rad2 / 100 * cUnit)
           return arc({
-            innerRadius: d.rad1 / 100 * cUnit,
-            outerRadius: d.rad2 / 100 * cUnit,
-            startAngle: (angle0 + d.ang1) * Math.PI / 180,
-            endAngle: (angle0 + d.ang2) * Math.PI / 180
+            innerRadius: d.rad1[i],
+            outerRadius: d.rad2[i],
+            startAngle: (angle_origin + d.ang1[i]) * Math.PI / 180,
+            endAngle: (angle_origin + d.ang2[i]) * Math.PI / 180
           })
         })
         .style('fill', d => d.colour)
         .style('opacity', d => {
-          // zone = 0.9
-          // other = 0.6
+          //return d.opacity[i]
           return 0.6
-        }),
-      update => update
-    )
+        })
+    }
   }
 
   async function loadYaml(file) {
@@ -722,5 +729,12 @@ export async function doughnut({
     displayChart: displayChart,
     displayNextChart: displayNextChart,
     displayPreviousChart: displayPreviousChart
+  }
+
+  function arcTween(b) {
+    var i = d3.interpolate({value: b.previous}, b);
+    return function(t) {
+      return arc(i(t));
+    };
   }
 }

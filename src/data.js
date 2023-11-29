@@ -3,16 +3,15 @@ export async function postprocessData(data) {
 
   // Canvas default values
   dv(data, 'canvas', {})
-  dv(data.canvas, 'width', 650)
-  dv(data.canvas, 'height', 650)
-  dv(data.canvas, 'angle0', 0)
-  dv(data.canvas, 'c_unit', 150)
-  dv(data.canvas, 'r_unit', data.canvas.c_unit)
+  dv(data.canvas, 'width_px', 650)
+  dv(data.canvas, 'height_px', 650)
+  dv(data.canvas, 'angle_origin', 340)
+  dv(data.canvas, 'angle_delta', 0)
+  dv(data.canvas, 'radius_px', 150)
+  dv(data.canvas, 'radius_real', null)
 
-  // Update numeric values specified in real units (<field>_ru creates attr <field>)
-  updateNumericForUnits(data, data.canvas.r_unit, data.canvas.c_unit)
-
-  // Propagate properties down object??
+  // Resolve all the number formats
+  resolveNumericFormats(data, data.canvas.radius_real, data.canvas.radius_px, data.canvas.angle_delta)
 
   // Charts
   const pp = []
@@ -20,15 +19,16 @@ export async function postprocessData(data) {
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
     dv(chart, 'images', [])
+    dv(chart, 'arcs', [])
     
     // Images
     chart.images.forEach(async (img, i) => {
       // Default values
       dv(img, 'id', null)
       dv(img, 'opacity', [1, 1, 1])
-      dv(img, 'angle', [0, 0, 0])
-      dv(img, 'offset', [0, 0, 0])
-      dv(img, 'rotate', [0, 0, 0])
+      dv(img, 'ang', [0, 0, 0])
+      dv(img, 'rad', [0, 0, 0])
+      dv(img, 'rot', [0, 0, 0])
       // Missing data warnings
       wm(img.width, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the width attribute. It will be ignored.`)
       wm(img.location, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the location attribute. It will be ignored.`)
@@ -98,21 +98,109 @@ function cr(parent, idexOrName, ...props) {
   }
 }
 
-function updateNumericForUnits (obj, r_unit, c_unit) {
-  if (r_unit) {
+function updateNumericForUnits (obj, radius_real, radius_px) {
+  if (radius_real) {
     Object.keys(obj).forEach(key => {
       //console.log(`key: ${key}, value: ${obj[key]}`)
       if (key.endsWith('_ru')) {
         const newKey = key.substring(0,key.length-3)
         obj[newKey] = [
-          obj[key][0] / r_unit * c_unit,
-          obj[key][1] / r_unit * c_unit,
-          obj[key][2] / r_unit * c_unit
+          obj[key][0] / radius_real * radius_px,
+          obj[key][1] / radius_real * radius_px,
+          obj[key][2] / radius_real * radius_px
         ]
       }
       if (typeof obj[key] === 'object' && obj[key] !== null) {
-        updateNumericForUnits(obj[key], r_unit, c_unit)
+        updateNumericForUnits(obj[key], radius_real, radius_px)
       }
     })
   }
 }
+
+function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
+
+  const keys = [
+    ['rad', 'px'],
+    ['rad1', 'px'],
+    ['rad2', 'px'],
+    ['ang', 'deg'],
+    ['ang1', 'deg'],
+    ['ang2', 'deg'],
+    ['width', 'px'],
+    ['rot', null],
+    ['opacity', null]
+  ]
+  Object.keys(obj).forEach(key => {
+
+    const keyMatch = keys.find(ki => ki[0] === key)
+    
+    if (keyMatch) {
+      const key = keyMatch[0]
+      const units = keyMatch[1]
+
+      if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
+
+        if (typeof obj[key] === 'number') {
+          obj[key] = obj[key].toString()
+        }
+        const vals = obj[key].split(' ')
+
+        let modifier
+        if (vals[vals.length-1] === '%' || vals[vals.length-1] === 'x') {
+          modifier = vals[vals.length-1]
+          vals.pop()
+        }
+      
+        // At this point, vals should either be of length one or three
+        // If anything else, act as if it is one.
+        const newVal = []
+        if (vals.length === 3) {
+          newVal[0] = convertValue(vals[0], modifier, units)
+          newVal[1] = convertValue(vals[1], modifier, units)
+          newVal[2] = convertValue(vals[2], modifier, units)
+        } else {
+          newVal[0] = convertValue(vals[0], modifier, units)
+          newVal[1] = convertValue(vals[0], modifier, units)
+          newVal[2] = convertValue(vals[0], modifier, units)
+        }
+
+        // Arc transitions don't work if the enter or exit radius is zero
+        // so reset to small value.
+        if (units === 'px' && newVal[0] === 0 && newVal[2] === 0 && newVal[1] > 0) {
+          newVal[0] = 1
+          newVal[2] = 1
+        }
+        // Update value
+        obj[key] = newVal
+      }
+    }
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      resolveNumericFormats(obj[key], radius_real, radius_px, angle_delta)
+    }
+  })
+
+  function convertValue(val, modifier, units) {
+
+    let multiplier
+    if (units === 'px') {
+      multiplier = radius_px
+    } else if (units === 'deg') {
+      multiplier = angle_delta
+    }
+    let ret
+    if (modifier === '%' && multiplier) {
+      // Value expressed as % of radius_px or angle_delta
+      return Number(val) / 100 * multiplier
+    } else if (modifier === 'x' && multiplier) {
+      // Value expressed as a multiplier of radius_px or angle_delta
+      return Number(val) * multiplier
+    } else if (radius_real && units === 'px') {
+      // Radius value expressed as in real units
+      return Number(val) / radius_real * radius_px
+    } else {
+      // Value expressed directly
+      return  Number(val)
+    }
+  }
+}
+

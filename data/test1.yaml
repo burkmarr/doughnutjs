@@ -1,69 +1,85 @@
 canvas:
-  width: 800 # pixels
-  height: 600 # pixles
-  angle0: 340 # Base angle from which others are measured
-  c_unit: 150 # 1 chart unit in pixels
-  #r_unit: 1000 # real world units corresponding to 1 chart unit
+  width_px: 800 # pixels
+  height_px: 600 # pixles
+  angle_origin: 0 # Base angle from which others are measured
+  angle_delta: 0 # Base angle from which others are measured
+  radius_px: 150 # 1 chart unit in pixels
+  radius_real: 400 # real world units corresponding to 1 chart unit
 charts:
+  - id: chart01
+    images:
+    - id: rock0 
+      location: images/rockstrom-earth.png
+      width: 100 %
+      opacity: 0 1 0
+      rad: 0 200 0 %
+      ang: 0 90 0
+      rot: 0 180 0
+  # - id: chart02
+  #   images:
+  #   - id: rock0 
+  #     location: images/rockstrom-earth.png
+  #     width: 0 100 0 %
+  #     opacity: 0 1 0
   - id: chart1
     images:
     - id: rock 
       location: images/rockstrom-earth.png
-      width: [0, 200, 0]
-      opacity: [0, 1, 0]
+      width: 0 200 0 %
+      opacity: 0 1 0
     arcs:
     - id: safe-zone
       colour: "#6D9100"
       rad1: 0
-      rad2: 40
+      rad2: 0 40 0 %
       ang1: 0
       ang2: 360
     - id: climate-change
       colour: red
       rad1: 0
-      rad2: 60
+      rad2: 0 60 0 %
       ang1: 0
       ang2: 40
     - id: ocean-acidification
       colour: red
       rad1: 0
-      rad2: 35
+      rad2: 0 35 0 %
       ang1: 40
       ang2: 80
     - id: ozone-depletion
       colour: red
       rad1: 0
-      rad2: 16
+      rad2: 0 16 0 %
       ang1: 80
       ang2: 120
     - id: nitrogen-cycle
       colour: red
       rad1: 0
-      rad2: 132
+      rad2: 0 132 0 %
       ang1: 120
       ang2: 140
     - id: phosphorous-cycle
       colour: red
       rad1: 0
-      rad2: 36
+      rad2: 0 36 0 %
       ang1: 140
       ang2: 160
     - id: freshwater-use
       colour: red
       rad1: 0
-      rad2: 22
+      rad2: 0 22 0 %
       ang1: 160
       ang2: 200
     - id: landuse-change
       colour: red
       rad1: 0
-      rad2: 24
+      rad2: 0 24 0 %
       ang1: 200
       ang2: 240
     - id: biodiversity-loss
       colour: red
       rad1: 0
-      rad2: 160
+      rad2: 0 160 0 %
       ang1: 240
       ang2: 280
     - id: aerosol-loading
@@ -80,31 +96,31 @@ charts:
       ang2: 360
     - id: zone-1
       colour: #A6D800
-      rad1: 20
-      rad2: 20
+      rad1: 19 %
+      rad2: 20 %
       ang1: 0
       ang2: 360
     - id: zone-2
       colour: #A6D800
-      rad1: 40
-      rad2: 40
+      rad1: 39 %
+      rad2: 40 %
       ang1: 0
       ang2: 360
     - id: zone-3
       colour: red
-      rad1: 60
-      rad2: 60
+      rad1: 59 %
+      rad2: 60 %
       ang1: 0
       ang2: 360
     - id: zone-4
       colour: red
-      rad1: 80
-      rad2: 80
+      rad1: 79 %
+      rad2: 80 %
       ang1: 0
       ang2: 360
     - id: zone-5
       colour: red
-      rad1: 100
-      rad2: 100
+      rad1: 99 %
+      rad2: 100 %
       ang1: 0
       ang2: 360

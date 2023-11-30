@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { addDef, fetchYaml } from './general.js'
-import { postprocessData } from './data.js'
+import { postprocessData, getArcParams } from './data.js'
 
 export async function doughnut({
   selector = 'body',
@@ -9,6 +9,7 @@ export async function doughnut({
 
   let iLastChart = null
   let svg, gImages, radius_px, angle_origin, svgWidth, svgHeight
+  let currentArcParams = {}
 
   // Load test data
   data = await loadYaml('./data/test1.yaml')
@@ -568,7 +569,22 @@ export async function doughnut({
 
     console.log("Display chart", iChart)
 
-    const trans = svg.transition().delay(350).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+    // For all arcs, update currentArcParams if an arc
+    // with that id has already been used
+    data.charts[iChart].arcs.forEach(a => {
+      if (currentArcParams[a.id]) {
+        a.currentArcParams = currentArcParams[a.id]
+      }
+    })
+    // Remove any properties of currentArcParams that
+    // have no corresponding key in current arcs
+    Object.keys(currentArcParams).forEach(k => {
+      if (!data.charts[iChart].arcs.find(a => a.id === k)) {
+        delete currentArcParams[k]
+      }
+    })
+
+    const trans = svg.transition().delay(0).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
     // Remeber current chart as the last chart
     iLastChart = iChart
@@ -631,14 +647,7 @@ export async function doughnut({
 
     function arcCommonAttrs(selection, i) {
       if (i === 0) {
-        selection.attr('d', d => {
-          return arc({
-            innerRadius: d.rad1[i],
-            outerRadius: d.rad2[i],
-            startAngle: (angle_origin + d.ang1[i]) * Math.PI / 180,
-            endAngle: (angle_origin + d.ang2[i]) * Math.PI / 180
-          })
-        })
+        selection.attr('d', d => arc(getArcParams(d,i)))
       } else {
         selection.transition(trans)
           .attrTween('d', d => {
@@ -654,27 +663,28 @@ export async function doughnut({
 
   function arcTween(d, i) {
 
-    function getMetrics(j) {
-      return ({
-        innerRadius: d.rad1[j],
-        outerRadius: d.rad2[j],
-        startAngle: (angle_origin + d.ang1[j]) * Math.PI / 180,
-        endAngle: (angle_origin + d.ang2[j]) * Math.PI / 180
-      })
-    }
-    const s = getMetrics(i-1)
-    const e = getMetrics(i)
+    const s = d.currentArcParams
+    const e = getArcParams(d, i)
+
     const iInnerRadius = d3.interpolate(s.innerRadius, e.innerRadius)
     const iOuterRadius = d3.interpolate(s.outerRadius, e.outerRadius)
     const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
     const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
 
     return function(t) {
+      d.currentArcParams = {
+        innerRadius: iInnerRadius(t),
+        outerRadius: iOuterRadius(t),
+        startAngle: iStartAngle(t),
+        endAngle: iEndAngle(t)
+      }
       const arc = d3.arc()
-        .innerRadius(iInnerRadius(t))
-        .outerRadius(iOuterRadius(t))
-        .startAngle(iStartAngle(t))
-        .endAngle(iEndAngle(t))
+        .innerRadius(d.currentArcParams.innerRadius)
+        .outerRadius(d.currentArcParams.outerRadius)
+        .startAngle(d.currentArcParams.startAngle)
+        .endAngle(d.currentArcParams.endAngle)
+
+      currentArcParams[d.id] = d.currentArcParams
       return arc()
     }
   }

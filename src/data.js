@@ -1,4 +1,6 @@
 
+let angle_origin
+
 export async function postprocessData(data) {
 
   // Canvas default values
@@ -9,6 +11,9 @@ export async function postprocessData(data) {
   dv(data.canvas, 'angle_delta', 0)
   dv(data.canvas, 'radius_px', 150)
   dv(data.canvas, 'radius_real', null)
+
+  // Set module level variables
+  angle_origin = data.canvas.angle_origin
 
   // Resolve all the number formats
   resolveNumericFormats(data, data.canvas.radius_real, data.canvas.radius_px, data.canvas.angle_delta)
@@ -40,9 +45,26 @@ export async function postprocessData(data) {
 
       //cr(chart.images, i, 'width', 'location')
     })
+
+    // Arcs
+    chart.arcs.forEach(arc => {
+
+
+       // Initialise the currentArcParams property
+       arc.currentArcParams = getArcParams(arc, 0)
+    })
   })
 
   await Promise.all(pp)
+}
+
+export function getArcParams (d, i) {
+  return {
+    innerRadius: d.rad1[i],
+    outerRadius: d.rad2[i],
+    startAngle: (angle_origin + d.ang1[i]) * Math.PI / 180,
+    endAngle: (angle_origin + d.ang2[i]) * Math.PI / 180
+  }
 }
 
 function getImageWidth(src, dataImage){
@@ -163,13 +185,6 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
           newVal[1] = convertValue(vals[0], modifier, units)
           newVal[2] = convertValue(vals[0], modifier, units)
         }
-
-        // Arc transitions don't work if the enter or exit radius is zero
-        // so reset to small value.
-        // if (units === 'px' && newVal[0] === 0 && newVal[2] === 0 && newVal[1] > 0) {
-        //   newVal[0] = 1
-        //   newVal[2] = 1
-        // }
         // Update value
         obj[key] = newVal
       }

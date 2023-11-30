@@ -32,8 +32,8 @@ charts:
       colour: red
       rad1: 0
       rad2: 0 30 0 %
-      ang1: 40
-      ang2: 80
+      ang1: 0
+      ang2: 0 80 0
   - id: chart1
     # images:
     # - id: rock 
@@ -50,7 +50,7 @@ charts:
     - id: climate-change
       colour: red
       rad1: 0
-      rad2: 0 60 0 %
+      rad2: 0 160 0 %
       ang1: 0
       ang2: 40
     - id: ocean-acidification

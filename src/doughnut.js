@@ -8,7 +8,7 @@ export async function doughnut({
 } = {}) {
 
   let iLastChart = null
-  let svg, gImages, radius_px, angle_origin, svgWidth, svgHeight
+  let svg, gImages, svgWidth, svgHeight
   let currentArcParams = {}
 
   // Load test data
@@ -32,11 +32,6 @@ export async function doughnut({
   svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
   svg.style('overflow', 'visible')
 
-  radius_px = data.canvas.radius_px
-  angle_origin = data.canvas.angle_origin
-  //const svgRealWidth = d3.select(selector).node().offsetWidth
-
-  //console.log('svgRealWidth', svgRealWidth)
   // Text style for Rockstrom 2009
   addDef(svg, 'whiteOutlineEffect')
 
@@ -556,7 +551,7 @@ export async function doughnut({
     return path
   }
 
-  function getOffset(angle, rad) {
+  function getOffset(angle, rad, angle_origin) {
     const angleRad = (angle + angle_origin - 90) * Math.PI / 180
     const x0 = rad * Math.cos(angleRad)
     const y0 = rad * Math.sin(angleRad)
@@ -617,7 +612,7 @@ export async function doughnut({
           return `${imgWidth/2}px ${imgHeight/2}px`
         })
         .attr('transform', d => {
-          const oxy = getOffset(d.ang[i], d.rad[i])
+          const oxy = getOffset(d.ang[i], d.rad[i], d.angle_origin)
           const imgWidth = d.width[i]
           const imgHeight = d.width[i] / d.aspectRatio
           return `

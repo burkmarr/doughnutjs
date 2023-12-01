@@ -1,10 +1,10 @@
-
-let angle_origin
-
 export async function postprocessData(data) {
+
+  // First check and ensure data integrity
 
   // Canvas default values
   dv(data, 'canvas', {})
+  dv(data, 'defaults', {})
   dv(data.canvas, 'width_px', 650)
   dv(data.canvas, 'height_px', 650)
   dv(data.canvas, 'angle_origin', 340)
@@ -12,14 +12,7 @@ export async function postprocessData(data) {
   dv(data.canvas, 'radius_px', 150)
   dv(data.canvas, 'radius_real', null)
 
-  // Set module level variables
-  angle_origin = data.canvas.angle_origin
-
-  // Resolve all the number formats
-  resolveNumericFormats(data, data.canvas.radius_real, data.canvas.radius_px, data.canvas.angle_delta)
-
-  // Charts
-  const pp = []
+  // Charts default values and missing value warnings
   dv(data.charts, {})
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
@@ -37,21 +30,29 @@ export async function postprocessData(data) {
       // Missing data warnings
       wm(img.width, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the width attribute. It will be ignored.`)
       wm(img.location, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the location attribute. It will be ignored.`)
+    })
+  })
 
+  // Propagate default values
+  propagateDefaults(data)
+
+  // Update images with aspect ratio of image
+  const pp = []
+  data.charts.forEach(async chart => {
+    chart.images.forEach(async img => {
       if (img.location) {
-        // Update data with aspect ratio of image
         pp.push(getImageWidth(img.location, img))
       }
-
-      //cr(chart.images, i, 'width', 'location')
     })
+  })
 
-    // Arcs
+  // Resolve all the number formats
+  resolveNumericFormats(data, data.canvas.radius_real, data.canvas.radius_px, data.canvas.angle_delta)
+
+  // Initialise the currentArcParams property
+  data.charts.forEach(chart => {
     chart.arcs.forEach(arc => {
-
-
-       // Initialise the currentArcParams property
-       arc.currentArcParams = getArcParams(arc, 0)
+      arc.currentArcParams = getArcParams(arc, 0)
     })
   })
 
@@ -62,9 +63,54 @@ export function getArcParams (d, i) {
   return {
     innerRadius: d.rad1[i],
     outerRadius: d.rad2[i],
-    startAngle: (angle_origin + d.ang1[i]) * Math.PI / 180,
-    endAngle: (angle_origin + d.ang2[i]) * Math.PI / 180
+    startAngle: (d.angle_origin + d.ang1[i]) * Math.PI / 180,
+    endAngle: (d.angle_origin + d.ang2[i]) * Math.PI / 180
   }
+}
+
+function propagateDefaults(data) {
+  const elementTypes = ['images', 'arcs', 'spokes', 'text', 'arrows']
+  data.charts.forEach(chart => {
+    elementTypes.forEach(type => {
+      if (chart[type]) {
+        const defaults = chart[type].find(e => e.id === 'default')
+        // console.log('defaults1', defaults)
+        // console.log('defaults0', data.defaults)
+        chart[type].forEach(element => {
+          if (defaults && element.id !== 'default') {
+            // Element collection level defaults
+            Object.keys(defaults).forEach(def => {
+              // If the default does not exist on the other elements then add.
+              if (!element[def]) {
+                element[def] = defaults[def]
+              }
+            })
+          }
+          // Top level defaults
+          if (data.defaults) {
+            data.defaults.forEach(tlDef => {
+              const def = Object.keys(tlDef)[0]
+              // If the default does not exist on the other elements then add.
+              if (!element[def]) {
+                element[def] = tlDef[def]
+              }
+            })
+          }
+        })
+      }
+    })
+  })
+  // Remove all objects with id 'default'
+  data.charts.forEach(chart => {
+    elementTypes.forEach(type => {
+      if (chart[type]) {
+        const i = chart[type].findIndex(e => e.id === 'default')
+        if (i > -1) {
+          chart[type].splice(i, 1)
+        }
+      }
+    })
+  })
 }
 
 function getImageWidth(src, dataImage){
@@ -218,4 +264,3 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
     }
   }
 }
-

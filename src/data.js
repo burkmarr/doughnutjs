@@ -166,25 +166,6 @@ function cr(parent, idexOrName, ...props) {
   }
 }
 
-function updateNumericForUnits (obj, radius_real, radius_px) {
-  if (radius_real) {
-    Object.keys(obj).forEach(key => {
-      //console.log(`key: ${key}, value: ${obj[key]}`)
-      if (key.endsWith('_ru')) {
-        const newKey = key.substring(0,key.length-3)
-        obj[newKey] = [
-          obj[key][0] / radius_real * radius_px,
-          obj[key][1] / radius_real * radius_px,
-          obj[key][2] / radius_real * radius_px
-        ]
-      }
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        updateNumericForUnits(obj[key], radius_real, radius_px)
-      }
-    })
-  }
-}
-
 function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
 
   const keys = [
@@ -195,8 +176,12 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
     ['ang1', 'deg'],
     ['ang2', 'deg'],
     ['width', 'px'],
-    ['rot', null],
-    ['opacity', null]
+    ['rot', 'n'],
+    ['opacity', 'n'],
+    ['colour', 's'],
+    ['stroke', 's'],
+    ['stroke-width', 'n'],
+    ['stroke-dasharray', 's']
   ]
   Object.keys(obj).forEach(key => {
 
@@ -204,9 +189,9 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
     
     if (keyMatch) {
       const key = keyMatch[0]
-      const units = keyMatch[1]
+      const type = keyMatch[1]
 
-      if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
+      if (!Array.isArray(obj[key])) {
 
         if (typeof obj[key] === 'number') {
           obj[key] = obj[key].toString()
@@ -223,13 +208,13 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
         // If anything else, act as if it is one.
         const newVal = []
         if (vals.length === 3) {
-          newVal[0] = convertValue(vals[0], modifier, units)
-          newVal[1] = convertValue(vals[1], modifier, units)
-          newVal[2] = convertValue(vals[2], modifier, units)
+          newVal[0] = convertValue(vals[0], modifier, type)
+          newVal[1] = convertValue(vals[1], modifier, type)
+          newVal[2] = convertValue(vals[2], modifier, type)
         } else {
-          newVal[0] = convertValue(vals[0], modifier, units)
-          newVal[1] = convertValue(vals[0], modifier, units)
-          newVal[2] = convertValue(vals[0], modifier, units)
+          newVal[0] = convertValue(vals[0], modifier, type)
+          newVal[1] = convertValue(vals[0], modifier, type)
+          newVal[2] = convertValue(vals[0], modifier, type)
         }
         // Update value
         obj[key] = newVal
@@ -240,24 +225,26 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
     }
   })
 
-  function convertValue(val, modifier, units) {
+  function convertValue(val, modifier, type) {
 
     let multiplier
-    if (units === 'px') {
+    if (type === 'px') {
       multiplier = radius_px
-    } else if (units === 'deg') {
+    } else if (type === 'deg') {
       multiplier = angle_delta
     }
-    let ret
     if (modifier === '%' && multiplier) {
       // Value expressed as % of radius_px or angle_delta
       return Number(val) / 100 * multiplier
     } else if (modifier === 'x' && multiplier) {
       // Value expressed as a multiplier of radius_px or angle_delta
       return Number(val) * multiplier
-    } else if (radius_real && units === 'px') {
+    } else if (radius_real && type === 'px') {
       // Radius value expressed as in real units
       return Number(val) / radius_real * radius_px
+    } else if (type === 's') {
+      // Value expressed directly
+      return  val
     } else {
       // Value expressed directly
       return  Number(val)

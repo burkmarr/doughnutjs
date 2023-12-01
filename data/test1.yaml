@@ -7,6 +7,9 @@ defaults:
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
   - opacity: 0 0.8 0
+  # - stroke: black
+  # - stroke-width: 0.5
+  # - stroke-dasharray: 2,2
 globals:
   duration: 2000
 charts:

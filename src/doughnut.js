@@ -649,8 +649,15 @@ export async function doughnut({
             return arcTween(d, i)
           })
       }
-      return selection.style('fill', d => d.colour)
-        .style('opacity', d => d.opacity[i])
+
+      return selection
+        .style('fill', d => d.colour ? d.colour[i] : null )
+        .style('stroke', d => d.stroke ? d.stroke[i] : null)
+        .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
+        .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
+        .style('opacity', d => d.opacity ? d.opacity[i] : null)
+
+      return selection
     }
   }
 

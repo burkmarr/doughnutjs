@@ -6,7 +6,9 @@ defaults:
   - angle_delta: 0 # Base angle from which others are measured
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
-  - opacity: 1
+  - opacity: 0 0.8 0
+globals:
+  duration: 2000
 charts:
   - id: chart1
     images:
@@ -14,7 +16,6 @@ charts:
       location: images/rockstrom-earth.png
       width: 0 200 0 %
       rot: 0 270 0
-      opacity: 0 1 0
     arcs:
     - id: default
       colour: red
@@ -32,7 +33,6 @@ charts:
     - id: rock 
       location: images/rockstrom-earth.png
       width: 0 200 0 %
-      opacity: 0 1 0
     arcs:
     - id: default
       colour: red

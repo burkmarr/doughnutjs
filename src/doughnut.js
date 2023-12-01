@@ -579,7 +579,8 @@ export async function doughnut({
       }
     })
 
-    const trans = svg.transition().delay(0).duration(2000) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+    const trans = svg.transition().delay(0).duration(data.globals.duration)
+    .ease(d3.easeLinear) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
     // Remeber current chart as the last chart
     iLastChart = iChart
@@ -626,33 +627,30 @@ export async function doughnut({
     // Arcs
     const arc =  d3.arc()
     gArcs.selectAll('.arc')
-    .data(data.charts[iChart].arcs, d => d.id)
-    .join(
-      enter => {
-        const sel = enter.append('path')
-        .classed('arc', true)
-        .attr('id', d => `arc-path-${d.id}`)
+      .data(data.charts[iChart].arcs, d => d.id)
+      .join(
+        enter => {
+          const sel = enter.append('path')
+            .classed('arc', true)
+            .attr('id', d => `arc-path-${d.id}`)
 
-        return arcCommonAttrs(sel, 0)
-      },
-      update => update,
-      exit => arcCommonAttrs(exit, 2).remove()
+          return arcCommonAttrs(sel, 0)
+        },
+        update => update,
+        exit => arcCommonAttrs(exit.transition(trans), 2).remove()
     )
-    .call(remaining => arcCommonAttrs(remaining, 1))
+    .call(remaining => arcCommonAttrs(remaining.transition(trans), 1))
 
     function arcCommonAttrs(selection, i) {
       if (i === 0) {
         selection.attr('d', d => arc(getArcParams(d,i)))
       } else {
-        selection.transition(trans)
-          .attrTween('d', d => {
+        selection.attrTween('d', d => {
             return arcTween(d, i)
           })
       }
       return selection.style('fill', d => d.colour)
-        .style('opacity', d => {
-          return 0.6
-        })
+        .style('opacity', d => d.opacity[i])
     }
   }
 

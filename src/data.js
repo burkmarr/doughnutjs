@@ -23,7 +23,7 @@ export async function postprocessData(data) {
     chart.images.forEach(async (img, i) => {
       // Default values
       dv(img, 'id', null)
-      dv(img, 'opacity', [1, 1, 1])
+      // dv(img, 'opacity', [1, 1, 1])
       dv(img, 'ang', [0, 0, 0])
       dv(img, 'rad', [0, 0, 0])
       dv(img, 'rot', [0, 0, 0])

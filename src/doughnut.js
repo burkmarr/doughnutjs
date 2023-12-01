@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { addDef, fetchYaml } from './general.js'
-import { postprocessData, getArcParams } from './data.js'
+import { postprocessData, getArcParams, getArclineParams, arcLine } from './data.js'
 
 export async function doughnut({
   selector = 'body',
@@ -10,6 +10,7 @@ export async function doughnut({
   let iLastChart = null
   let svg, gImages, svgWidth, svgHeight
   let currentArcParams = {}
+  let currentArclineParams = {}
 
   // Load test data
   data = await loadYaml('./data/test1.yaml')
@@ -579,6 +580,21 @@ export async function doughnut({
       }
     })
 
+    // For all arclines, update currentArclineParams if an arc
+    // with that id has already been used
+    data.charts[iChart].arclines.forEach(a => {
+      if (currentArclineParams[a.id]) {
+        a.currentArclineParams = currentArclineParams[a.id]
+      }
+    })
+    // Remove any properties of currentArclineParams that
+    // have no corresponding key in current arcs
+    Object.keys(currentArclineParams).forEach(k => {
+      if (!data.charts[iChart].arclines.find(a => a.id === k)) {
+        delete currentArclineParams[k]
+      }
+    })
+
     const trans = svg.transition().delay(0).duration(data.globals.duration)
     .ease(d3.easeLinear) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
@@ -659,6 +675,44 @@ export async function doughnut({
 
       return selection
     }
+
+    // Arcliness
+    const arcline =  d3.arc()
+
+    gArcs.selectAll('.arcline')
+      .data(data.charts[iChart].arclines, d => d.id)
+      .join(
+        enter => {
+          const sel = enter.append('path')
+            .classed('arcline', true)
+            .attr('id', d => `arcline-path-${d.id}`)
+
+          return arclineCommonAttrs(sel, 0)
+        },
+        update => update,
+        exit => arclineCommonAttrs(exit.transition(trans), 2).remove()
+    )
+    .call(remaining => arclineCommonAttrs(remaining.transition(trans), 1))
+
+    function arclineCommonAttrs(selection, i) {
+      if (i === 0) {
+        //selection.attr('d', d => arcline(getArclineParams(d,i)))
+        selection.attr('d', d => arcLine(getArclineParams(d,i)))
+      } else {
+        selection.attrTween('d', d => {
+            return arclineTween(d, i)
+          })
+      }
+
+      return selection
+        .style('fill', 'none' )
+        .style('stroke', d => d.stroke ? d.stroke[i] : null)
+        .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
+        .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
+        .style('opacity', d => d.opacity ? d.opacity[i] : null)
+
+      return selection
+    }
   }
 
   function arcTween(d, i) {
@@ -686,6 +740,35 @@ export async function doughnut({
 
       currentArcParams[d.id] = d.currentArcParams
       return arc()
+    }
+  }
+
+  function arclineTween(d, i) {
+
+    const s = d.currentArclineParams
+    const e = getArclineParams(d, i)
+
+    const iRadius = d3.interpolate(s.radius, e.radius)
+    const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
+    const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
+
+    return function(t) {
+      d.currentArclineParams = {
+        //innerRadius: iInnerRadius(t),
+        //outerRadius: iOuterRadius(t),
+        radius: iRadius(t),
+        startAngle: iStartAngle(t),
+        endAngle: iEndAngle(t)
+      }
+      // const arc = d3.arc()
+      //   .innerRadius(d.currentArclineParams.innerRadius)
+      //   .outerRadius(d.currentArclineParams.outerRadius)
+      //   .startAngle(d.currentArclineParams.startAngle)
+      //   .endAngle(d.currentArclineParams.endAngle)
+
+      currentArclineParams[d.id] = d.currentArclineParams
+      //return arc()
+      return arcLine(d.currentArclineParams)
     }
   }
 

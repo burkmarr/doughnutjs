@@ -17,6 +17,7 @@ export async function postprocessData(data) {
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
     dv(chart, 'images', [])
+    dv(chart, 'arclines', [])
     dv(chart, 'arcs', [])
     
     // Images
@@ -56,6 +57,13 @@ export async function postprocessData(data) {
     })
   })
 
+  // Initialise the currentArclineParams property
+  data.charts.forEach(chart => {
+    chart.arclines.forEach(arcline => {
+      arcline.currentArclineParams = getArclineParams(arcline, 0)
+    })
+  })
+
   await Promise.all(pp)
 }
 
@@ -68,8 +76,27 @@ export function getArcParams (d, i) {
   }
 }
 
+export function getArclineParams (d, i) {
+  return {
+    innerRadius: d.rad[i]-1,
+    outerRadius: d.rad[i],
+    radius: d.rad[i],
+    startAngle: (d.angle_origin + d.ang1[i] - 90) * Math.PI / 180,
+    endAngle: (d.angle_origin + d.ang2[i] - 90) * Math.PI / 180
+  }
+}
+
+export function arcLine(arclineParams) {
+  const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
+  const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
+  const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
+  const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
+  const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 0 1 ${x2} ${y2}`
+  return path
+}
+
 function propagateDefaults(data) {
-  const elementTypes = ['images', 'arcs', 'spokes', 'text', 'arrows']
+  const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
   data.charts.forEach(chart => {
     elementTypes.forEach(type => {
       if (chart[type]) {

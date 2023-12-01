@@ -7,9 +7,9 @@ defaults:
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
   - opacity: 0 0.8 0
-  # - stroke: black
-  # - stroke-width: 0.5
-  # - stroke-dasharray: 2,2
+  - stroke: black
+  - stroke-width: 0.5
+  - stroke-dasharray: 3
 globals:
   duration: 2000
 charts:
@@ -31,6 +31,14 @@ charts:
       rad2: 0 30 0 %
       ang1: 0
       ang2: 0 80 0
+    arclines: 
+    - id: zone-1
+      # stroke: black magenta green
+      # stroke-dasharray: 3
+      stroke-width: 3
+      rad: 10 50 0 %
+      ang1: 90
+      ang2: 180 270 90
   - id: chart2
     images:
     - id: rock 

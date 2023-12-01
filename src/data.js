@@ -2,6 +2,8 @@ export async function postprocessData(data) {
 
   // First check and ensure data integrity
 
+  console.log('data0', JSON.parse(JSON.stringify(data)))
+
   // Canvas default values
   dv(data, 'canvas', {})
   dv(data, 'defaults', {})
@@ -34,8 +36,12 @@ export async function postprocessData(data) {
     })
   })
 
+  console.log('data1', JSON.parse(JSON.stringify(data)))
+
   // Propagate default values
   propagateDefaults(data)
+
+  console.log('data2', JSON.parse(JSON.stringify(data)))
 
   // Update images with aspect ratio of image
   const pp = []
@@ -78,8 +84,6 @@ export function getArcParams (d, i) {
 
 export function getArclineParams (d, i) {
   return {
-    innerRadius: d.rad[i]-1,
-    outerRadius: d.rad[i],
     radius: d.rad[i],
     startAngle: (d.angle_origin + d.ang1[i] - 90) * Math.PI / 180,
     endAngle: (d.angle_origin + d.ang2[i] - 90) * Math.PI / 180
@@ -87,11 +91,31 @@ export function getArclineParams (d, i) {
 }
 
 export function arcLine(arclineParams) {
-  const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
-  const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
-  const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
-  const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
-  const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 0 1 ${x2} ${y2}`
+  const as = arclineParams.startAngle * 180 / Math.PI
+  const ae = arclineParams.endAngle * 180 / Math.PI
+
+  // Using path Arc generator problematic because when you do a full cirlce,
+  // it disappears - so you can only do 0-359 which leaves a gap
+  // const largeArcFlag = (ae - as) > 180 || ae > 360 && ae - 360 === es ? 1 : 0
+  // const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
+  // const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
+  // const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
+  // const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
+  // const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
+
+  // Instead calcualted circles and arcs directly
+  let path = ''
+  for (var i = as; i <= ae; i++) {
+    var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
+    var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
+
+    if (!path) {
+      path = `M${x} ${y}`
+    } else {
+      path = `${path} L${x} ${y}`
+    }
+  }
+  path = `${path}`
   return path
 }
 
@@ -208,7 +232,7 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
     ['colour', 's'],
     ['stroke', 's'],
     ['stroke-width', 'n'],
-    ['stroke-dasharray', 's']
+    // ['stroke-dasharray', 's']
   ]
   Object.keys(obj).forEach(key => {
 
@@ -223,6 +247,7 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
         if (typeof obj[key] === 'number') {
           obj[key] = obj[key].toString()
         }
+
         const vals = obj[key].split(' ')
 
         let modifier

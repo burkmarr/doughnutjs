@@ -7,9 +7,6 @@ defaults:
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
   - opacity: 0 0.8 0
-  - stroke: black
-  - stroke-width: 0.5
-  - stroke-dasharray: 3
 globals:
   duration: 2000
 charts:
@@ -32,13 +29,14 @@ charts:
       ang1: 0
       ang2: 0 80 0
     arclines: 
-    - id: zone-1
-      # stroke: black magenta green
-      # stroke-dasharray: 3
+    - id: 'default'
+      stroke: red
       stroke-width: 3
-      rad: 10 50 0 %
-      ang1: 90
-      ang2: 180 270 90
+      opacity: 1
+    - id: zone-3
+      rad: 60 %
+      ang1: 10
+      ang2: 10 380 0
   - id: chart2
     images:
     - id: rock 
@@ -48,11 +46,12 @@ charts:
     - id: default
       colour: red
       rad1: 0
+      opacity: 0.5
     - id: safe-zone
       colour: "#6D9100"
       rad2: 0 40 0 %
       ang1: 0
-      ang2: 360
+      ang2: 360  
     - id: climate-change
       rad2: 0 60 0 %
       ang1: 0
@@ -93,30 +92,30 @@ charts:
       rad2: 0
       ang1: 320
       ang2: 360
+    arclines:
+    - id: default
+      stroke: red
+      stroke-width: 1
+      opacity: 1
     - id: zone-1
-      colour: #A6D800
-      rad1: 19 %
-      rad2: 20 %
+      stroke: '#A6D800'
+      rad: 0 20 0%
       ang1: 0
       ang2: 360
     - id: zone-2
-      colour: #A6D800
-      rad1: 39 %
-      rad2: 40 %
+      stroke: '#A6D800'
+      rad: 0 40 0 %
       ang1: 0
       ang2: 360
     - id: zone-3
-      rad1: 59 %
-      rad2: 60 %
+      rad: 0 60 0 %
       ang1: 0
       ang2: 360
     - id: zone-4
-      rad1: 79 %
-      rad2: 80 %
+      rad: 0 80 0 %
       ang1: 0
       ang2: 360
     - id: zone-5
-      rad1: 99 %
-      rad2: 100 %
+      rad: 0 100 0 %
       ang1: 0
       ang2: 360

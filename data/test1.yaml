@@ -1,14 +1,13 @@
-canvas:
+globals:
   width_px: 800 # pixels
   height_px: 600 # pixles
+  duration: 2000
 defaults:
-  - angle_origin: 0 # Base angle from which others are measured
+  - angle_origin: -20 # Base angle from which others are measured
   - angle_delta: 0 # Base angle from which others are measured
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
   - opacity: 0 0.8 0
-globals:
-  duration: 2000
 charts:
   - id: chart1
     images:
@@ -99,7 +98,7 @@ charts:
       opacity: 1
     - id: zone-1
       stroke: '#A6D800'
-      rad: 0 20 0%
+      rad: 0 20 0 %
       ang1: 0
       ang2: 360
     - id: zone-2

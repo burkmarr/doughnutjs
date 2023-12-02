@@ -2,17 +2,18 @@ export async function postprocessData(data) {
 
   // First check and ensure data integrity
 
-  console.log('data0', JSON.parse(JSON.stringify(data)))
+  //console.log('data0', JSON.parse(JSON.stringify(data)))
 
-  // Canvas default values
-  dv(data, 'canvas', {})
+  // Top level efault values
+  dv(data, 'globals', {})
   dv(data, 'defaults', {})
-  dv(data.canvas, 'width_px', 650)
-  dv(data.canvas, 'height_px', 650)
-  dv(data.canvas, 'angle_origin', 340)
-  dv(data.canvas, 'angle_delta', 0)
-  dv(data.canvas, 'radius_px', 150)
-  dv(data.canvas, 'radius_real', null)
+
+  dv(data.globals, 'width_px', 650)
+  dv(data.globals, 'height_px', 650)
+  dv(data.globals, 'angle_origin', 340)
+  dv(data.globals, 'angle_delta', 0)
+  dv(data.globals, 'radius_px', 150)
+  dv(data.globals, 'radius_real', null)
 
   // Charts default values and missing value warnings
   dv(data.charts, {})
@@ -36,12 +37,12 @@ export async function postprocessData(data) {
     })
   })
 
-  console.log('data1', JSON.parse(JSON.stringify(data)))
+  //console.log('data1', JSON.parse(JSON.stringify(data)))
 
   // Propagate default values
   propagateDefaults(data)
 
-  console.log('data2', JSON.parse(JSON.stringify(data)))
+  //console.log('data2', JSON.parse(JSON.stringify(data)))
 
   // Update images with aspect ratio of image
   const pp = []
@@ -54,7 +55,7 @@ export async function postprocessData(data) {
   })
 
   // Resolve all the number formats
-  resolveNumericFormats(data, data.canvas.radius_real, data.canvas.radius_px, data.canvas.angle_delta)
+  resolveNumericFormats(data, data.globals.radius_real, data.globals.radius_px, data.globals.angle_delta)
 
   // Initialise the currentArcParams property
   data.charts.forEach(chart => {

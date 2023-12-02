@@ -21,6 +21,7 @@
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
   
   <!-- Allows us to test without having to build first -->
+
   <script type="importmap">
     {
       "imports": {
@@ -29,9 +30,19 @@
       }
     }
   </script>
+
+  <!-- <script type="importmap">
+    {
+      "imports": {
+        "d3": "http://localhost:8080/src/d3.v7.js",
+        "js-yaml": "http://localhost:8080/src/js-yaml.mjs"
+      }
+    }
+  </script> -->
   <script type="module">
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
+    chart.loadYaml('./data/test1.yaml')
     window.nextChart = function() {
       chart.displayNextChart()
     }

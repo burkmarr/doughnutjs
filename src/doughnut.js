@@ -43,6 +43,10 @@ export async function doughnut({
 
     // Error trapping on invalid values to api functions
 
+    // API functions for next/previous or specific chart need to have
+    // a new boolen argument which specifies whether chart is to be
+    // cleared before loading new one, or transitioned.
+
     if (!svg) {
 
       svgWidth = getGlobal('width_px')

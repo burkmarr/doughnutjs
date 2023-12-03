@@ -1,32 +1,53 @@
 import * as d3 from 'd3'
 import { old } from './old-stuff.js'
 import { addDef, fetchYaml } from './general.js'
-import { postprocessData, getArcParams, getArclineParams, arcLine } from './data.js'
+import { parseRecipe, getArcParams, getArclineParams, arcLine } from './data.js'
 
 export async function doughnut({
   selector = 'body',
-  data = []
+  recipe = []
 } = {}) {
 
   let iLastChart = null
   let svg, svgWidth, svgHeight
-  let gImages, gArcs, gArclines, gSpokes, gText
+  let recipeErrors = 'not parsed'
+  let gAll, gImages, gArcs, gArclines, gSpokes, gText
   let currentArcParams = {}
   let currentArclineParams = {}
+  const fixedGlobals = {}
 
-  async function initFromRecipe() {
-    // Need some stuff to deal with retaining or
-    // refreshing current globals and defaults(?)
-    // from previous recipe
+  async function updateChart(iChart) {
 
-    console.log('data', JSON.parse(JSON.stringify(data)))
-    await postprocessData(data)
-    console.log('postprocessData', data)
+    console.log("Display chart", iChart)
+
+    if (recipeErrors !== 'done') {
+      console.log('recipe', JSON.parse(JSON.stringify(recipe)))
+      recipeErrors = await parseRecipe(recipe)
+      console.log('parsedRecipe', recipe)
+
+      // If the parse failed, display the error messages somewhere
+    }
   
-    if (!svg) {
-      svgWidth = data.globals.width_px
-      svgHeight = data.globals.height_px
+    // TODO
+    // If svg exists and global width or height has changed, then
+    // reset the widths and position of gAll, update svgWidth and Height
+    // and update viewbox attr. I dont know how images will behave when
+    // this happend so going to have to experiment. To do this, split
+    // the current recipe into two and work on and test the api functions 
+    // for loadin recipes etc.
+    // Once done, also test the fixedGlobals - have different globals on
+    // each of the two files and test transition between them with width
+    // and height globals fixed and unfixed.
     
+    // full cirle circle arc not closing
+
+    // Error trapping on invalid values to api functions
+
+    if (!svg) {
+
+      svgWidth = getGlobal('width_px')
+      svgHeight = getGlobal('height_px')
+
       svg = d3.select(selector).append('svg')
       svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
       svg.style('overflow', 'visible')
@@ -37,25 +58,20 @@ export async function doughnut({
       // Text style for Rockstrom 2009
       addDef(svg, 'whiteOutlineEffect')
     
-      gImages = svg.append('g')
-      gArcs = svg.append('g')
-      gSpokes = svg.append('g')
-      gText = svg.append('g')
-      gArcs.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
-      gSpokes.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
-      gText.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`) 
+      gImages = svg.append('g') // Not centred because that is done indepedently
+      gAll = svg.append('g')
+      gArcs = gAll.append('g')
+      gSpokes = gAll.append('g')
+      gText = gAll.append('g')
+      // Transform gAll to centre elements on canvas
+      gAll.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
+    } else {
+      console.log('existing width', svg.attr('width'))
     }
-  }
- 
-  // Return API
-
-  function updateChart(iChart) {
-
-    console.log("Display chart", iChart)
 
     // For all arcs, update currentArcParams if an arc
     // with that id has already been used
-    data.charts[iChart].arcs.forEach(a => {
+    recipe.charts[iChart].arcs.forEach(a => {
       if (currentArcParams[a.id]) {
         a.currentArcParams = currentArcParams[a.id]
       }
@@ -63,14 +79,14 @@ export async function doughnut({
     // Remove any properties of currentArcParams that
     // have no corresponding key in current arcs
     Object.keys(currentArcParams).forEach(k => {
-      if (!data.charts[iChart].arcs.find(a => a.id === k)) {
+      if (!recipe.charts[iChart].arcs.find(a => a.id === k)) {
         delete currentArcParams[k]
       }
     })
 
     // For all arclines, update currentArclineParams if an arc
     // with that id has already been used
-    data.charts[iChart].arclines.forEach(a => {
+    recipe.charts[iChart].arclines.forEach(a => {
       if (currentArclineParams[a.id]) {
         a.currentArclineParams = currentArclineParams[a.id]
       }
@@ -78,20 +94,21 @@ export async function doughnut({
     // Remove any properties of currentArclineParams that
     // have no corresponding key in current arcs
     Object.keys(currentArclineParams).forEach(k => {
-      if (!data.charts[iChart].arclines.find(a => a.id === k)) {
+      if (!recipe.charts[iChart].arclines.find(a => a.id === k)) {
         delete currentArclineParams[k]
       }
     })
 
-    const trans = svg.transition().delay(0).duration(data.globals.duration)
-    .ease(d3.easeLinear) //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+    const trans = svg.transition().duration(getGlobal('duration'))
+    .ease(d3.easeLinear) 
+    //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
 
     // Remeber current chart as the last chart
     iLastChart = iChart
 
     // Images
     gImages.selectAll('.img')
-    .data(data.charts[iChart].images, d => d.id)
+    .data(recipe.charts[iChart].images, d => d.id)
     .join(
       enter => {
         const sel = enter.append('image')
@@ -131,7 +148,7 @@ export async function doughnut({
     // Arcs
     const arc =  d3.arc()
     gArcs.selectAll('.arc')
-      .data(data.charts[iChart].arcs, d => d.id)
+      .data(recipe.charts[iChart].arcs, d => d.id)
       .join(
         enter => {
           const sel = enter.append('path')
@@ -166,7 +183,7 @@ export async function doughnut({
 
     // Arcliness
     gArcs.selectAll('.arcline')
-      .data(data.charts[iChart].arclines, d => d.id)
+      .data(recipe.charts[iChart].arclines, d => d.id)
       .join(
         enter => {
           const sel = enter.append('path')
@@ -265,18 +282,27 @@ export async function doughnut({
     return [x0,y0]
   }
 
-  async function loadYaml(file) {
-    data = await fetchYaml(file)
-    initFromRecipe()
-    //return data
+  function getGlobal(k) {
+
+    console.log('typod', k, fixedGlobals[k])
+    if (typeof(fixedGlobals[k]) !== 'undefined') {
+      // There's a value for this key in fixedGlobals
+      return fixedGlobals[k]
+    } else {
+      // There's always a value in the recipe because software provides default
+      // if not specified.
+
+      console.log('globs', recipe.globals)
+      return recipe.globals[k]
+    }
   }
 
   function displayChart(i) {
     let iChart
     if (i === null) {
       iChart = 0
-    } else if (i > data.charts.length - 1 ) {
-      iChart =  data.charts.length - 1
+    } else if (i > recipe.charts.length - 1 ) {
+      iChart =  recipe.charts.length - 1
     } else if (i < 1){
       iChart = 0
     } else {
@@ -289,7 +315,7 @@ export async function doughnut({
     let iChart
     if (iLastChart === null) {
       iChart = 0
-    } else if (iLastChart === data.charts.length - 1 ) {
+    } else if (iLastChart === recipe.charts.length - 1 ) {
       iChart = 0
     } else {
       iChart = iLastChart + 1
@@ -302,15 +328,43 @@ export async function doughnut({
     if (iLastChart === null) {
       iChart = 0
     } else if (iLastChart === 0 ) {
-      iChart = data.charts.length - 1
+      iChart = recipe.charts.length - 1
     } else {
       iChart = iLastChart - 1
     }
     updateChart(iChart)
   }
 
+  async function loadRecipe(file) {
+    recipe = await fetchYaml(file)
+    recipeErrors = 'not parsed'
+    return recipe
+  }
+
+  function fixGlobals(globals) {
+    Object.keys(globals).forEach(k => {
+      if (typeof(fixedGlobals[k]) !== 'undefined') {
+        // Value currently set for this key in fixedGlobals
+        if (typeof(globals[k]) === null) {
+          // Passed value is null - unset the fGlobal value
+          delete fixedGlobals[k]
+        } else {
+          // Set the fixedGlobals value
+          fixedGlobals[k] = globals[k]
+        }
+      } else {
+        // No value currently set for this key in fGlobal
+        // Set the fixedGlobals value if passed value not null
+        if (globals[k] !== null) {
+          fixedGlobals[k] =  globals[k]
+        }
+      }
+    })
+  }
+
   return {
-    loadYaml: loadYaml,
+    loadRecipe: loadRecipe,
+    fixGlobals: fixGlobals,
     displayChart: displayChart,
     displayNextChart: displayNextChart,
     displayPreviousChart: displayPreviousChart

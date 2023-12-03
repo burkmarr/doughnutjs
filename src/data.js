@@ -1,4 +1,4 @@
-export async function postprocessData(data) {
+export async function parseRecipe(data) {
 
   // First check and ensure data integrity
 
@@ -10,6 +10,7 @@ export async function postprocessData(data) {
 
   dv(data.globals, 'width_px', 650)
   dv(data.globals, 'height_px', 650)
+  dv(data.globals, 'duration', 1000)
   dv(data.globals, 'angle_origin', 340)
   dv(data.globals, 'angle_delta', 0)
   dv(data.globals, 'radius_px', 150)
@@ -35,6 +36,8 @@ export async function postprocessData(data) {
       wm(img.width, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the width attribute. It will be ignored.`)
       wm(img.location, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the location attribute. It will be ignored.`)
     })
+
+    return 'none' // Successfuly parsed
   })
 
   //console.log('data1', JSON.parse(JSON.stringify(data)))

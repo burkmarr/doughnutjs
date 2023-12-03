@@ -11,7 +11,7 @@ defaults:
 charts:
   - id: chart1
     images:
-    - id: rock0 
+    - id: rock
       location: images/rockstrom-earth.png
       width: 0 200 0 %
       rot: 0 270 0

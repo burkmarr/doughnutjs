@@ -39,7 +39,7 @@ export function addDef(el, name) {
 export function fetchYaml(file) {
 
   return new Promise((resolve, reject) => {
-    fetch(file).then(response => {
+    fetch(`${file}?${Math.random()}`).then(response => {
       if (response.status !== 200) {
         console.log(`Fetch error. Status code: ${response.status}`)
         resolve({})

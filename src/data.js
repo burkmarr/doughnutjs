@@ -11,6 +11,7 @@ export async function parseRecipe(data) {
   dv(data.globals, 'width_px', 650)
   dv(data.globals, 'height_px', 650)
   dv(data.globals, 'duration', 1000)
+  dv(data.globals, 'transition', 'yes')
   dv(data.globals, 'angle_origin', 340)
   dv(data.globals, 'angle_delta', 0)
   dv(data.globals, 'radius_px', 150)
@@ -74,6 +75,18 @@ export async function parseRecipe(data) {
     })
   })
 
+  // Initialise the currentImageParams property
+  data.charts.forEach(chart => {
+    chart.images.forEach(image => {
+      image.currentImageParams = {
+        ang: image.ang[0],
+        width: image.width[0],
+        rad: image.rad[0],
+        rot: image.rot[0]
+      }
+    })
+  })
+
   await Promise.all(pp)
 }
 
@@ -95,8 +108,8 @@ export function getArclineParams (d, i) {
 }
 
 export function arcLine(arclineParams) {
-  const as = arclineParams.startAngle * 180 / Math.PI
-  const ae = arclineParams.endAngle * 180 / Math.PI
+  const as = Math.round(arclineParams.startAngle * 180 / Math.PI)
+  const ae = Math.round(arclineParams.endAngle * 180 / Math.PI)
 
   // Using path Arc generator problematic because when you do a full cirlce,
   // it disappears - so you can only do 0-359 which leaves a gap
@@ -110,6 +123,7 @@ export function arcLine(arclineParams) {
   // Instead calcualted circles and arcs directly
   let path = ''
   for (var i = as; i <= ae; i++) {
+
     var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
     var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
 

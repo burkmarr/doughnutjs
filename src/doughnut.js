@@ -14,6 +14,7 @@ export async function doughnut({
   let gAll, gImages, gArcs, gArclines, gSpokes, gText
   let currentArcParams = {}
   let currentArclineParams = {}
+  let currentImageParams = {}
   const fixedGlobals = {}
 
   async function updateChart(iChart) {
@@ -29,28 +30,20 @@ export async function doughnut({
     }
   
     // TODO
-    // If svg exists and global width or height has changed, then
-    // reset the widths and position of gAll, update svgWidth and Height
-    // and update viewbox attr. I dont know how images will behave when
-    // this happend so going to have to experiment. To do this, split
-    // the current recipe into two and work on and test the api functions 
-    // for loadin recipes etc.
-    // Once done, also test the fixedGlobals - have different globals on
-    // each of the two files and test transition between them with width
-    // and height globals fixed and unfixed.
-    
-    // full cirle circle arc not closing
 
     // Error trapping on invalid values to api functions
 
-    // API functions for next/previous or specific chart need to have
-    // a new boolen argument which specifies whether chart is to be
-    // cleared before loading new one, or transitioned.
+    // Real units modifier - r
+
+    svgWidth = getGlobal('width_px')
+    svgHeight = getGlobal('height_px')
+
+    if (svg && getGlobal('transition') !== 'yes') {
+      svg.remove()
+      svg = null
+    }
 
     if (!svg) {
-
-      svgWidth = getGlobal('width_px')
-      svgHeight = getGlobal('height_px')
 
       svg = d3.select(selector).append('svg')
       svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
@@ -60,18 +53,19 @@ export async function doughnut({
       //old(d3, svg, 350)
     
       // Text style for Rockstrom 2009
-      addDef(svg, 'whiteOutlineEffect')
+      //addDef(svg, 'whiteOutlineEffect')
     
-      gImages = svg.append('g') // Not centred because that is done indepedently
       gAll = svg.append('g')
+      gImages = gAll.append('g') // Not centred because that is done indepedently
       gArcs = gAll.append('g')
       gSpokes = gAll.append('g')
       gText = gAll.append('g')
-      // Transform gAll to centre elements on canvas
-      gAll.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
     } else {
-      console.log('existing width', svg.attr('width'))
+      svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
     }
+
+    // Transform gAll to centre elements on canvas
+    gAll.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
     // For all arcs, update currentArcParams if an arc
     // with that id has already been used
@@ -103,6 +97,21 @@ export async function doughnut({
       }
     })
 
+    // For all images, update currentImageParams if an image
+    // with that id has already been used
+    recipe.charts[iChart].images.forEach(i => {
+      if (currentImageParams[i.id]) {
+        i.currentImageParams = currentImageParams[i.id]
+      }
+    })
+    // Remove any properties of currentImageParams that
+    // have no corresponding key in current arcs
+    Object.keys(currentImageParams).forEach(k => {
+      if (!recipe.charts[iChart].images.find(i => i.id === k)) {
+        delete currentImageParams[k]
+      }
+    })
+
     const trans = svg.transition().duration(getGlobal('duration'))
     .ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
@@ -110,16 +119,25 @@ export async function doughnut({
     // Remeber current chart as the last chart
     iLastChart = iChart
 
+    // Debug image centres
+
     // Images
     gImages.selectAll('.img')
     .data(recipe.charts[iChart].images, d => d.id)
     .join(
       enter => {
         const sel = enter.append('image')
-        .classed('img', true)
-        .attr('xlink:href', d => d.location)
-        //.attr('id', d => `img-${d.key}`)
-        //.style('outline', '2px red solid')
+          .attr('xlink:href', d => d.location)
+          .classed('img', true)
+          // For debugging
+          .style('outline', '2px blue solid')
+
+        // For debugging
+        enter.append('rect')
+          .style('outline', '2px red solid')
+          .attr('width', d => d.width[1])
+          .attr('height', d => d.width[1])
+          .attr('fill-opacity', d => 0)
 
         return imageCommonAttrs(sel, 0)
       },
@@ -130,23 +148,29 @@ export async function doughnut({
 
     function imageCommonAttrs(selection, i) {
 
-      return selection
+      selection
         .attr('width', d => d.width[i])
-        .attr('transform-origin', d => {
-          const imgWidth = d.width[i] 
-          const imgHeight = d.width[i] / d.aspectRatio
-          return `${imgWidth/2}px ${imgHeight/2}px`
-        })
-        .attr('transform', d => {
+        .attr('height', d => d.width[i])
+        .attr('transform-origin', d => `${d.width[i]/2}px ${d.width[i]/2}px`)
+
+      if (i === 0) {
+        selection.attr('transform', d => {
           const oxy = getOffset(d.ang[i], d.rad[i], d.angle_origin)
-          const imgWidth = d.width[i]
-          const imgHeight = d.width[i] / d.aspectRatio
+          const deltaWidth = -d.width[i]/2 + oxy[0]
+          const deltaHeight = -d.width[i]/2 + oxy[1]
           return `
-            translate(${(svgWidth - imgWidth) / 2 + oxy[0]}, ${(svgHeight - imgHeight) / 2  + oxy[1]}) 
+          translate(${deltaWidth}, ${deltaHeight}) 
             rotate(${d.rot[i]}) 
           `
         })
-        .style('opacity', d => d.opacity[i])
+      } else {
+        selection.attrTween('transform', d => {
+          return imageTween(d, i)
+        })
+      }
+      selection.style('opacity', d => d.opacity[i])
+
+      return selection
     }
 
     // Arcs
@@ -174,18 +198,15 @@ export async function doughnut({
             return arcTween(d, i)
           })
       }
-
       return selection
         .style('fill', d => d.colour ? d.colour[i] : null )
         .style('stroke', d => d.stroke ? d.stroke[i] : null)
         .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
         .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
         .style('opacity', d => d.opacity ? d.opacity[i] : null)
-
-      return selection
     }
 
-    // Arcliness
+    // Arclines
     gArcs.selectAll('.arcline')
       .data(recipe.charts[iChart].arclines, d => d.id)
       .join(
@@ -203,23 +224,46 @@ export async function doughnut({
 
     function arclineCommonAttrs(selection, i) {
       if (i === 0) {
-        //selection.attr('d', d => arcline(getArclineParams(d,i)))
         selection.attr('d', d => arcLine(getArclineParams(d,i)))
       } else {
         selection.attrTween('d', d => {
             return arclineTween(d, i)
           })
       }
-
       return selection
         .style('fill', 'none' )
         .style('stroke', d => d.stroke ? d.stroke[i] : null)
         .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
         .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
         .style('opacity', d => d.opacity ? d.opacity[i] : null)
-
-      return selection
     }
+  }
+
+  function imageTween(d, i) {
+
+      const iAng = d3.interpolate(d.currentImageParams.ang, d.ang[i])
+      const iWidth = d3.interpolate(d.currentImageParams.width, d.width[i])
+      const iRad = d3.interpolate(d.currentImageParams.rad, d.rad[i])
+      const iRot = d3.interpolate(d.currentImageParams.rot, d.rot[i])
+
+      return function(t) {
+
+        d.currentImageParams = {
+          ang: iAng(t),
+          width: iWidth(t),
+          rad: iRad(t),
+          rot: iRot(t)
+        }
+        const oxy = getOffset(iAng(t), iRad(t), d.angle_origin)
+        const deltaWidth = -iWidth(t)/2 + oxy[0]
+        const deltaHeight = -iWidth(t)/2 + oxy[1]
+
+        currentImageParams[d.id] = {...d.currentImageParams}
+        return `
+          translate(${deltaWidth}, ${deltaHeight}) 
+          rotate(${iRot(t)}) 
+        `
+      }
   }
 
   function arcTween(d, i) {
@@ -261,20 +305,11 @@ export async function doughnut({
 
     return function(t) {
       d.currentArclineParams = {
-        //innerRadius: iInnerRadius(t),
-        //outerRadius: iOuterRadius(t),
         radius: iRadius(t),
         startAngle: iStartAngle(t),
         endAngle: iEndAngle(t)
       }
-      // const arc = d3.arc()
-      //   .innerRadius(d.currentArclineParams.innerRadius)
-      //   .outerRadius(d.currentArclineParams.outerRadius)
-      //   .startAngle(d.currentArclineParams.startAngle)
-      //   .endAngle(d.currentArclineParams.endAngle)
-
       currentArclineParams[d.id] = d.currentArclineParams
-      //return arc()
       return arcLine(d.currentArclineParams)
     }
   }
@@ -288,21 +323,19 @@ export async function doughnut({
 
   function getGlobal(k) {
 
-    console.log('typod', k, fixedGlobals[k])
     if (typeof(fixedGlobals[k]) !== 'undefined') {
       // There's a value for this key in fixedGlobals
       return fixedGlobals[k]
     } else {
       // There's always a value in the recipe because software provides default
       // if not specified.
-
-      console.log('globs', recipe.globals)
       return recipe.globals[k]
     }
   }
 
   function displayChart(i) {
     let iChart
+
     if (i === null) {
       iChart = 0
     } else if (i > recipe.charts.length - 1 ) {
@@ -317,6 +350,7 @@ export async function doughnut({
 
   function displayNextChart() {
     let iChart
+
     if (iLastChart === null) {
       iChart = 0
     } else if (iLastChart === recipe.charts.length - 1 ) {
@@ -341,6 +375,7 @@ export async function doughnut({
 
   async function loadRecipe(file) {
     recipe = await fetchYaml(file)
+    iLastChart = null
     recipeErrors = 'not parsed'
     return recipe
   }
@@ -349,7 +384,9 @@ export async function doughnut({
     Object.keys(globals).forEach(k => {
       if (typeof(fixedGlobals[k]) !== 'undefined') {
         // Value currently set for this key in fixedGlobals
-        if (typeof(globals[k]) === null) {
+
+        //console.log(k, globals[k], globals)
+        if (globals[k] === null) {
           // Passed value is null - unset the fGlobal value
           delete fixedGlobals[k]
         } else {

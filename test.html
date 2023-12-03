@@ -16,7 +16,15 @@
   <button type="button" onclick="nextChart()">Next</button>
   <button type="button" onclick="previousChart()">Previous</button>
   <button type="button" onclick="displayChart()">Chart</button>
+
   <input type="number" id="chartno" name="chartno" min="0" />
+
+  <br><br>
+
+  <button type="button" onclick="loadRecipe(1)">Recipe 1</button>
+  <button type="button" onclick="loadRecipe(2)">Recipe 2</button>
+  <button type="button" onclick="loadRecipe(3)">Recipe 3</button>
+
   <div id="donut-div" style="width: 100%"></div>
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
   
@@ -43,6 +51,8 @@
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
     chart.loadRecipe('./data/test1.yaml')
+    chart.fixGlobals({width_px: 600, height_px: 600})
+
     window.nextChart = function() {
       chart.displayNextChart()
     }
@@ -51,6 +61,13 @@
     }
     window.displayChart = function() {
       chart.displayChart(document.getElementById("chartno").value)
+    }
+
+    window.loadRecipe = function(n) {
+      if (n === 3) {
+        chart.fixGlobals({width_px: null, height_px: null})
+      }
+      chart.loadRecipe(`./data/test${n}.yaml`)
     }
 
     displayChart

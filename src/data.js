@@ -1,12 +1,17 @@
+import { cloneObj } from './general.js'
+
 export async function parseRecipe(data) {
+
+  // Resolve cloned charts
 
   // First check and ensure data integrity
 
-  //console.log('data0', JSON.parse(JSON.stringify(data)))
+  //console.log('data0', cloneObj(data))
 
   // Top level efault values
   dv(data, 'globals', {})
   dv(data, 'defaults', {})
+  dv(data.charts, {})
 
   dv(data.globals, 'width_px', 650)
   dv(data.globals, 'height_px', 650)
@@ -17,8 +22,66 @@ export async function parseRecipe(data) {
   dv(data.globals, 'radius_px', 150)
   dv(data.globals, 'radius_real', null)
 
+  // Resolve clones
+  data.charts.forEach(chart => {
+    if (chart.clone) {
+      const toChart = chart
+      const fromChart = data.charts.find(c => c.id === chart.clone)
+
+      //console.log('fromChart', cloneObj(fromChart))
+      //console.log('toChart', cloneObj(toChart))
+
+      if (fromChart) {
+        const types = ['images', 'arcs', 'arclines']
+        types.forEach(elementType => {
+          const fromChartElements = fromChart[elementType]
+          let toChartElements = toChart[elementType]
+
+          if (fromChartElements) {
+            let toChartElementsCloned
+            if (toChartElements) {
+              // Clone the target array element array
+              toChartElementsCloned = cloneObj(toChartElements)
+              //console.log('toChartElementsCloned', cloneObj(toChartElementsCloned))
+            }
+
+            // First copy entire element type array from source to target
+            data.charts.find(c => c.id === toChart.id)[elementType] = cloneObj(fromChartElements)
+            toChartElements = toChart[elementType]
+
+            //console.log('toChart', cloneObj(toChart))
+            //console.log('toChartElements', cloneObj(toChartElements))
+
+            if (toChartElementsCloned) {
+              // Now loop through the elements previously cloned from target and
+              // Update in the copied,
+              toChartElementsCloned.forEach(toChartElementCloned => {
+                const toChartElement = toChartElements.find(toChartElement => toChartElement.id === toChartElementCloned.id)
+                if (toChartElement) {
+                  //console.log('toChartElement', cloneObj(toChartElement))
+                  Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
+                    toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
+                  })
+                }
+              })
+            }
+          } else {
+            // Element type array from target not found in source,
+            // so delete from target
+            delete toChart[elementType]
+          }
+        })
+        console.log('toChart', toChart)
+      } else {
+        // Referenced clone id not found - need to warm
+      }
+    }
+  })
+
+  console.log('Cloned recipe', cloneObj(data))
+
   // Charts default values and missing value warnings
-  dv(data.charts, {})
+
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
     dv(chart, 'images', [])
@@ -41,12 +104,12 @@ export async function parseRecipe(data) {
     return 'none' // Successfuly parsed
   })
 
-  //console.log('data1', JSON.parse(JSON.stringify(data)))
+  //console.log('data1', cloneObj(data))
 
   // Propagate default values
   propagateDefaults(data)
 
-  //console.log('data2', JSON.parse(JSON.stringify(data)))
+  //console.log('data2', cloneObjy(data))
 
   // Update images with aspect ratio of image
   const pp = []

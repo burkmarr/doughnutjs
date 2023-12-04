@@ -122,3 +122,10 @@ charts:
       rad: 0 100 0 %
       ang1: 0
       ang2: 360
+  - id: chart3
+    clone: chart2
+    arclines:
+    - id: default
+      stroke: black
+      stroke-width: 10
+      opacity: 0.5

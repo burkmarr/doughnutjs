@@ -37,3 +37,9 @@ charts:
       rad: 100 %
       ang1: 90
       ang2: 10 360 0
+  - id: rock2
+    clone: chart1
+    arclines: 
+    - id: zone-3
+      rad: 200 %
+

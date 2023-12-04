@@ -1,5 +1,8 @@
 import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
+import * as d3 from 'd3'
+
+export function 
 export async function parseRecipe(data) {
  
   // Resolve cloned charts
@@ -19,7 +22,7 @@ export async function parseRecipe(data) {
   dv(data.globals, 'radius_real', null)
 
   // Validate property value formats
-  validatePropertyValues(data)
+  validateProperties(data)
   
   // Resolve clones
   resolveClones(data)
@@ -332,7 +335,7 @@ function resolveClones (data) {
             delete toChart[elementType]
           }
         })
-        console.log('toChart', toChart)
+        //console.log('toChart', toChart)
       } else {
         // Referenced clone id not found - need to warm
       }
@@ -385,38 +388,63 @@ function propagateDefaults(data) {
   })
 }
 
-function validatePropertyValues(data) {
+function validateProperties(data) {
+  
+
+  const errorDiv = d3.select('#doughnut-error-msg')
+  const svg = d3.select('#doughnut-svg')
+  errorDiv.html('')
+  const errorUl = errorDiv.append('ul')
+
   const propDefs = getProperties()
-
-  propDefs.forEach(pd => {
-    //console.log('prop def', pd)
-  })
-
+  const elementTypes = ['arcs', 'arclines', 'images']
   data.charts.forEach(chart => {
-    propDefs.forEach(propDef => {
-      const elementTypes = [...propDef.mandatoryOn, ...propDef.opitionalOn]
-      elementTypes.forEach(elementType => {
-        if (chart[elementType]) {
-          chart[elementType].forEach(element => {
-            Object.keys(element).forEach(property => {
+    elementTypes.forEach(elementType => {
+      if (chart[elementType]) {
+        chart[elementType].forEach(element => {
+          Object.keys(element).forEach(property => {
+            const propDef = propDefs.find(propdef => propdef.name === property)
+            if (propDef) {
               if (property === propDef.name) {
                 //console.log(chart.id, elementType, element.id, property, element[property])
                 let permittedFormat = false
                 for (let i=0; i<propDef.formats.length; i++) {
                   const regex = new RegExp(propDef.formats[i])
-                  if (regex.test[property]) {
+                  if (regex.test(element[property])) {
                     permittedFormat = true
                     break
                   }
                 }
                 if (!permittedFormat) {
-                  console.log('invalid format', chart.id, elementType, element.id, property, element[property])
+                  const err = propDef.formatError
+                    .replace('##prop##', `${chart.id}>${elementType}>${element.id}`)
+                    .replace('##value##', `${element[property]}`)
+                  errorUl.append('li').html(err)
+                  console.log(err)
                 }
               }
-            })   
+            } else {
+              // A property defintion was not found for a property of this name
+              //const err = `The property name <b>${property}</b> is not recognised. Check <b>${chart.id}>${elementType}>${element.id}</b>.`
+              //errorUl.append('li').html(err)
+            }
           })
-        }
-      })
+        })
+      }
     })
   })
+
+  // ###############
+  // REDO THIS - just have this return html string. Ideally do the DOM manipulation from doughnut.js
+  
+  const hasErrors = errorUl.selectAll('li').size()
+
+  console.log("errorUl.selectAll('li').size()", errorUl.selectAll('li').size())
+  if (hasErrors) {
+    errorDiv.style('display', '')
+    svg.style('display', 'none')
+  } else {
+    errorDiv.style('display', 'none')
+    svg.style('display', '')
+  }
 }

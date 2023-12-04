@@ -19,6 +19,10 @@ export async function doughnut({
   const fixedGlobals = {}
   let rc
 
+  d3.select(selector).append('div')
+    .attr('id', 'doughnut-error-msg')
+    .style('display', 'none')
+
   async function updateChart(iChart) {
 
     console.log("Display chart", iChart)
@@ -56,8 +60,9 @@ export async function doughnut({
     if (!svg) {
 
       svg = d3.select(selector).append('svg')
-      svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
-      svg.style('overflow', 'visible')
+        .attr('id', 'doughnut-svg')
+        .attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
+        .style('overflow', 'visible')
 
       //  Old visualisation
       //old(d3, svg, 350)

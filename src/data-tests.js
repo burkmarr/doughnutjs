@@ -21,9 +21,9 @@ const  properties = [
     opitionalOn: ['arcs', 'arclines'],
     mandatoryOn: [],
     formats: [f.simpleNumber, f.transNumber],
-    formatError: `The property ##prop_path## must be specified with one of these formats; 'n <m>'
-      where n is a number and m is a modifier (x, % or r), or 'n1 n2 n3 m') where n1 is the ${eTrans1}, 
-      n2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}`,
+    formatError: `The property <b>##prop##</b> has the value <b>##value##</b> but must be specified with one of these formats; 'n <m>'
+where n is a number and m is a modifier (x, % or r), or 'n1 n2 n3 m') where n1 is the ${eTrans1}, 
+n2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}`,
     missingError: eMandatory
   },
   {
@@ -31,9 +31,9 @@ const  properties = [
     opitionalOn: ['arcs', 'arclines'],
     mandatoryOn: [],
     formats: [f.simpleNumber, f.transNumber],
-    formatError: `The property ##prop_path## must be specified with one of these formats; 'n <m>'
-      where n is a number and m is a modifier (x, % or r), or 'n1 n2 n3 m') where n1 is the ${eTrans1}, 
-      n2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}`,
+    formatError: `The property <b>##prop##</b> has the value <b>##value##</b> but must be specified with one of these formats; 'n <m>'
+where n is a number and m is a modifier (x, % or r), or 'n1 n2 n3 m') where n1 is the ${eTrans1}, 
+n2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}`,
     missingError: eMandatory
 }
 ]

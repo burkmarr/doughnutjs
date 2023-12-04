@@ -17,7 +17,7 @@ charts:
       width: 50 %
       rot: 0 270 0
       rad: 100 %
-      ang: 0 90 0
+      ang: 0 90 
     arcs:
     - id: default
       colour: red

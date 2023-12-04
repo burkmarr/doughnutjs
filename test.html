@@ -55,6 +55,11 @@
     }
   </script> -->
   <script type="module">
+    // ###############
+    import { getProperties } from "./src/data-tests.js"
+    getProperties()
+    // ###############
+
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
     chart.loadRecipe('./data/test1.yaml')

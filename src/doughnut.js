@@ -33,12 +33,17 @@ export async function doughnut({
   
     // TODO
 
-    // Need to test data cloning
-    // remove to separate function
-
     // Error trapping on invalid values to api functions
 
     // Real units modifier - r
+
+    // Add options for arcs including gaps and rounded corners.
+
+    // Test and deal with images that are not square.
+
+    // Implement rough styles
+
+    // Fading of arcs towards outer and inner edge
 
     svgWidth = getGlobal('width_px')
     svgHeight = getGlobal('height_px')
@@ -296,8 +301,8 @@ export async function doughnut({
 
       currentArcParams[d.id] = d.currentArcParams
  
-      return roughUp(arc())
-      //return arc()
+      //return roughUp(arc())
+      return arc()
     }
   }
 

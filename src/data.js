@@ -1,13 +1,10 @@
 import { cloneObj } from './general.js'
+import { getProperties } from './data-tests.js'
 export async function parseRecipe(data) {
  
   // Resolve cloned charts
 
-  // First check and ensure data integrity
-
-  //console.log('data0', cloneObj(data))
-
-  // Top level efault values
+  // Top level default values
   dv(data, 'globals', {})
   dv(data, 'defaults', {})
   dv(data.charts, {})
@@ -21,66 +18,13 @@ export async function parseRecipe(data) {
   dv(data.globals, 'radius_px', 150)
   dv(data.globals, 'radius_real', null)
 
+  // Validate property value formats
+  validatePropertyValues(data)
+  
   // Resolve clones
-  data.charts.forEach(chart => {
-    if (chart.clone) {
-      const toChart = chart
-      const fromChart = data.charts.find(c => c.id === chart.clone)
-
-      //console.log('fromChart', cloneObj(fromChart))
-      //console.log('toChart', cloneObj(toChart))
-
-      if (fromChart) {
-        const types = ['images', 'arcs', 'arclines']
-        types.forEach(elementType => {
-          const fromChartElements = fromChart[elementType]
-          let toChartElements = toChart[elementType]
-
-          if (fromChartElements) {
-            let toChartElementsCloned
-            if (toChartElements) {
-              // Clone the target array element array
-              toChartElementsCloned = cloneObj(toChartElements)
-              //console.log('toChartElementsCloned', cloneObj(toChartElementsCloned))
-            }
-
-            // First copy entire element type array from source to target
-            data.charts.find(c => c.id === toChart.id)[elementType] = cloneObj(fromChartElements)
-            toChartElements = toChart[elementType]
-
-            //console.log('toChart', cloneObj(toChart))
-            //console.log('toChartElements', cloneObj(toChartElements))
-
-            if (toChartElementsCloned) {
-              // Now loop through the elements previously cloned from target and
-              // Update in the copied,
-              toChartElementsCloned.forEach(toChartElementCloned => {
-                const toChartElement = toChartElements.find(toChartElement => toChartElement.id === toChartElementCloned.id)
-                if (toChartElement) {
-                  //console.log('toChartElement', cloneObj(toChartElement))
-                  Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
-                    toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
-                  })
-                }
-              })
-            }
-          } else {
-            // Element type array from target not found in source,
-            // so delete from target
-            delete toChart[elementType]
-          }
-        })
-        console.log('toChart', toChart)
-      } else {
-        // Referenced clone id not found - need to warm
-      }
-    }
-  })
-
-  console.log('Cloned recipe', cloneObj(data))
-
+  resolveClones(data)
+ 
   // Charts default values and missing value warnings
-
   data.charts.forEach(async chart => {
     dv(chart, 'id', null)
     dv(chart, 'images', [])
@@ -103,25 +47,21 @@ export async function parseRecipe(data) {
     return 'none' // Successfuly parsed
   })
 
-  //console.log('data1', cloneObj(data))
-
   // Propagate default values
   propagateDefaults(data)
 
-  //console.log('data2', cloneObjy(data))
-
   // Update images with aspect ratio of image
-  const pp = []
+  const allPromises = []
   data.charts.forEach(async chart => {
     chart.images.forEach(async img => {
       if (img.location) {
-        pp.push(getImageWidth(img.location, img))
+        allPromises.push(getImageWidth(img.location, img))
       }
     })
   })
 
   // Resolve all the number formats
-  resolveNumericFormats(data, data.globals.radius_real, data.globals.radius_px, data.globals.angle_delta)
+  resolveNumericFormats(data, data)
 
   // Initialise the currentArcParams property
   data.charts.forEach(chart => {
@@ -149,7 +89,7 @@ export async function parseRecipe(data) {
     })
   })
 
-  await Promise.all(pp)
+  await Promise.all(allPromises)
 }
 
 export function getArcParams (d, i) {
@@ -197,51 +137,6 @@ export function arcLine(arclineParams) {
   }
   path = `${path}`
   return path
-}
-
-function propagateDefaults(data) {
-  const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
-  data.charts.forEach(chart => {
-    elementTypes.forEach(type => {
-      if (chart[type]) {
-        const defaults = chart[type].find(e => e.id === 'default')
-        // console.log('defaults1', defaults)
-        // console.log('defaults0', data.defaults)
-        chart[type].forEach(element => {
-          if (defaults && element.id !== 'default') {
-            // Element collection level defaults
-            Object.keys(defaults).forEach(def => {
-              // If the default does not exist on the other elements then add.
-              if (!element[def]) {
-                element[def] = defaults[def]
-              }
-            })
-          }
-          // Top level defaults
-          if (data.defaults) {
-            data.defaults.forEach(tlDef => {
-              const def = Object.keys(tlDef)[0]
-              // If the default does not exist on the other elements then add.
-              if (!element[def]) {
-                element[def] = tlDef[def]
-              }
-            })
-          }
-        })
-      }
-    })
-  })
-  // Remove all objects with id 'default'
-  data.charts.forEach(chart => {
-    elementTypes.forEach(type => {
-      if (chart[type]) {
-        const i = chart[type].findIndex(e => e.id === 'default')
-        if (i > -1) {
-          chart[type].splice(i, 1)
-        }
-      }
-    })
-  })
 }
 
 function getImageWidth(src, dataImage){
@@ -297,7 +192,11 @@ function cr(parent, idexOrName, ...props) {
   }
 }
 
-function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
+function resolveNumericFormats (data, obj) {
+
+  const radius_real = data.globals.radius_real
+  const radius_px= data.globals.radius_px
+  const angle_delta = data.globals.angle_delta
 
   const keys = [
     ['rad', 'px'],
@@ -353,7 +252,7 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
       }
     }
     if (typeof obj[key] === 'object' && obj[key] !== null) {
-      resolveNumericFormats(obj[key], radius_real, radius_px, angle_delta)
+      resolveNumericFormats(data, obj[key])
     }
   })
 
@@ -382,4 +281,142 @@ function resolveNumericFormats (obj, radius_real, radius_px, angle_delta) {
       return  Number(val)
     }
   }
+}
+
+function resolveClones (data) {
+  data.charts.forEach(chart => {
+    if (chart.clone) {
+      const toChart = chart
+      const fromChart = data.charts.find(c => c.id === chart.clone)
+
+      //console.log('fromChart', cloneObj(fromChart))
+      //console.log('toChart', cloneObj(toChart))
+
+      if (fromChart) {
+        const types = ['images', 'arcs', 'arclines']
+        types.forEach(elementType => {
+          const fromChartElements = fromChart[elementType]
+          let toChartElements = toChart[elementType]
+
+          if (fromChartElements) {
+            let toChartElementsCloned
+            if (toChartElements) {
+              // Clone the target array element array
+              toChartElementsCloned = cloneObj(toChartElements)
+              //console.log('toChartElementsCloned', cloneObj(toChartElementsCloned))
+            }
+
+            // First copy entire element type array from source to target
+            data.charts.find(c => c.id === toChart.id)[elementType] = cloneObj(fromChartElements)
+            toChartElements = toChart[elementType]
+
+            //console.log('toChart', cloneObj(toChart))
+            //console.log('toChartElements', cloneObj(toChartElements))
+
+            if (toChartElementsCloned) {
+              // Now loop through the elements previously cloned from target and
+              // Update in the copied,
+              toChartElementsCloned.forEach(toChartElementCloned => {
+                const toChartElement = toChartElements.find(toChartElement => toChartElement.id === toChartElementCloned.id)
+                if (toChartElement) {
+                  //console.log('toChartElement', cloneObj(toChartElement))
+                  Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
+                    toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
+                  })
+                }
+              })
+            }
+          } else {
+            // Element type array from target not found in source,
+            // so delete from target
+            delete toChart[elementType]
+          }
+        })
+        console.log('toChart', toChart)
+      } else {
+        // Referenced clone id not found - need to warm
+      }
+    }
+  })
+}
+
+function propagateDefaults(data) {
+  const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
+  data.charts.forEach(chart => {
+    elementTypes.forEach(type => {
+      if (chart[type]) {
+        const defaults = chart[type].find(e => e.id === 'default')
+        // console.log('defaults1', defaults)
+        // console.log('defaults0', data.defaults)
+        chart[type].forEach(element => {
+          if (defaults && element.id !== 'default') {
+            // Element collection level defaults
+            Object.keys(defaults).forEach(def => {
+              // If the default does not exist on the other elements then add.
+              if (!element[def]) {
+                element[def] = defaults[def]
+              }
+            })
+          }
+          // Top level defaults
+          if (data.defaults) {
+            data.defaults.forEach(tlDef => {
+              const def = Object.keys(tlDef)[0]
+              // If the default does not exist on the other elements then add.
+              if (!element[def]) {
+                element[def] = tlDef[def]
+              }
+            })
+          }
+        })
+      }
+    })
+  })
+  // Remove all objects with id 'default'
+  data.charts.forEach(chart => {
+    elementTypes.forEach(type => {
+      if (chart[type]) {
+        const i = chart[type].findIndex(e => e.id === 'default')
+        if (i > -1) {
+          chart[type].splice(i, 1)
+        }
+      }
+    })
+  })
+}
+
+function validatePropertyValues(data) {
+  const propDefs = getProperties()
+
+  propDefs.forEach(pd => {
+    //console.log('prop def', pd)
+  })
+
+  data.charts.forEach(chart => {
+    propDefs.forEach(propDef => {
+      const elementTypes = [...propDef.mandatoryOn, ...propDef.opitionalOn]
+      elementTypes.forEach(elementType => {
+        if (chart[elementType]) {
+          chart[elementType].forEach(element => {
+            Object.keys(element).forEach(property => {
+              if (property === propDef.name) {
+                //console.log(chart.id, elementType, element.id, property, element[property])
+                let permittedFormat = false
+                for (let i=0; i<propDef.formats.length; i++) {
+                  const regex = new RegExp(propDef.formats[i])
+                  if (regex.test[property]) {
+                    permittedFormat = true
+                    break
+                  }
+                }
+                if (!permittedFormat) {
+                  console.log('invalid format', chart.id, elementType, element.id, property, element[property])
+                }
+              }
+            })   
+          })
+        }
+      })
+    })
+  })
 }

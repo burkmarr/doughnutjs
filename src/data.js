@@ -1,7 +1,6 @@
 import { cloneObj } from './general.js'
-
 export async function parseRecipe(data) {
-
+ 
   // Resolve cloned charts
 
   // First check and ensure data integrity

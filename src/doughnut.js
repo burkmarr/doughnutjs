@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 import { old } from './old-stuff.js'
 import { addDef, fetchYaml } from './general.js'
 import { parseRecipe, getArcParams, getArclineParams, arcLine } from './data.js'
+import { roughUp } from './roughUp.js'
 
 export async function doughnut({
   selector = 'body',
@@ -16,6 +17,7 @@ export async function doughnut({
   let currentArclineParams = {}
   let currentImageParams = {}
   const fixedGlobals = {}
+  let rc
 
   async function updateChart(iChart) {
 
@@ -51,7 +53,7 @@ export async function doughnut({
       svg = d3.select(selector).append('svg')
       svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
       svg.style('overflow', 'visible')
-    
+
       //  Old visualisation
       //old(d3, svg, 350)
     
@@ -293,7 +295,9 @@ export async function doughnut({
         .endAngle(d.currentArcParams.endAngle)
 
       currentArcParams[d.id] = d.currentArcParams
-      return arc()
+ 
+      return roughUp(arc())
+      //return arc()
     }
   }
 

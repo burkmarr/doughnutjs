@@ -17,7 +17,7 @@ const eMandatory = `The property ##prop_path## is mandatory. You can specify it
 // Error check definitions
 const  properties = [
   {
-    name: 'rad',
+    name: 'rad1',
     opitionalOn: ['arcs', 'arclines'],
     mandatoryOn: [],
     formats: [f.simpleNumber, f.transNumber],
@@ -27,7 +27,7 @@ n2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}`,
     missingError: eMandatory
   },
   {
-    name: 'ang',
+    name: 'ang1',
     opitionalOn: ['arcs', 'arclines'],
     mandatoryOn: [],
     formats: [f.simpleNumber, f.transNumber],

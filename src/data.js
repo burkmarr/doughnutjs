@@ -2,9 +2,10 @@ import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
 import * as d3 from 'd3'
 
-export function 
-export async function parseRecipe(data) {
+export async function parseRecipe(data, errorUl) {
  
+  let allPromises = [] // For the return value
+
   // Resolve cloned charts
 
   // Top level default values
@@ -21,76 +22,31 @@ export async function parseRecipe(data) {
   dv(data.globals, 'radius_px', 150)
   dv(data.globals, 'radius_real', null)
 
+  data.charts.forEach(chart => {
+    dv(chart, 'images', [])
+    dv(chart, 'arclines', [])
+    dv(chart, 'arcs', [])
+  })
+  // ### TODO ### 
+  // Need to check that charts have id property
+
   // Validate property value formats
-  validateProperties(data)
+  validateProperties(data, errorUl)
   
   // Resolve clones
   resolveClones(data)
  
-  // Charts default values and missing value warnings
-  data.charts.forEach(async chart => {
-    dv(chart, 'id', null)
-    dv(chart, 'images', [])
-    dv(chart, 'arclines', [])
-    dv(chart, 'arcs', [])
-    
-    // Images
-    chart.images.forEach(async (img, i) => {
-      // Default values
-      dv(img, 'id', null)
-      // dv(img, 'opacity', [1, 1, 1])
-      dv(img, 'ang', [0, 0, 0])
-      dv(img, 'rad', [0, 0, 0])
-      dv(img, 'rot', [0, 0, 0])
-      // Missing data warnings
-      wm(img.width, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the width attribute. It will be ignored.`)
-      wm(img.location, `Warning: image with id '${img.id ? img.id : '(not specified)'}' is lacking the location attribute. It will be ignored.`)
-    })
-
-    return 'none' // Successfuly parsed
-  })
-
   // Propagate default values
   propagateDefaults(data)
-
-  // Update images with aspect ratio of image
-  const allPromises = []
-  data.charts.forEach(async chart => {
-    chart.images.forEach(async img => {
-      if (img.location) {
-        allPromises.push(getImageWidth(img.location, img))
-      }
-    })
-  })
 
   // Resolve all the number formats
   resolveNumericFormats(data, data)
 
-  // Initialise the currentArcParams property
-  data.charts.forEach(chart => {
-    chart.arcs.forEach(arc => {
-      arc.currentArcParams = getArcParams(arc, 0)
-    })
-  })
+  // Initialise additional properties required for tweening
+  initialiseTweenProps(data)
 
-  // Initialise the currentArclineParams property
-  data.charts.forEach(chart => {
-    chart.arclines.forEach(arcline => {
-      arcline.currentArclineParams = getArclineParams(arcline, 0)
-    })
-  })
-
-  // Initialise the currentImageParams property
-  data.charts.forEach(chart => {
-    chart.images.forEach(image => {
-      image.currentImageParams = {
-        ang: image.ang[0],
-        width: image.width[0],
-        rad: image.rad[0],
-        rot: image.rot[0]
-      }
-    })
-  })
+  // Record the aspect ratio of any images
+  allPromises = [...allPromises, ...recordImageAspectRatio(data)]
 
   await Promise.all(allPromises)
 }
@@ -142,21 +98,6 @@ export function arcLine(arclineParams) {
   return path
 }
 
-function getImageWidth(src, dataImage){
-  return new Promise((resolve, reject) => {
-    let img = new Image()
-    img.onload = () => {
-      // dataImage.origWidth = img.width
-      // dataImage.origHeight = img.height
-      dataImage.aspectRatio = img.width / img.height
-      img = null
-      resolve()
-    }
-    img.onerror = reject
-    img.src = src
-  })
-}
-
 function dv(obj, prop, value) {
   // Default value
   if (!obj[prop]) {
@@ -196,7 +137,7 @@ function cr(parent, idexOrName, ...props) {
 }
 
 function resolveNumericFormats (data, obj) {
-
+  
   const radius_real = data.globals.radius_real
   const radius_px= data.globals.radius_px
   const angle_delta = data.globals.angle_delta
@@ -388,14 +329,8 @@ function propagateDefaults(data) {
   })
 }
 
-function validateProperties(data) {
+function validateProperties(data, errorUl) {
   
-
-  const errorDiv = d3.select('#doughnut-error-msg')
-  const svg = d3.select('#doughnut-svg')
-  errorDiv.html('')
-  const errorUl = errorDiv.append('ul')
-
   const propDefs = getProperties()
   const elementTypes = ['arcs', 'arclines', 'images']
   data.charts.forEach(chart => {
@@ -417,10 +352,10 @@ function validateProperties(data) {
                 }
                 if (!permittedFormat) {
                   const err = propDef.formatError
-                    .replace('##prop##', `${chart.id}>${elementType}>${element.id}`)
+                    .replace('##prop##', `${chart.id}>${elementType}>${element.id}>${propDef.name}`)
                     .replace('##value##', `${element[property]}`)
                   errorUl.append('li').html(err)
-                  console.log(err)
+                  //console.log(err)
                 }
               }
             } else {
@@ -433,18 +368,63 @@ function validateProperties(data) {
       }
     })
   })
+  // No return value dom object - errorUl - is updated directly
+}
 
-  // ###############
-  // REDO THIS - just have this return html string. Ideally do the DOM manipulation from doughnut.js
-  
-  const hasErrors = errorUl.selectAll('li').size()
+function initialiseTweenProps(data) {
+  // Initialise the currentArcParams property
+  data.charts.forEach(chart => {
+    chart.arcs.forEach(arc => {
+      arc.currentArcParams = getArcParams(arc, 0)
+    })
+  })
 
-  console.log("errorUl.selectAll('li').size()", errorUl.selectAll('li').size())
-  if (hasErrors) {
-    errorDiv.style('display', '')
-    svg.style('display', 'none')
-  } else {
-    errorDiv.style('display', 'none')
-    svg.style('display', '')
+  // Initialise the currentArclineParams property
+  data.charts.forEach(chart => {
+    chart.arclines.forEach(arcline => {
+      arcline.currentArclineParams = getArclineParams(arcline, 0)
+    })
+  })
+
+  // Initialise the currentImageParams property
+  data.charts.forEach(chart => {
+    chart.images.forEach(image => {
+      image.currentImageParams = {
+        ang: image.ang[0],
+        width: image.width[0],
+        rad: image.rad[0],
+        rot: image.rot[0]
+      }
+    })
+  })
+}
+
+function recordImageAspectRatio(data) {
+
+  const allPromises = []
+
+  data.charts.forEach(async chart => {
+    chart.images.forEach(async img => {
+      if (img.location) {
+        allPromises.push(getImageWidth(img.location, img))
+      }
+    })
+  })
+
+  return allPromises
+
+  function getImageWidth(src, dataImage){
+    return new Promise((resolve, reject) => {
+      let img = new Image()
+      img.onload = () => {
+        // dataImage.origWidth = img.width
+        // dataImage.origHeight = img.height
+        dataImage.aspectRatio = img.width / img.height
+        img = null
+        resolve()
+      }
+      img.onerror = reject
+      img.src = src
+    })
   }
 }

@@ -9,6 +9,8 @@ defaults:
   - radius_px: 150 # 1 chart unit in pixels
   - radius_real: 400 # real world units corresponding to 1 chart unit
   - opacity: 0.8
+  - rad: 0
+  - rot: 0
 charts:
   - id: chart1
     images:
@@ -17,13 +19,13 @@ charts:
       width: 50 %
       rot: 0 270 0
       rad: 100 %
-      ang: 0 90 
+      ang: 0 90 0
     arcs:
     - id: default
       colour: red
       rad1: 0
     - id: climate-change
-      rad2: 0 60 0 %
+      rad2: 0 60 0  %
       ang1: 100
       ang2: 160
     - id: ocean-acidification

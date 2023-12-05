@@ -1,3 +1,3 @@
 # doughnutjs
-Library for ecological economics visualisations
+Library for ecological economics visualisations.
 

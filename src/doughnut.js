@@ -19,8 +19,7 @@ export async function doughnut({
   const fixedGlobals = {}
   let rc
 
-  d3.select(selector).append('div')
-    .attr('id', 'doughnut-error-msg')
+  const errorDiv = d3.select(selector).append('div')
     .style('display', 'none')
 
   async function updateChart(iChart) {
@@ -35,7 +34,9 @@ export async function doughnut({
     //   // If the parse failed, display the error messages somewhere
     // }
   
-    // TODO
+    // ###TODO###
+
+    // Recipe 2 is not parsing properly
 
     // Error trapping on invalid values to api functions
 
@@ -60,7 +61,6 @@ export async function doughnut({
     if (!svg) {
 
       svg = d3.select(selector).append('svg')
-        .attr('id', 'doughnut-svg')
         .attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
         .style('overflow', 'visible')
 
@@ -397,24 +397,18 @@ export async function doughnut({
     recipe = await fetchYaml(file)
     const recipe0 = JSON.parse(JSON.stringify(recipe))
 
-    const errorDiv = d3.select('#doughnut-error-msg')
-    const svg = d3.select('#doughnut-svg')
     errorDiv.html('')
     const errorUl = errorDiv.append('ul')
     
     console.log('recipe', recipe0)
-    //recipeErrors = 
-    //await 
     parseRecipe(recipe, errorUl)
     
-    //console.log("errorUl.selectAll('li').size()", errorUl.selectAll('li').size())
-
     if (errorUl.selectAll('li').size()) {
       errorDiv.style('display', '')
-      svg.style('display', 'none')
+      if (svg) svg.style('display', 'none')
     } else {
       errorDiv.style('display', 'none')
-      svg.style('display', '')
+      if (svg) svg.style('display', '')
       console.log('parsedRecipe', recipe)
     }
 

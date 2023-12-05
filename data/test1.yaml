@@ -26,7 +26,7 @@ charts:
       rad1: 0
     - id: climate-change
       rad2: 0 60 0  %
-      ang1: 100
+      ang1: 100 sdf
       ang2: 160
     - id: ocean-acidification
       rad2: 0 30 0 %

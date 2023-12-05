@@ -1,0 +1,25 @@
+#recipe-errors {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #recipe-errors td, #recipe-errors th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #recipe-errors tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #recipe-errors tr:hover {background-color: #ddd;}
+  
+  #recipe-errors th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: black;
+    color: white;
+  }
+
+  .error-property-value {
+    font-weight: bold;
+  }

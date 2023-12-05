@@ -2,7 +2,7 @@ import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
 import * as d3 from 'd3'
 
-export async function parseRecipe(data, errorUl) {
+export async function parseRecipe(data, errHtmlEl) {
  
   let allPromises = [] // For the return value
 
@@ -30,14 +30,17 @@ export async function parseRecipe(data, errorUl) {
   // ### TODO ### 
   // Need to check that charts have id property
 
-  // Validate property value formats
-  validateProperties(data, errorUl)
+  // Validate property value formats and return if fails
+  if (!validateProperties(data, errHtmlEl)) return Promise.all(allPromises)
   
   // Resolve clones
   resolveClones(data)
  
   // Propagate default values
   propagateDefaults(data)
+
+  // Find missing values
+  if (!findMissingValues(data, errHtmlEl)) return Promise.all(allPromises)
 
   // Resolve all the number formats
   resolveNumericFormats(data, data)
@@ -329,7 +332,7 @@ function propagateDefaults(data) {
   })
 }
 
-function validateProperties(data, errorUl) {
+function validateProperties(data, errHtmlEl) {
   
   const propDefs = getProperties()
   const elementTypes = ['arcs', 'arclines', 'images']
@@ -343,32 +346,51 @@ function validateProperties(data, errorUl) {
               if (property === propDef.name) {
                 //console.log(chart.id, elementType, element.id, property, element[property])
                 let permittedFormat = false
-                for (let i=0; i<propDef.formats.length; i++) {
-                  const regex = new RegExp(propDef.formats[i])
+
+                for (let i=0; i<propDef.formats.re.length; i++) {
+                  const regex = new RegExp(propDef.formats.re[i])
                   if (regex.test(element[property])) {
                     permittedFormat = true
-                    break
                   }
                 }
                 if (!permittedFormat) {
-                  const err = propDef.formatError
-                    .replace('##prop##', `${chart.id}>${elementType}>${element.id}>${propDef.name}`)
-                    .replace('##value##', `${element[property]}`)
-                  errorUl.append('li').html(err)
-                  //console.log(err)
+                  let err = '<ul>'
+                  propDef.formats.disp.forEach((d,i) => {
+                    err = `${err}<li><b>${d}</b> - e.g. <b>${propDef.formats.example[i]}</b></li>`
+                  })
+                  err = `${err}</ul> ${propDef.formats.expl}`
+                  addRow(chart.id, elementType, element.id, propDef.name, element[property], err)
                 }
               }
             } else {
               // A property defintion was not found for a property of this name
               //const err = `The property name <b>${property}</b> is not recognised. Check <b>${chart.id}>${elementType}>${element.id}</b>.`
-              //errorUl.append('li').html(err)
+              //errHtmlEl.append('li').html(err)
             }
           })
         })
       }
     })
+
+    function addRow(chart_id, element_type, element_id, prop_name, prop_value, format_error) {
+      const row = errHtmlEl.append('tr')
+      row.append('td').text(chart_id)
+      row.append('td').text(element_type)
+      row.append('td').text(element_id)
+      row.append('td').text(prop_name)
+      row.append('td').text(prop_value).classed('error-property-value', true)
+      row.append('td').html(format_error)
+    }
   })
-  // No return value dom object - errorUl - is updated directly
+
+  return errHtmlEl.selectAll('tr').size() === 1
+  // No return value dom object - errHtmlEl - is updated directly
+}
+
+function findMissingValues(data, errHtmlEl) {
+
+
+  return true
 }
 
 function initialiseTweenProps(data) {

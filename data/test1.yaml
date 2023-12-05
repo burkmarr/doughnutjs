@@ -26,7 +26,7 @@ charts:
       rad1: 0
     - id: climate-change
       rad2: 0 60 0  %
-      ang1: 100 sdf
+      ang1: 100
       ang2: 160
     - id: ocean-acidification
       rad2: 0 30 0 %
@@ -36,7 +36,7 @@ charts:
     - id: 'default'
       stroke: red
       stroke-width: 3
-      opacity: 1
+      opacity: 0.1
     - id: zone-3
       rad: 60 %
       ang1: 0

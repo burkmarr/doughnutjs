@@ -7,6 +7,9 @@ import terser from '@rollup/plugin-terser'
 // Rollup tutorial: https://rollupjs.org/tutorial/
 // Rollup plugins: https://rollupjs.org/tools/
 
+// ### TODO ### 
+// Need to add CSS in
+
 export default {
 	input: 'src/main.js',
 	output: {

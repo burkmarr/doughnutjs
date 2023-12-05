@@ -11,7 +11,7 @@ export async function doughnut({
 
   let iLastChart = null
   let svg, svgWidth, svgHeight
-  // let recipeErrors = 'not parsed'
+  let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gText
   let currentArcParams = {}
   let currentArclineParams = {}
@@ -23,6 +23,8 @@ export async function doughnut({
     .style('display', 'none')
 
   async function updateChart(iChart) {
+
+    if (!recipeParsed) return
 
     console.log("Display chart", iChart)
 
@@ -393,27 +395,37 @@ export async function doughnut({
   async function loadRecipe(file) {
 
     iLastChart = null
+    recipeParsed = false
 
     recipe = await fetchYaml(file)
     const recipe0 = JSON.parse(JSON.stringify(recipe))
 
     errorDiv.html('')
-    const errorUl = errorDiv.append('ul')
-    
+    const errHtmlEl = errorDiv.append('table')
+    errHtmlEl.attr('id', 'recipe-errors')
+    const errTableHdrRow = errHtmlEl.append('tr')
+    errTableHdrRow.append('th').text('Chart ID')
+    errTableHdrRow.append('th').text('Element type')
+    errTableHdrRow.append('th').text('Element ID')
+    errTableHdrRow.append('th').text('Element prop')
+    errTableHdrRow.append('th').text('Prop value')
+    errTableHdrRow.append('th').text('Permitted formats')
+
     console.log('recipe', recipe0)
-    parseRecipe(recipe, errorUl)
+    parseRecipe(recipe, errHtmlEl)
     
-    if (errorUl.selectAll('li').size()) {
+    if (errHtmlEl.selectAll('tr').size() > 1) {
+      // There are errors
       errorDiv.style('display', '')
       if (svg) svg.style('display', 'none')
+      recipeParsed = false
     } else {
+      // No errors
       errorDiv.style('display', 'none')
       if (svg) svg.style('display', '')
+      recipeParsed = true
       console.log('parsedRecipe', recipe)
     }
-
-    //recipeErrors = 'not parsed'
-    //return recipe
   }
 
   function fixGlobals(globals) {

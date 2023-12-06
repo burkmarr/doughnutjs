@@ -28,6 +28,12 @@ const f = {
     example: ['magenta', '#B3C9F4', 'rgb(179,201,0)'],
     expl: ''
   },
+  string: {
+    re: ['^\\S+$'],
+    disp: ['A string without spaces'],
+    example: ['chart1'],
+    expl: ''
+  },
   url: {
     re: ['^\\S+$'],
     disp: ['A string without spaces'],
@@ -49,6 +55,13 @@ const eMandatory = `The property ##prop_path## is mandatory. You can specify it
 
 // Error check definitions
 const  properties = [
+  {
+    name: 'id',
+    optionalOn: [],
+    mandatoryOn: ['images', 'arcs', 'arclines'],
+    formats: f.string,
+    missingError: eMandatory
+  },
   {
     name: 'location',
     optionalOn: [],

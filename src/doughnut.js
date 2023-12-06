@@ -145,16 +145,8 @@ export async function doughnut({
     recipe = await fetchYaml(file)
     const recipe0 = JSON.parse(JSON.stringify(recipe))
 
-    errorDiv.html('')
     const errHtmlEl = errorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
-    const errTableHdrRow = errHtmlEl.append('tr')
-    errTableHdrRow.append('th').text('Chart ID')
-    errTableHdrRow.append('th').text('Element type')
-    errTableHdrRow.append('th').text('Element ID')
-    errTableHdrRow.append('th').text('Element prop')
-    errTableHdrRow.append('th').text('Prop value')
-    errTableHdrRow.append('th').text('Permitted formats')
 
     console.log('recipe', recipe0)
     parseRecipe(recipe, errHtmlEl)

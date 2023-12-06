@@ -33,19 +33,22 @@ export async function parseRecipe(data, errHtmlEl) {
   // Need to check that charts have id property
 
   // Validate property value formats and return if fails
-  if (!validateProperties(data, errHtmlEl)) return Promise.all(allPromises)
+  if (!validateProps(data, errHtmlEl)) return Promise.all(allPromises)
   
+  // Highlight unpermitted properties
+  if (!unpermittedProps(data, errHtmlEl)) return Promise.all(allPromises)
+
   // Resolve clones
   resolveClones(data)
  
   // Propagate default values
-  propagateDefaults(data)
+  propogateDefaultProps(data)
 
   // Find missing values
-  if (!findMissingValues(data, errHtmlEl)) return Promise.all(allPromises)
+  if (!missingProps(data, errHtmlEl)) return Promise.all(allPromises)
 
-  // Remove innapropriate properties
-  cleanUpProperties(data)
+  // Remove remove unpermitted properties
+  //unpermittedProps(data)
 
   // Resolve all the number formats
   resolveNumericFormats(data, data)
@@ -262,7 +265,7 @@ function resolveClones (data) {
   })
 }
 
-function propagateDefaults(data) {
+function propogateDefaultProps(data) {
   // ### TODO ###
   // Optionally, limit the propogation of defaults to those elements
   // that are allowed to have those defaults. Would need to upate data-tests first
@@ -319,8 +322,17 @@ function propagateDefaults(data) {
   })
 }
 
-function validateProperties(data, errHtmlEl) {
+function validateProps(data, errHtmlEl) {
   
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('Chart ID')
+  errTableHdrRow.append('th').text('Element type')
+  errTableHdrRow.append('th').text('Element ID')
+  errTableHdrRow.append('th').text('Element prop')
+  errTableHdrRow.append('th').text('Prop value')
+  errTableHdrRow.append('th').text('Permitted formats')
+
   const propDefs = getProperties()
   data.charts.forEach(chart => {
     elementTypes.forEach(elementType => {
@@ -345,7 +357,14 @@ function validateProperties(data, errHtmlEl) {
                     err = `${err}<li><b>${d}</b> - e.g. <b>${propDef.formats.example[i]}</b></li>`
                   })
                   err = `${err}</ul> ${propDef.formats.expl}`
-                  addRow(chart.id, elementType, element.id, propDef.name, element[property], err)
+                 
+                  const row = errHtmlEl.append('tr')
+                  row.append('td').text(chart.id)
+                  row.append('td').text(elementType)
+                  row.append('td').text(element.id)
+                  row.append('td').text(propDef.name)
+                  row.append('td').text(element[property]).classed('error-property-value', true)
+                  row.append('td').html(err)
                 }
               }
             } else {
@@ -357,23 +376,19 @@ function validateProperties(data, errHtmlEl) {
         })
       }
     })
-
-    function addRow(chart_id, element_type, element_id, prop_name, prop_value, format_error) {
-      const row = errHtmlEl.append('tr')
-      row.append('td').text(chart_id)
-      row.append('td').text(element_type)
-      row.append('td').text(element_id)
-      row.append('td').text(prop_name)
-      row.append('td').text(prop_value).classed('error-property-value', true)
-      row.append('td').html(format_error)
-    }
   })
-
   return errHtmlEl.selectAll('tr').size() === 1
-  // No return value dom object - errHtmlEl - is updated directly
 }
 
-function findMissingValues(data, errHtmlEl) {
+function missingProps(data, errHtmlEl) {
+
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('Chart ID')
+  errTableHdrRow.append('th').text('Element type')
+  errTableHdrRow.append('th').text('Element ID')
+  errTableHdrRow.append('th').text('Element prop')
+  errTableHdrRow.append('th').text('Problem')
 
   const propDefs = getProperties()
 
@@ -390,7 +405,12 @@ function findMissingValues(data, errHtmlEl) {
           mandatoryProps.forEach(mandatoryProp => {
             if (!Object.keys(element).find(prop => prop === mandatoryProp)) {
               //console.log('Mandatory prop not found', chart.id, elementType, element.id, mandatoryProp)
-              addRow(chart.id, elementType, element.id, mandatoryProp)
+              const row = errHtmlEl.append('tr')
+              row.append('td').text(chart.id)
+              row.append('td').text(elementType)
+              row.append('td').text(element.id)
+              row.append('td').text(mandatoryProp)
+              row.append('td').html('Mandatory prop not found')
             }
           })
         })
@@ -398,31 +418,26 @@ function findMissingValues(data, errHtmlEl) {
     })
   })
 
-  function addRow(chart_id, element_type, element_id, prop_name) {
-    const row = errHtmlEl.append('tr')
-    row.append('td').text(chart_id)
-    row.append('td').text(element_type)
-    row.append('td').text(element_id)
-    row.append('td').text(prop_name)
-    row.append('td')
-    row.append('td').html('Mandatory prop not found')
-  }
-
   return errHtmlEl.selectAll('tr').size() === 1
 }
 
-function cleanUpProperties(data) {
+function unpermittedProps(data, errHtmlEl) {
+
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('Chart ID')
+  errTableHdrRow.append('th').text('Element type')
+  errTableHdrRow.append('th').text('Element ID')
+  errTableHdrRow.append('th').text('Element prop')
+  errTableHdrRow.append('th').text('Problem')
 
   const propDefs = getProperties()
 
-  // Checks if a prelement type exists in property definition and, if not,
-  // strip it out. This will tidy up defaults propogated without checking
-  // if they are appropriate 
-
-  const allPropsFromDefs = propDefs.map(propDef => propDef.name)
-
-  console.log('all', allPropsFromDefs)
-
+  // Checks if property is permitted on element type.
+  // If the errHtmlEl is set, it warns the user
+  // without removing the type and returns HTML.
+  // If errHtmlEl is not set, it does not warn
+  // the user, but removes the innapropriate property.
   data.charts.forEach(chart => {
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
@@ -433,13 +448,26 @@ function cleanUpProperties(data) {
         chart[elementType].forEach(element => {
           Object.keys(element).forEach(property => {
             if (!permittedElementProps.find(permittedProperty => permittedProperty === property)) {
-              console.log(`${property} not permitted on ${elementType}`)
+              //console.log(`${property} not permitted on ${elementType}`)
+              console.log('errHtmlEl', errHtmlEl)
+              if (errHtmlEl) {
+                const row = errHtmlEl.append('tr')
+                row.append('td').text(chart.id)
+                row.append('td').text(elementType)
+                row.append('td').text(element.id)
+                row.append('td').text(property)
+                row.append('td').html('Property not permitted on the element type')
+              } else {
+                delete element.prop
+              }   
             }
           })
         })
       }
     })
   })
+
+  return errHtmlEl.selectAll('tr').size() === 1
 }
 
 function initialiseTweenProps(data) {

@@ -1,4 +1,6 @@
 
+//### TODO ###
+// What about properties that can have negative angles??
 
 // Named formats
 const f = {
@@ -112,8 +114,8 @@ const  properties = [
   },
   {
     name: 'opacity',
-    optionalOn: [],
-    mandatoryOn: ['images', 'arcs', 'arclines'],
+    optionalOn: ['arcs'],
+    mandatoryOn: ['images', 'arclines'],
     formats: f.zeroToOne,
     missingError: eMandatory
   },
@@ -126,39 +128,20 @@ const  properties = [
   },
   {
     name: 'stroke',
-    optionalOn: [],
-    mandatoryOn: ['arclines', 'arcs'],
+    optionalOn: ['arcs'],
+    mandatoryOn: ['arclines'],
     formats: f.colour,
     missingError: eMandatory
   },
   {
     name: 'stroke-width',
-    optionalOn: [],
-    mandatoryOn: ['arclines', 'arcs'],
+    optionalOn: ['arcs'],
+    mandatoryOn: ['arclines'],
     formats: f.NumberNoMod,
     missingError: eMandatory
   }
 ]
 
 export function getProperties () {
-
-  // Tests
-  let regex 
-  
-  // regex = new RegExp(f.simpleNumber)
-  // console.log(regex.test('0.5'))
-  // console.log(regex.test('4567'))
-  // console.log(regex.test('0'))
-  // console.log(regex.test('-3.4'))
-  // console.log(regex.test('1 %'))
-  // console.log(regex.test('1 x'))
-  // console.log(regex.test('1 r'))
-
-  regex = new RegExp(f.transNumber)
-  console.log(regex.test('0.5 5 23'))
-  console.log(regex.test('0.5  5 23   %'))
-  console.log(regex.test('1 2'))
-
-
   return properties
 }

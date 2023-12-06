@@ -1,8 +1,11 @@
 import * as d3 from 'd3'
 import { old } from './old-stuff.js'
-import { addDef, fetchYaml } from './general.js'
-import { parseRecipe, getArcParams, getArclineParams, arcLine } from './data.js'
+import { fetchYaml } from './general.js'
+import { parseRecipe } from './data.js'
 import { roughUp } from './roughUp.js'
+import { createImageElements } from './images.js'
+import { createArcElements } from './arcs.js'
+import { createArclineElements } from './arclines.js'
 
 export async function doughnut({
   selector = 'body',
@@ -13,9 +16,9 @@ export async function doughnut({
   let svg, svgWidth, svgHeight
   let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gText
+  let currentImageParams = {}
   let currentArcParams = {}
   let currentArclineParams = {}
-  let currentImageParams = {}
   const fixedGlobals = {}
   let rc
 
@@ -28,15 +31,10 @@ export async function doughnut({
 
     console.log("Display chart", iChart)
 
-    // if (recipeErrors !== 'done') {
-    //   console.log('recipe', JSON.parse(JSON.stringify(recipe)))
-    //   recipeErrors = await parseRecipe(recipe)
-    //   console.log('parsedRecipe', recipe)
-
-    //   // If the parse failed, display the error messages somewhere
-    // }
-  
     // ###TODO###
+
+    // Look at moving functions out of data and into
+    // respective element creation modules
 
     // Recipe 2 is not parsing properly
 
@@ -75,6 +73,7 @@ export async function doughnut({
       gAll = svg.append('g')
       gImages = gAll.append('g') // Not centred because that is done indepedently
       gArcs = gAll.append('g')
+      gArclines = gAll.append('g')
       gSpokes = gAll.append('g')
       gText = gAll.append('g')
     } else {
@@ -99,7 +98,7 @@ export async function doughnut({
       }
     })
 
-    // For all arclines, update currentArclineParams if an arc
+    // For all arclines, update currentArclineParams if an arcline
     // with that id has already been used
     recipe.charts[iChart].arclines.forEach(a => {
       if (currentArclineParams[a.id]) {
@@ -139,205 +138,11 @@ export async function doughnut({
     // Debug image centres
 
     // Images
-    gImages.selectAll('.img')
-    .data(recipe.charts[iChart].images, d => d.id)
-    .join(
-      enter => {
-        const sel = enter.append('image')
-          .attr('xlink:href', d => d.location)
-          .classed('img', true)
-          // For debugging
-          // .style('outline', '2px blue solid')
-
-        // For debugging
-        // enter.append('rect')
-        //   .style('outline', '2px red solid')
-        //   .attr('width', d => d.width[1])
-        //   .attr('height', d => d.width[1])
-        //   .attr('fill-opacity', d => 0)
-
-        return imageCommonAttrs(sel, 0)
-      },
-      update => update,
-      exit => imageCommonAttrs(exit.transition(trans), 2).remove()
-    )
-    .call(remaining => imageCommonAttrs(remaining.transition(trans), 1))
-
-    function imageCommonAttrs(selection, i) {
-
-      selection
-        .attr('width', d => d.width[i])
-        .attr('height', d => d.width[i])
-        .attr('transform-origin', d => `${d.width[i]/2}px ${d.width[i]/2}px`)
-
-      if (i === 0) {
-        selection.attr('transform', d => {
-          const oxy = getOffset(d.ang[i], d.rad[i], d.angle_origin)
-          const deltaWidth = -d.width[i]/2 + oxy[0]
-          const deltaHeight = -d.width[i]/2 + oxy[1]
-          return `
-          translate(${deltaWidth}, ${deltaHeight}) 
-            rotate(${d.rot[i]}) 
-          `
-        })
-      } else {
-        selection.attrTween('transform', d => {
-          return imageTween(d, i)
-        })
-      }
-      selection.style('opacity', d => d.opacity[i])
-
-      return selection
-    }
-
+    createImageElements(gImages, recipe.charts[iChart].images, trans, currentImageParams)
     // Arcs
-    const arc =  d3.arc()
-    gArcs.selectAll('.arc')
-      .data(recipe.charts[iChart].arcs, d => d.id)
-      .join(
-        enter => {
-          const sel = enter.append('path')
-            .classed('arc', true)
-            .attr('id', d => `arc-path-${d.id}`)
-
-          return arcCommonAttrs(sel, 0)
-        },
-        update => update,
-        exit => arcCommonAttrs(exit.transition(trans), 2).remove()
-    )
-    .call(remaining => arcCommonAttrs(remaining.transition(trans), 1))
-
-    function arcCommonAttrs(selection, i) {
-      if (i === 0) {
-        selection.attr('d', d => arc(getArcParams(d,i)))
-      } else {
-        selection.attrTween('d', d => {
-            return arcTween(d, i)
-          })
-      }
-      return selection
-        .style('fill', d => d.colour ? d.colour[i] : null )
-        .style('stroke', d => d.stroke ? d.stroke[i] : null)
-        .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
-        .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
-        .style('opacity', d => d.opacity ? d.opacity[i] : null)
-    }
-
+    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentArcParams)
     // Arclines
-    gArcs.selectAll('.arcline')
-      .data(recipe.charts[iChart].arclines, d => d.id)
-      .join(
-        enter => {
-          const sel = enter.append('path')
-            .classed('arcline', true)
-            .attr('id', d => `arcline-path-${d.id}`)
-
-          return arclineCommonAttrs(sel, 0)
-        },
-        update => update,
-        exit => arclineCommonAttrs(exit.transition(trans), 2).remove()
-    )
-    .call(remaining => arclineCommonAttrs(remaining.transition(trans), 1))
-
-    function arclineCommonAttrs(selection, i) {
-      if (i === 0) {
-        selection.attr('d', d => arcLine(getArclineParams(d,i)))
-      } else {
-        selection.attrTween('d', d => {
-            return arclineTween(d, i)
-          })
-      }
-      return selection
-        .style('fill', 'none' )
-        .style('stroke', d => d.stroke ? d.stroke[i] : null)
-        .style('stroke-width', d => d['stroke-width'] ? d['stroke-width'][i] : null)
-        .style('stroke-dasharray', d => d['stroke-dasharray'] ? d['stroke-dasharray'] : null)
-        .style('opacity', d => d.opacity ? d.opacity[i] : null)
-    }
-  }
-
-  function imageTween(d, i) {
-
-      const iAng = d3.interpolate(d.currentImageParams.ang, d.ang[i])
-      const iWidth = d3.interpolate(d.currentImageParams.width, d.width[i])
-      const iRad = d3.interpolate(d.currentImageParams.rad, d.rad[i])
-      const iRot = d3.interpolate(d.currentImageParams.rot, d.rot[i])
-
-      return function(t) {
-
-        d.currentImageParams = {
-          ang: iAng(t),
-          width: iWidth(t),
-          rad: iRad(t),
-          rot: iRot(t)
-        }
-        const oxy = getOffset(iAng(t), iRad(t), d.angle_origin)
-        const deltaWidth = -iWidth(t)/2 + oxy[0]
-        const deltaHeight = -iWidth(t)/2 + oxy[1]
-
-        currentImageParams[d.id] = {...d.currentImageParams}
-        return `
-          translate(${deltaWidth}, ${deltaHeight}) 
-          rotate(${iRot(t)}) 
-        `
-      }
-  }
-
-  function arcTween(d, i) {
-
-    const s = d.currentArcParams
-    const e = getArcParams(d, i)
-
-    const iInnerRadius = d3.interpolate(s.innerRadius, e.innerRadius)
-    const iOuterRadius = d3.interpolate(s.outerRadius, e.outerRadius)
-    const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
-    const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
-
-    return function(t) {
-      d.currentArcParams = {
-        innerRadius: iInnerRadius(t),
-        outerRadius: iOuterRadius(t),
-        startAngle: iStartAngle(t),
-        endAngle: iEndAngle(t)
-      }
-      const arc = d3.arc()
-        .innerRadius(d.currentArcParams.innerRadius)
-        .outerRadius(d.currentArcParams.outerRadius)
-        .startAngle(d.currentArcParams.startAngle)
-        .endAngle(d.currentArcParams.endAngle)
-
-      currentArcParams[d.id] = d.currentArcParams
- 
-      //return roughUp(arc())
-      return arc()
-    }
-  }
-
-  function arclineTween(d, i) {
-
-    const s = d.currentArclineParams
-    const e = getArclineParams(d, i)
-
-    const iRadius = d3.interpolate(s.radius, e.radius)
-    const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
-    const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
-
-    return function(t) {
-      d.currentArclineParams = {
-        radius: iRadius(t),
-        startAngle: iStartAngle(t),
-        endAngle: iEndAngle(t)
-      }
-      currentArclineParams[d.id] = d.currentArclineParams
-      return arcLine(d.currentArclineParams)
-    }
-  }
-
-  function getOffset(angle, rad, angle_origin) {
-    const angleRad = (angle + angle_origin - 90) * Math.PI / 180
-    const x0 = rad * Math.cos(angleRad)
-    const y0 = rad * Math.sin(angleRad)
-    return [x0,y0]
+    createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentArcParams)
   }
 
   function getGlobal(k) {

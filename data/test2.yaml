@@ -4,11 +4,11 @@ globals:
   height_px: 400 # pixles
   duration: 1000
 defaults: 
-  - angle_origin: -20 # Base angle from which others are measured
-  - angle_delta: 0 # Base angle from which others are measured
-  - radius_px: 150 # 1 chart unit in pixels
-  - radius_real: 400 # real world units corresponding to 1 chart unit
-  - opacity: 0 0.8 0
+  angle_origin: -20 # Base angle from which others are measured
+  angle_delta: 0 # Base angle from which others are measured
+  radius_px: 150 # 1 chart unit in pixels
+  radius_real: 400 # real world units corresponding to 1 chart unit
+  opacity: 0 0.8 0
 charts:
   - id: chart1
     images:
@@ -16,6 +16,8 @@ charts:
       location: http://localhost:8080/images/rockstrom-earth.png
       width: 0 200 0 %
       rot: 0 270 0
+      rad: 0
+      ang: 0
     arcs:
     - id: default
       colour: red

@@ -4,15 +4,17 @@ globals:
   duration: 1000
   transition: yes
 defaults:
-  - angle_origin: 0 # Base angle from which others are measured
-  - angle_delta: 0 # Base angle from which others are measured
-  - radius_px: 150 # 1 chart unit in pixels
-  - radius_real: 400 # real world units corresponding to 1 chart unit
-  - opacity: 0.8
-  - rad: 0
-  - rot: 0
+  angle_origin: 0 # Base angle from which others are measured
+  angle_delta: 0 # Base angle from which others are measured
+  radius_px: 150 # 1 chart unit in pixels
+  radius_real: 400 # real world units corresponding to 1 chart unit
+  opacity: 0.8
+  rad: 0
+  rot: 0
 charts:
   - id: chart1
+    defaults:
+    - angle_origin: 0
     images:
     - id: rock
       location: images/rockstrom-earth.png
@@ -42,6 +44,8 @@ charts:
       ang1: 0
       ang2: 360
   - id: chart2
+    defaults:
+      angle_origin: -20
     images:
     - id: rock 
       location: images/rockstrom-earth.png

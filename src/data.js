@@ -71,36 +71,6 @@ export function getArclineParams (d, i) {
   }
 }
 
-export function arcLine(arclineParams) {
-  const as = Math.round(arclineParams.startAngle * 180 / Math.PI)
-  const ae = Math.round(arclineParams.endAngle * 180 / Math.PI)
-
-  // Using path Arc generator problematic because when you do a full cirlce,
-  // it disappears - so you can only do 0-359 which leaves a gap
-  // const largeArcFlag = (ae - as) > 180 || ae > 360 && ae - 360 === es ? 1 : 0
-  // const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
-  // const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
-  // const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
-  // const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
-  // const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
-
-  // Instead calcualted circles and arcs directly
-  let path = ''
-  for (var i = as; i <= ae; i++) {
-
-    var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
-    var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
-
-    if (!path) {
-      path = `M${x} ${y}`
-    } else {
-      path = `${path} L${x} ${y}`
-    }
-  }
-  path = `${path}`
-  return path
-}
-
 function dv(obj, prop, value) {
   // Default value
   if (!obj[prop]) {
@@ -240,7 +210,7 @@ function resolveClones (data) {
       //console.log('toChart', cloneObj(toChart))
 
       if (fromChart) {
-        const types = ['images', 'arcs', 'arclines']
+        const types = ['defaults', 'images', 'arcs', 'arclines']
         types.forEach(elementType => {
           const fromChartElements = fromChart[elementType]
           let toChartElements = toChart[elementType]
@@ -288,8 +258,15 @@ function resolveClones (data) {
 }
 
 function propagateDefaults(data) {
+  // ### TODO ###
+  // Optionally, limit the propogation of defaults to those elements
+  // that are allowed to have those defaults. Would need to upate data-tests first
+  // to ensure that all properties are accounted for.
+  // And ALTERNATIVE would be to propogate them and strip out in findMissingValues
+  const recipeDefaults = data.defaults
   const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
   data.charts.forEach(chart => {
+    const chartDefaults = chart.defaults ? chart.defaults : {}
     elementTypes.forEach(type => {
       if (chart[type]) {
         const defaults = chart[type].find(e => e.id === 'default')
@@ -297,21 +274,27 @@ function propagateDefaults(data) {
         // console.log('defaults0', data.defaults)
         chart[type].forEach(element => {
           if (defaults && element.id !== 'default') {
-            // Element collection level defaults
-            Object.keys(defaults).forEach(def => {
-              // If the default does not exist on the other elements then add.
-              if (!element[def]) {
-                element[def] = defaults[def]
+            // Element collection defaults
+            Object.keys(defaults).forEach(elementDefault => {
+              // If the default does not exist on the element then add.
+              if (!element[elementDefault]) {
+                element[elementDefault] = defaults[elementDefault]
               }
             })
           }
-          // Top level defaults
-          if (data.defaults) {
-            data.defaults.forEach(tlDef => {
-              const def = Object.keys(tlDef)[0]
-              // If the default does not exist on the other elements then add.
-              if (!element[def]) {
-                element[def] = tlDef[def]
+          // Chart defaults
+          Object.keys(chartDefaults).forEach(chartDefault => {
+            // If the chart default does not exist on the element then add.
+            if (!element[chartDefault]) {
+              element[chartDefault] = chartDefaults[chartDefault]
+            }
+          })
+          // Recipe defaults
+          if (recipeDefaults) {
+            Object.keys(recipeDefaults).forEach(recipeDefault => {
+              // If the recipe default does not exist on the element then add.
+              if (!element[recipeDefault]) {
+                element[recipeDefault] = recipeDefaults[recipeDefault]
               }
             })
           }
@@ -389,8 +372,63 @@ function validateProperties(data, errHtmlEl) {
 
 function findMissingValues(data, errHtmlEl) {
 
+  const propDefs = getProperties()
+  const elementTypes = ['arcs', 'arclines', 'images']
 
-  return true
+  // This checks if a property exists in property definition
+  // so could be used to strip out wrongly propogated defaults
+  data.charts.forEach(chart => {
+    elementTypes.forEach(elementType => {
+      if (chart[elementType]) {
+        chart[elementType].forEach(element => {
+          Object.keys(element).forEach(property => {
+            const propDef = propDefs.find(propdef => propdef.name === property)
+            // if (propDef) {
+            //   if (![...propDef.optionalOn, ...propDef.mandatoryOn].find(p => p.name === property)) {
+            //     console.log('Prop not found on definition', chart.id, elementType, element.id, property)
+            //     console.log(propDef)
+            //   }
+            // } else {
+            //   console.log('Prop definition not found', chart.id, elementType, element.id, property)
+            // }
+          })
+        })
+      }
+    })
+  })
+
+  data.charts.forEach(chart => {
+    elementTypes.forEach(elementType => {
+      if (chart[elementType]) {
+        // Get a list of all the mandatory properties for this element type
+        let mandatoryProps =  propDefs.filter(propDef => {
+          return propDef.mandatoryOn.find(mandatoryOn => mandatoryOn === elementType)
+        }).map(propDef => propDef.name)
+        // Remove duplicates from the list
+        mandatoryProps = [...new Set(mandatoryProps)]
+        chart[elementType].forEach(element => {
+          mandatoryProps.forEach(mandatoryProp => {
+            if (!Object.keys(element).find(prop => prop === mandatoryProp)) {
+              //console.log('Mandatory prop not found', chart.id, elementType, element.id, mandatoryProp)
+              addRow(chart.id, elementType, element.id, mandatoryProp)
+            }
+          })
+        })
+      }
+    })
+  })
+
+  function addRow(chart_id, element_type, element_id, prop_name) {
+    const row = errHtmlEl.append('tr')
+    row.append('td').text(chart_id)
+    row.append('td').text(element_type)
+    row.append('td').text(element_id)
+    row.append('td').text(prop_name)
+    row.append('td')
+    row.append('td').html('Mandatory prop not found')
+  }
+
+  return errHtmlEl.selectAll('tr').size() === 1
 }
 
 function initialiseTweenProps(data) {

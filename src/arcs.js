@@ -66,3 +66,23 @@ export function createArcElements(g, arcs, trans, currentArcParams) {
     }
   }
 }
+
+export function initialiseArcParameters(arcs, currentArcParams) {
+  // For all arcs, update currentArcParams if an arc
+  // with that id has already been used
+  arcs.forEach(a => {
+    if (currentArcParams[a.id]) {
+      a.currentArcParams = currentArcParams[a.id]
+    }
+  })
+  // Remove any properties of currentArcParams that
+  // have no corresponding key in current arcs
+  Object.keys(currentArcParams).forEach(k => {
+    if (!arcs.find(a => a.id === k)) {
+      delete currentArcParams[k]
+    }
+  })
+}
+
+
+  

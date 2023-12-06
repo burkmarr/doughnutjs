@@ -2,6 +2,8 @@ import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
 import * as d3 from 'd3'
 
+const elementTypes = ['arcs', 'arclines', 'images']
+
 export async function parseRecipe(data, errHtmlEl) {
  
   let allPromises = [] // For the return value
@@ -41,6 +43,9 @@ export async function parseRecipe(data, errHtmlEl) {
 
   // Find missing values
   if (!findMissingValues(data, errHtmlEl)) return Promise.all(allPromises)
+
+  // Remove innapropriate properties
+  cleanUpProperties(data)
 
   // Resolve all the number formats
   resolveNumericFormats(data, data)
@@ -262,7 +267,6 @@ function propagateDefaults(data) {
   // Optionally, limit the propogation of defaults to those elements
   // that are allowed to have those defaults. Would need to upate data-tests first
   // to ensure that all properties are accounted for.
-  // And ALTERNATIVE would be to propogate them and strip out in findMissingValues
   const recipeDefaults = data.defaults
   const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
   data.charts.forEach(chart => {
@@ -318,7 +322,6 @@ function propagateDefaults(data) {
 function validateProperties(data, errHtmlEl) {
   
   const propDefs = getProperties()
-  const elementTypes = ['arcs', 'arclines', 'images']
   data.charts.forEach(chart => {
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
@@ -373,29 +376,6 @@ function validateProperties(data, errHtmlEl) {
 function findMissingValues(data, errHtmlEl) {
 
   const propDefs = getProperties()
-  const elementTypes = ['arcs', 'arclines', 'images']
-
-  // This checks if a property exists in property definition
-  // so could be used to strip out wrongly propogated defaults
-  data.charts.forEach(chart => {
-    elementTypes.forEach(elementType => {
-      if (chart[elementType]) {
-        chart[elementType].forEach(element => {
-          Object.keys(element).forEach(property => {
-            const propDef = propDefs.find(propdef => propdef.name === property)
-            // if (propDef) {
-            //   if (![...propDef.optionalOn, ...propDef.mandatoryOn].find(p => p.name === property)) {
-            //     console.log('Prop not found on definition', chart.id, elementType, element.id, property)
-            //     console.log(propDef)
-            //   }
-            // } else {
-            //   console.log('Prop definition not found', chart.id, elementType, element.id, property)
-            // }
-          })
-        })
-      }
-    })
-  })
 
   data.charts.forEach(chart => {
     elementTypes.forEach(elementType => {
@@ -429,6 +409,37 @@ function findMissingValues(data, errHtmlEl) {
   }
 
   return errHtmlEl.selectAll('tr').size() === 1
+}
+
+function cleanUpProperties(data) {
+
+  const propDefs = getProperties()
+
+  // Checks if a prelement type exists in property definition and, if not,
+  // strip it out. This will tidy up defaults propogated without checking
+  // if they are appropriate 
+
+  const allPropsFromDefs = propDefs.map(propDef => propDef.name)
+
+  console.log('all', allPropsFromDefs)
+
+  data.charts.forEach(chart => {
+    elementTypes.forEach(elementType => {
+      if (chart[elementType]) {
+        const permittedElementProps = propDefs
+            .filter(propDef => [...propDef.mandatoryOn, ...propDef.optionalOn].find(propDef => propDef === elementType))
+            .map(propDef => propDef.name)
+        //console.log(`Permitted on ${elementType}: ${PermittedElementProps}`)
+        chart[elementType].forEach(element => {
+          Object.keys(element).forEach(property => {
+            if (!permittedElementProps.find(permittedProperty => permittedProperty === property)) {
+              console.log(`${property} not permitted on ${elementType}`)
+            }
+          })
+        })
+      }
+    })
+  })
 }
 
 function initialiseTweenProps(data) {

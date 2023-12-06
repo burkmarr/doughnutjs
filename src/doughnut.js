@@ -3,9 +3,9 @@ import { old } from './old-stuff.js'
 import { fetchYaml } from './general.js'
 import { parseRecipe } from './data.js'
 import { roughUp } from './roughUp.js'
-import { createImageElements } from './images.js'
-import { createArcElements } from './arcs.js'
-import { createArclineElements } from './arclines.js'
+import { createImageElements, initialiseImageParameters } from './images.js'
+import { createArcElements, initialiseArcParameters } from './arcs.js'
+import { createArclineElements, initialiseArclineParameters } from './arclines.js'
 
 export async function doughnut({
   selector = 'body',
@@ -16,9 +16,7 @@ export async function doughnut({
   let svg, svgWidth, svgHeight
   let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gText
-  let currentImageParams = {}
-  let currentArcParams = {}
-  let currentArclineParams = {}
+  let currentParams = {arcs: {}, arclines: {}, images: {}}
   const fixedGlobals = {}
   let rc
 
@@ -30,25 +28,6 @@ export async function doughnut({
     if (!recipeParsed) return
 
     console.log("Display chart", iChart)
-
-    // ###TODO###
-
-    // Look at moving functions out of data and into
-    // respective element creation modules
-
-    // Recipe 2 is not parsing properly
-
-    // Error trapping on invalid values to api functions
-
-    // Real units modifier - r
-
-    // Add options for arcs including gaps and rounded corners.
-
-    // Test and deal with images that are not square.
-
-    // Implement rough styles
-
-    // Fading of arcs towards outer and inner edge
 
     svgWidth = getGlobal('width_px')
     svgHeight = getGlobal('height_px')
@@ -83,66 +62,26 @@ export async function doughnut({
     // Transform gAll to centre elements on canvas
     gAll.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
-    // For all arcs, update currentArcParams if an arc
-    // with that id has already been used
-    recipe.charts[iChart].arcs.forEach(a => {
-      if (currentArcParams[a.id]) {
-        a.currentArcParams = currentArcParams[a.id]
-      }
-    })
-    // Remove any properties of currentArcParams that
-    // have no corresponding key in current arcs
-    Object.keys(currentArcParams).forEach(k => {
-      if (!recipe.charts[iChart].arcs.find(a => a.id === k)) {
-        delete currentArcParams[k]
-      }
-    })
-
-    // For all arclines, update currentArclineParams if an arcline
-    // with that id has already been used
-    recipe.charts[iChart].arclines.forEach(a => {
-      if (currentArclineParams[a.id]) {
-        a.currentArclineParams = currentArclineParams[a.id]
-      }
-    })
-    // Remove any properties of currentArclineParams that
-    // have no corresponding key in current arcs
-    Object.keys(currentArclineParams).forEach(k => {
-      if (!recipe.charts[iChart].arclines.find(a => a.id === k)) {
-        delete currentArclineParams[k]
-      }
-    })
-
-    // For all images, update currentImageParams if an image
-    // with that id has already been used
-    recipe.charts[iChart].images.forEach(i => {
-      if (currentImageParams[i.id]) {
-        i.currentImageParams = currentImageParams[i.id]
-      }
-    })
-    // Remove any properties of currentImageParams that
-    // have no corresponding key in current arcs
-    Object.keys(currentImageParams).forEach(k => {
-      if (!recipe.charts[iChart].images.find(i => i.id === k)) {
-        delete currentImageParams[k]
-      }
-    })
-
-    const trans = svg.transition().duration(getGlobal('duration'))
-    .ease(d3.easeLinear) 
+    // Initliase element parameters (aids transitions across charts and recipes)
+    initialiseImageParameters(recipe.charts[iChart].images, currentParams.images)
+    initialiseArcParameters(recipe.charts[iChart].arcs, currentParams.arcs)
+    initialiseArclineParameters(recipe.charts[iChart].arclines, currentParams.arclines)
+    
+    const trans = svg.transition().duration(0).ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
+    if (getGlobal('transition') === 'yes') {
+      trans.duration(getGlobal('duration'))
+    } else {
 
+    }
+   
     // Remeber current chart as the last chart
     iLastChart = iChart
 
-    // Debug image centres
-
-    // Images
-    createImageElements(gImages, recipe.charts[iChart].images, trans, currentImageParams)
-    // Arcs
-    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentArcParams)
-    // Arclines
-    createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentArcParams)
+    // Create elements
+    createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
+    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
+    createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
   }
 
   function getGlobal(k) {
@@ -157,6 +96,7 @@ export async function doughnut({
     }
   }
 
+  // API //
   function displayChart(i) {
     let iChart
 
@@ -234,6 +174,10 @@ export async function doughnut({
   }
 
   function fixGlobals(globals) {
+    // The purpose of this API function is to fix
+    // global values so that they persist over invocations
+    // of different charts within a recipe or between
+    // recipes.
     Object.keys(globals).forEach(k => {
       if (typeof(fixedGlobals[k]) !== 'undefined') {
         // Value currently set for this key in fixedGlobals

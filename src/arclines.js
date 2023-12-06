@@ -84,3 +84,20 @@ export function arcLine(arclineParams) {
   path = `${path}`
   return path
 }
+
+export function initialiseArclineParameters (arclines, currentArclineParams) {
+  // For all arclines, update currentArclineParams if an arcline
+  // with that id has already been used
+  arclines.forEach(a => {
+    if (currentArclineParams[a.id]) {
+      a.currentArclineParams = currentArclineParams[a.id]
+    }
+  })
+  // Remove any properties of currentArclineParams that
+  // have no corresponding key in current arcs
+  Object.keys(currentArclineParams).forEach(k => {
+    if (!arclines.find(a => a.id === k)) {
+      delete currentArclineParams[k]
+    }
+  })
+}

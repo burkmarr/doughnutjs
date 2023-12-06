@@ -82,6 +82,23 @@ export function createImageElements(g, images, trans, currentImageParams) {
   }
 }
 
+export function initialiseImageParameters(images, currentImageParams) {
+  // For all images, update currentImageParams if an image
+  // with that id has already been used
+  images.forEach(i => {
+    if (currentImageParams[i.id]) {
+      i.currentImageParams = currentImageParams[i.id]
+    }
+  })
+  // Remove any properties of currentImageParams that
+  // have no corresponding key in current arcs
+  Object.keys(currentImageParams).forEach(k => {
+    if (!images.find(i => i.id === k)) {
+      delete currentImageParams[k]
+    }
+  })
+}
+
 
 function getOffset(angle, rad, angle_origin) {
   const angleRad = (angle + angle_origin - 90) * Math.PI / 180

@@ -2,12 +2,11 @@ globals:
   width_px: 800 # pixels
   height_px: 600 # pixles
   duration: 1000
-converters:
-  angle_origin: 0 # Base angle from which others are measured
-  angle_delta: 0 # Base angle from which others are measured
-  radius_px: 150 # 1 chart unit in pixels
-  radius_real: 400 # real world units corresponding to 1 chart unit
 defaults:
+  angle0: 0 # Base angle from which others are measured
+  angleSpan: 0 # Base angle from which others are measured
+  radiusSpanPx: 150 # 1 chart unit in pixels
+  radiusSpanReal: 400 # real world units corresponding to 1 chart unit
   opacity: 0 0.8 0
 charts:
   - id: chart2
@@ -16,58 +15,58 @@ charts:
       location: images/rockstrom-earth.png
       width: 0 50 0 %
       rot: 0 45 0
-      rad: 0 100 0 %
-      ang: 90
+      radius: 0 100 0 %
+      angle: 90
     arcs:
     - id: default
       colour: red
-      rad1: 0
+      radius1: 0
       opacity: 0.5
     - id: safe-zone
       colour: "#6D9100"
-      rad2: 0 40 0 %
-      ang1: 0
-      ang2: 360  
+      radius2: 0 40 0 %
+      angle1: 0
+      angle2: 360  
     - id: climate-change
-      rad2: 0 60 0 %
-      ang1: 0
-      ang2: 40
+      radius2: 0 60 0 %
+      angle1: 0
+      angle2: 40
     - id: ocean-acidification
-      rad2: 0 30 0 %
-      ang1: 40
-      ang2: 80
+      radius2: 0 30 0 %
+      angle1: 40
+      angle2: 80
     - id: ozone-depletion
-      rad2: 0 16 0 %
-      ang1: 80
-      ang2: 120
+      radius2: 0 16 0 %
+      angle1: 80
+      angle2: 120
     - id: nitrogen-cycle
-      rad2: 0 132 0 %
-      ang1: 120
-      ang2: 140
+      radius2: 0 132 0 %
+      angle1: 120
+      angle2: 140
     - id: phosphorous-cycle
-      rad2: 0 36 0 %
-      ang1: 140
-      ang2: 160
+      radius2: 0 36 0 %
+      angle1: 140
+      angle2: 160
     - id: freshwater-use
-      rad2: 0 22 0 %
-      ang1: 160
-      ang2: 200
+      radius2: 0 22 0 %
+      angle1: 160
+      angle2: 200
     - id: landuse-change
-      rad2: 0 24 0 %
-      ang1: 200
-      ang2: 240
+      radius2: 0 24 0 %
+      angle1: 200
+      angle2: 240
     - id: biodiversity-loss
-      rad2: 0 160 0 %
-      ang1: 240
-      ang2: 280
+      radius2: 0 160 0 %
+      angle1: 240
+      angle2: 280
     - id: aerosol-loading
-      rad2: 0
-      ang1: 280
-      ang2: 320
+      radius2: 0
+      angle1: 280
+      angle2: 320
     - id: chemical-pollution
-      rad2: 0
-      ang1: 320
-      ang2: 360
+      radius2: 0
+      angle1: 320
+      angle2: 360
     arclines:
     - id: default
       stroke: red
@@ -75,23 +74,23 @@ charts:
       opacity: 1
     - id: zone-1
       stroke: '#A6D800'
-      rad: 0 20 0 %
-      ang1: 0
-      ang2: 360
+      radius: 0 20 0 %
+      angle1: 0
+      angle2: 360
     - id: zone-2
       stroke: '#A6D800'
-      rad: 0 40 0 %
-      ang1: 0
-      ang2: 360
+      radius: 0 40 0 %
+      angle1: 0
+      angle2: 360
     - id: zone-3
-      rad: 0 60 0 %
-      ang1: 0
-      ang2: 360
+      radius: 0 60 0 %
+      angle1: 0
+      angle2: 360
     - id: zone-4
-      rad: 0 80 0 %
-      ang1: 0
-      ang2: 360
+      radius: 0 80 0 %
+      angle1: 0
+      angle2: 360
     - id: zone-5
-      rad: 0 100 0 %
-      ang1: 0
-      ang2: 360
+      radius: 0 100 0 %
+      angle1: 0
+      angle2: 360

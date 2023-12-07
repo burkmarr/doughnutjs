@@ -42,17 +42,6 @@ const f = {
   },
 }
 
-// Error text literals
-const eTrans1 = 'value at the start of a transition'
-const eTrans2 = 'the actual value after the transition'
-const eTrans3 = 'the value at the end of the transition before exiting'
-const eNoQuotes = '(Omit single quotes used here to demarcate the formats.)'
-
-const eMandatory = `The property ##prop_path## is mandatory. You can specify it
-  directly or in one of the default specifications - ##el_default_path## or ##global_default_path##`
-
-//  where n1 is the ${eTrans1}, 2 ${eTrans2} and n3 ${eTrans3}. ${eNoQuotes}
-
 // Error check definitions
 const  properties = [
   {
@@ -60,98 +49,126 @@ const  properties = [
     optionalOn: [],
     mandatoryOn: ['images', 'arcs', 'arclines'],
     formats: f.string,
-    missingError: eMandatory
   },
   {
     name: 'location',
     optionalOn: [],
     mandatoryOn: ['images'],
     formats: f.url,
-    missingError: eMandatory
   },
   {
     name: 'width',
     optionalOn: [],
     mandatoryOn: ['images'],
     formats: f.numberWithMod,
-    missingError: eMandatory
   },
   {
-    name: 'rad',
+    name: 'radius',
     optionalOn: [],
     mandatoryOn: ['images', 'arclines'],
     formats: f.numberWithMod,
-    missingError: eMandatory
   },
   {
-    name: 'rad1',
+    name: 'radius1',
     optionalOn: [],
     mandatoryOn: ['arcs'],
     formats: f.numberWithMod,
-    missingError: eMandatory
   },
   {
-    name: 'rad2',
+    name: 'radius2',
     optionalOn: [],
     mandatoryOn: ['arcs'],
     formats: f.numberWithMod,
-    missingError: eMandatory
   },
   {
-    name: 'ang',
+    name: 'angle',
     optionalOn: [],
     mandatoryOn: ['images'],
     formats: f.NumberNoMod,
-    missingError: eMandatory
   },
   {
-    name: 'ang1',
+    name: 'angle1',
     optionalOn: [],
     mandatoryOn: ['arcs', 'arclines'],
     formats: f.NumberNoMod,
-    missingError: eMandatory
   },
   {
-    name: 'ang2',
+    name: 'angle2',
     optionalOn: [],
     mandatoryOn: ['arcs', 'arclines'],
     formats: f.NumberNoMod,
-    missingError: eMandatory
   },
   {
     name: 'rot',
     optionalOn: [],
     mandatoryOn: ['images'],
     formats: f.NumberNoMod,
-    missingError: eMandatory
   },
   {
     name: 'opacity',
     optionalOn: ['arcs'],
     mandatoryOn: ['images', 'arclines'],
     formats: f.zeroToOne,
-    missingError: eMandatory
   },
   {
     name: 'colour',
     optionalOn: [],
     mandatoryOn: ['arcs'],
     formats: f.colour,
-    missingError: eMandatory
   },
   {
     name: 'stroke',
     optionalOn: ['arcs'],
     mandatoryOn: ['arclines'],
     formats: f.colour,
-    missingError: eMandatory
   },
   {
     name: 'stroke-width',
     optionalOn: ['arcs'],
     mandatoryOn: ['arclines'],
     formats: f.NumberNoMod,
-    missingError: eMandatory
+  },
+  {
+    name: 'angle0',
+    optionalOn: [],
+    mandatoryOn: [],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'angleSpan',
+    optionalOn: [],
+    mandatoryOn: [],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'angleSpan',
+    optionalOn: [],
+    mandatoryOn: [],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'radiusSpanReal',
+    optionalOn: [],
+    mandatoryOn: [],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'cornerRadius',
+    optionalOn: [],
+    mandatoryOn: ['arcs'],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'padAngle',
+    optionalOn: [],
+    mandatoryOn: ['arcs'],
+    formats: f.NumberNoMod,
+  },
+  {
+    name: 'padRadius',
+    optionalOn: [],
+    mandatoryOn: ['arcs'],
+    formats: f.NumberNoMod,
   }
 ]
 

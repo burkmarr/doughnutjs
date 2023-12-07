@@ -35,7 +35,7 @@ export function createImageElements(g, images, trans, currentImageParams) {
 
     if (i === 0) {
       selection.attr('transform', d => {
-        const oxy = getOffset(d.ang[i], d.rad[i])
+        const oxy = getOffset(d.angle[i], d.radius[i])
         const deltaWidth = -d.width[i]/2 + oxy[0]
         const deltaHeight = -d.width[i]/2 + oxy[1]
         return `
@@ -56,23 +56,23 @@ export function createImageElements(g, images, trans, currentImageParams) {
   
   function imageTween(d, i) {
 
-    const iAng = d3.interpolate(d.currentImageParams.ang, d.ang[i])
+    const iAng = d3.interpolate(d.currentImageParams.angle, d.angle[i])
     const iWidth = d3.interpolate(d.currentImageParams.width, d.width[i])
-    const iRad = d3.interpolate(d.currentImageParams.rad, d.rad[i])
+    const iRad = d3.interpolate(d.currentImageParams.radius, d.radius[i])
     const iRot = d3.interpolate(d.currentImageParams.rot, d.rot[i])
 
     return function(t) {
 
       d.currentImageParams = {
-        ang: iAng(t),
+        angle: iAng(t),
         width: iWidth(t),
-        rad: iRad(t),
+        radius: iRad(t),
         rot: iRot(t)
       }
       const oxy = getOffset(iAng(t), iRad(t))
       const deltaWidth = -iWidth(t)/2 + oxy[0]
       const deltaHeight = -iWidth(t)/2 + oxy[1]
-      
+
       currentImageParams[d.id] = {...d.currentImageParams}
       return `
         translate(${deltaWidth}, ${deltaHeight}) 
@@ -99,9 +99,9 @@ export function initialiseImageParameters(images, currentImageParams) {
   })
 }
 
-function getOffset(angle, rad) {
+function getOffset(angle, radius) {
   const angleRad = (angle - 90) * Math.PI / 180
-  const x0 = rad * Math.cos(angleRad)
-  const y0 = rad * Math.sin(angleRad)
+  const x0 = radius * Math.cos(angleRad)
+  const y0 = radius * Math.sin(angleRad)
   return [x0,y0]
 }

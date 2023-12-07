@@ -14,19 +14,22 @@ export async function parseRecipe(data, errHtmlEl) {
 
   // Top level default values
   dv(data, 'globals', {})
-  dv(data, 'converters', {})
   dv(data, 'defaults', {})
   dv(data, 'charts', {})
-
   dv(data.globals, 'width_px', 650)
   dv(data.globals, 'height_px', 650)
   dv(data.globals, 'duration', 1000)
   dv(data.globals, 'transition', 'yes')
 
-  dv(data.converters, 'angle_origin', 0)
-  dv(data.converters, 'angle_delta', 360)
-  dv(data.converters, 'radius_px', 150)
-  dv(data.converters, 'radius_real', null)
+  // These are given defaults so we do 
+  // not have to check for them
+  dv(data.defaults, 'angle0', 0)
+  dv(data.defaults, 'angleSpan', 360)
+  dv(data.defaults, 'radiusSpanPx', 150)
+  dv(data.defaults, 'radiusSpanReal', null)
+  dv(data.defaults, 'cornerRadius', 0)
+  dv(data.defaults, 'padAngle', 0)
+  dv(data.defaults, 'padRadius', 0)
 
   data.charts.forEach(chart => {
     dv(chart, 'defaults', [])
@@ -53,6 +56,9 @@ export async function parseRecipe(data, errHtmlEl) {
   if (!missingProps(data, errHtmlEl)) return Promise.all(allPromises)
 
   // Remove remove unpermitted properties
+  // I DONT think I should implement this
+  // Safer not to and shouldn't have any implications for
+  // user or performance
   //unpermittedProps(data)
 
   // Resolve all the number formats
@@ -74,48 +80,20 @@ function dv(obj, prop, value) {
   }
 }
 
-function wm(prop, message) {
-  // Warning message
-  if (!prop) {
-    console.warn(message)
-  }
-}
-
-function cr(parent, idexOrName, ...props) {
-  // Conditional removal of array item or object property.
-  // If any of the properties are missing, the property or
-  // array item is removed.
-  // If an array, second argument is a numeric array index
-  // otherwise it is the name of a property.
-
-  let obj = parent[idexOrName]
-  let remove
-  for (let i=0; i<props.length; i++) {
-    if (!obj[props[i]]) {
-      remove = true
-      break
-    }
-  }
-  if (remove) {
-    if (Array.isArray(parent)) {
-      parent.splice(idexOrName, 1)
-    } else {
-      delete parent[idexOrName]
-    }
-  }
-}
-
 function resolveNumericFormats (data, obj) {
   // ### TODO ###
   // Surely the following array should go in data-tests.js
   // or maybe whole function?
   const keys = [
-    ['rad', 'px'],
-    ['rad1', 'px'],
-    ['rad2', 'px'],
-    ['ang', 'deg'],
-    ['ang1', 'deg'],
-    ['ang2', 'deg'],
+    ['cornerRadius', 'n'],
+    ['padAngle', 'n'],
+    ['padRadius', 'n'],
+    ['radius', 'px'],
+    ['radius1', 'px'],
+    ['radius2', 'px'],
+    ['angle', 'deg'],
+    ['angle1', 'deg'],
+    ['angle2', 'deg'],
     ['width', 'px'],
     ['rot', 'n'],
     ['opacity', 'n'],
@@ -141,7 +119,7 @@ function resolveNumericFormats (data, obj) {
         const vals = obj[key].split(' ')
 
         let modifier
-        if (vals[vals.length-1] === '%' || vals[vals.length-1] === 'x') {
+        if (vals[vals.length-1] === '%' || vals[vals.length-1] === 'x' || vals[vals.length-1] === 'r') {
           modifier = vals[vals.length-1]
           vals.pop()
         }
@@ -172,19 +150,27 @@ function resolveNumericFormats (data, obj) {
     let ret
     let multiplier
     if (type === 'px') {
-      multiplier = Number(obj.radius_px)
+      if (modifier === 'r') {
+        multiplier = Number(obj.radiusSpanPx)/Number(obj.radiusSpanReal)
+      } else {
+        multiplier = Number(obj.radiusSpanPx)
+      }
     } else if (type === 'deg') {
-      multiplier = Number(obj.angle_delta)
+      multiplier = Number(obj.angleSpan)
     }
+
     if (modifier === '%' && multiplier) {
-      // Value expressed as % of radius_px or angle_delta
+      // Value expressed as % of radiusSpanPx or angleSpan
       ret = Number(val) / 100 * multiplier
     } else if (modifier === 'x' && multiplier) {
-      // Value expressed as a multiplier of radius_px or angle_delta
+      // Value expressed as a multiplier of radiusSpanPx or angleSpan
+      ret = Number(val) * multiplier
+    } else if (modifier === 'r' && multiplier) {
+      // Value expressed as a multiplier of radiusSpanReal
       ret = Number(val) * multiplier
     } else if (type === 'px') {
       // Radius value expressed as in real units
-      ret = Number(val) / Number(obj.radius_real) * Number(obj.radius_px)
+      ret = Number(val) / Number(obj.radiusSpanReal) * Number(obj.radiusSpanPx)
     } else if (type === 's') {
       // Value expressed directly
       ret =  val
@@ -193,7 +179,7 @@ function resolveNumericFormats (data, obj) {
       ret =  Number(val)
     }
     if (type === 'deg') {
-      ret = ret + Number(obj.angle_origin)
+      ret = ret + Number(obj.angle0)
     }
     return ret
   }
@@ -257,11 +243,11 @@ function resolveClones (data) {
 }
 
 function propogateDefaultProps(data) {
-  // Works by propogating all defaults (and converters), whether or not they are permitted on
+  // Works by propogating all defaults whether or not they are permitted on
   // on an element type and later clearing out those that are not.
   // Another way of doing it would be to limit the propogation of defaults to those elements
   // that are allowed to have them. 
-  const recipeDefaults = {...data.defaults, ...data.converters}
+  const recipeDefaults = data.defaults
   data.charts.forEach(chart => {
     const chartDefaults = chart.defaults ? chart.defaults : {}
     elementTypes.forEach(elementType => {
@@ -401,7 +387,15 @@ function missingProps(data, errHtmlEl) {
               row.append('td').text(elementType)
               row.append('td').text(element.id)
               row.append('td').text(mandatoryProp)
-              row.append('td').html('Mandatory prop not found')
+              row.append('td').html(`
+                Mandatory prop not found. Specify it either:
+                <ul>
+                <li>directly on the element</li>
+                <li>or the element with id <i>defaults</i> under <i>${chart.id}>${elementType}</i>,</li>
+                <li>or under the charts defaults <i>${chart.id}>defaults,</i>
+                <li>or under the top level <i>defaults</i>.</li>
+                </ul>
+              `)
             }
           })
         })
@@ -432,8 +426,13 @@ function unpermittedProps(data, errHtmlEl) {
   data.charts.forEach(chart => {
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
+        
         const permittedElementProps = propDefs
-            .filter(propDef => [...propDef.mandatoryOn, ...propDef.optionalOn].find(propDef => propDef === elementType))
+            .filter(propDef => {
+              let permitted = [...propDef.mandatoryOn, ...propDef.optionalOn]
+              if (!permitted.length) permitted = elementTypes
+              return permitted.find(propDef => propDef === elementType)
+            })
             .map(propDef => propDef.name)
         //console.log(`Permitted on ${elementType}: ${PermittedElementProps}`)
         chart[elementType].forEach(element => {
@@ -481,9 +480,9 @@ function initialiseTweenProps(data) {
   data.charts.forEach(chart => {
     chart.images.forEach(image => {
       image.currentImageParams = {
-        ang: image.ang[0],
+        angle: image.angle[0],
         width: image.width[0],
-        rad: image.rad[0],
+        radius: image.radius[0],
         rot: image.rot[0]
       }
     })

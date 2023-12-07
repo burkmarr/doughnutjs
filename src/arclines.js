@@ -103,8 +103,8 @@ export function initialiseArclineParameters (arclines, currentArclineParams) {
 
 export function getArclineParams (d, i) {
   return {
-    radius: d.rad[i],
-    startAngle: (d.ang1[i] - 90) * Math.PI / 180,
-    endAngle: (d.ang2[i] - 90) * Math.PI / 180
+    radius: d.radius[i],
+    startAngle: (d.angle1[i] - 90) * Math.PI / 180,
+    endAngle: (d.angle2[i] - 90) * Math.PI / 180
   }
 }

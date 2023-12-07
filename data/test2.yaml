@@ -3,12 +3,11 @@ globals:
   width_px: 400 # pixels
   height_px: 400 # pixles
   duration: 1000
-converters: 
-  angle_origin: -20 # Base angle from which others are measured
-  angle_delta: 0 # Base angle from which others are measured
-  radius_px: 50 # 1 chart unit in pixels
-  radius_real: 400 # real world units corresponding to 1 chart unit
-defaults:
+defaults: 
+  angle0: -20 # Base angle from which others are measured
+  angleSpan: 0 # Base angle from which others are measured
+  radiusSpanPx: 50 # 1 chart unit in pixels
+  radiusSpanReal: 400 # real world units corresponding to 1 chart unit
   opacity: 0 0.8 0
 charts:
   - id: chart1
@@ -17,32 +16,32 @@ charts:
       location: http://localhost:8080/images/rockstrom-earth.png
       width: 0 200 0 %
       rot: 0 270 0
-      rad: 0
-      ang: 0
+      radius: 0
+      angle: 0
     arcs:
     - id: default
       colour: red
-      rad1: 0
+      radius1: 0
     - id: climate-change
-      rad2: 60 %
-      ang1: 0
-      ang2: 90
+      radius2: 60 %
+      angle1: 0
+      angle2: 90
     - id: ocean-acidification
-      rad2: 0 30 0 %
-      ang1: 0
-      ang2: 0 80 0
+      radius2: 0 30 0 %
+      angle1: 0
+      angle2: 0 80 0
     arclines: 
     - id: 'default'
       stroke: red
       stroke-width: 3
       opacity: 1
     - id: zone-3
-      rad: 100 %
-      ang1: 90
-      ang2: 10 360 0
+      radius: 100 %
+      angle1: 90
+      angle2: 10 360 0
   - id: rock2
     clone: chart1
     arclines: 
     - id: zone-3
-      rad: 200 %
+      radius: 200 %
 

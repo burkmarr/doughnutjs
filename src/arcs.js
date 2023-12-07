@@ -44,19 +44,30 @@ export function createArcElements(g, arcs, trans, currentArcParams) {
     const iOuterRadius = d3.interpolate(s.outerRadius, e.outerRadius)
     const iStartAngle = d3.interpolate(s.startAngle, e.startAngle)
     const iEndAngle = d3.interpolate(s.endAngle, e.endAngle)
+    const iCornerRadius = d3.interpolate(s.cornerRadius, e.cornerRadius)
+    const iPadAngle = d3.interpolate(s.padAngle, e.padAngle)
+    const iPadRadius = d3.interpolate(s.padRadius, e.padRadius)
 
     return function(t) {
       d.currentArcParams = {
         innerRadius: iInnerRadius(t),
         outerRadius: iOuterRadius(t),
         startAngle: iStartAngle(t),
-        endAngle: iEndAngle(t)
+        endAngle: iEndAngle(t),
+        cornerRadius: iCornerRadius(t),
+        padAngle: iPadAngle(t),
+        padRadius: iPadRadius(t)
       }
+
+      //https://d3js.org/d3-shape/arc
       const arc = d3.arc()
         .innerRadius(d.currentArcParams.innerRadius)
         .outerRadius(d.currentArcParams.outerRadius)
         .startAngle(d.currentArcParams.startAngle)
         .endAngle(d.currentArcParams.endAngle)
+        .cornerRadius(d.currentArcParams.cornerRadius)
+        .padAngle(d.currentArcParams.padAngle)
+        .padRadius(d.currentArcParams.padRadius)
 
       currentArcParams[d.id] = d.currentArcParams
  
@@ -86,10 +97,13 @@ export function initialiseArcParameters(arcs, currentArcParams) {
 export function getArcParams (d, i) {
 
   return {
-    innerRadius: d.rad1[i],
-    outerRadius: d.rad2[i],
-    startAngle: (d.ang1[i]) * Math.PI / 180,
-    endAngle: (d.ang2[i]) * Math.PI / 180
+    innerRadius: d.radius1[i],
+    outerRadius: d.radius2[i],
+    startAngle: (d.angle1[i]) * Math.PI / 180,
+    endAngle: (d.angle2[i]) * Math.PI / 180,
+    cornerRadius: d.cornerRadius[i],
+    padAngle: d.padAngle[i],
+    padRadius: d.padRadius[i]
   }
 }
 

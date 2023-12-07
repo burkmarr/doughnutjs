@@ -1,10 +1,10 @@
 canvas:
   width_px: 800 # pixels
   height_px: 600 # pixles
-  angle_origin: 0 # Base angle from which others are measured
-  angle_delta: 0 # Base angle from which others are measured
-  radius_px: 150 # 1 chart unit in pixels
-  radius_real: 400 # real world units corresponding to 1 chart unit
+  angle0: 0 # Base angle from which others are measured
+  angleSpan: 0 # Base angle from which others are measured
+  radiusSpanPx: 150 # 1 chart unit in pixels
+  radiusSpanReal: 400 # real world units corresponding to 1 chart unit
 charts:
   - id: rockstrom2009
     images:
@@ -15,97 +15,97 @@ charts:
     arcs:
     - id: safe-zone
       colour: "#6D9100"
-      rad1: 0
-      rad2: 0 40 0 %
-      ang1: 0
-      ang2: 360
+      radius1: 0
+      radius2: 0 40 0 %
+      angle1: 0
+      angle2: 360
     - id: climate-change
       colour: red
-      rad1: 0
-      rad2: 0 60 0 %
-      ang1: 0
-      ang2: 40
+      radius1: 0
+      radius2: 0 60 0 %
+      angle1: 0
+      angle2: 40
     - id: ocean-acidification
       colour: red
-      rad1: 0
-      rad2: 0 30 0 %
-      ang1: 40
-      ang2: 80
+      radius1: 0
+      radius2: 0 30 0 %
+      angle1: 40
+      angle2: 80
     - id: ozone-depletion
       colour: red
-      rad1: 0
-      rad2: 0 16 0 %
-      ang1: 80
-      ang2: 120
+      radius1: 0
+      radius2: 0 16 0 %
+      angle1: 80
+      angle2: 120
     - id: nitrogen-cycle
       colour: red
-      rad1: 0
-      rad2: 0 132 0 %
-      ang1: 120
-      ang2: 140
+      radius1: 0
+      radius2: 0 132 0 %
+      angle1: 120
+      angle2: 140
     - id: phosphorous-cycle
       colour: red
-      rad1: 0
-      rad2: 0 36 0 %
-      ang1: 140
-      ang2: 160
+      radius1: 0
+      radius2: 0 36 0 %
+      angle1: 140
+      angle2: 160
     - id: freshwater-use
       colour: red
-      rad1: 0
-      rad2: 0 22 0 %
-      ang1: 160
-      ang2: 200
+      radius1: 0
+      radius2: 0 22 0 %
+      angle1: 160
+      angle2: 200
     - id: landuse-change
       colour: red
-      rad1: 0
-      rad2: 0 24 0 %
-      ang1: 200
-      ang2: 240
+      radius1: 0
+      radius2: 0 24 0 %
+      angle1: 200
+      angle2: 240
     - id: biodiversity-loss
       colour: red
-      rad1: 0
-      rad2: 0 160 0 %
-      ang1: 240
-      ang2: 280
+      radius1: 0
+      radius2: 0 160 0 %
+      angle1: 240
+      angle2: 280
     - id: aerosol-loading
       colour: red
-      rad1: 0
-      rad2: 0
-      ang1: 280
-      ang2: 320
+      radius1: 0
+      radius2: 0
+      angle1: 280
+      angle2: 320
     - id: chemical-pollution
       colour: red
-      rad1: 0
-      rad2: 0
-      ang1: 320
-      ang2: 360
+      radius1: 0
+      radius2: 0
+      angle1: 320
+      angle2: 360
     - id: zone-1
       colour: #A6D800
-      rad1: 19 %
-      rad2: 20 %
-      ang1: 0
-      ang2: 360
+      radius1: 19 %
+      radius2: 20 %
+      angle1: 0
+      angle2: 360
     - id: zone-2
       colour: #A6D800
-      rad1: 39 %
-      rad2: 40 %
-      ang1: 0
-      ang2: 360
+      radius1: 39 %
+      radius2: 40 %
+      angle1: 0
+      angle2: 360
     - id: zone-3
       colour: red
-      rad1: 59 %
-      rad2: 60 %
-      ang1: 0
-      ang2: 360
+      radius1: 59 %
+      radius2: 60 %
+      angle1: 0
+      angle2: 360
     - id: zone-4
       colour: red
-      rad1: 79 %
-      rad2: 80 %
-      ang1: 0
-      ang2: 360
+      radius1: 79 %
+      radius2: 80 %
+      angle1: 0
+      angle2: 360
     - id: zone-5
       colour: red
-      rad1: 99 %
-      rad2: 100 %
-      ang1: 0
-      ang2: 360
+      radius1: 99 %
+      radius2: 100 %
+      angle1: 0
+      angle2: 360

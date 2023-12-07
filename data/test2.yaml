@@ -3,11 +3,12 @@ globals:
   width_px: 400 # pixels
   height_px: 400 # pixles
   duration: 1000
-defaults: 
+converters: 
   angle_origin: -20 # Base angle from which others are measured
   angle_delta: 0 # Base angle from which others are measured
-  radius_px: 150 # 1 chart unit in pixels
+  radius_px: 50 # 1 chart unit in pixels
   radius_real: 400 # real world units corresponding to 1 chart unit
+defaults:
   opacity: 0 0.8 0
 charts:
   - id: chart1
@@ -23,9 +24,9 @@ charts:
       colour: red
       rad1: 0
     - id: climate-change
-      rad2: 0 60 0 %
-      ang1: 100
-      ang2: 160
+      rad2: 60 %
+      ang1: 0
+      ang2: 90
     - id: ocean-acidification
       rad2: 0 30 0 %
       ang1: 0

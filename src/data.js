@@ -1,5 +1,7 @@
 import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
+import { getArcParams } from './arcs.js'
+import { getArclineParams } from './arclines.js'
 import * as d3 from 'd3'
 
 const elementTypes = ['arcs', 'arclines', 'images']
@@ -12,22 +14,25 @@ export async function parseRecipe(data, errHtmlEl) {
 
   // Top level default values
   dv(data, 'globals', {})
+  dv(data, 'converters', {})
   dv(data, 'defaults', {})
-  dv(data.charts, {})
+  dv(data, 'charts', {})
 
   dv(data.globals, 'width_px', 650)
   dv(data.globals, 'height_px', 650)
   dv(data.globals, 'duration', 1000)
   dv(data.globals, 'transition', 'yes')
-  dv(data.globals, 'angle_origin', 340)
-  dv(data.globals, 'angle_delta', 0)
-  dv(data.globals, 'radius_px', 150)
-  dv(data.globals, 'radius_real', null)
+
+  dv(data.converters, 'angle_origin', 0)
+  dv(data.converters, 'angle_delta', 360)
+  dv(data.converters, 'radius_px', 150)
+  dv(data.converters, 'radius_real', null)
 
   data.charts.forEach(chart => {
-    dv(chart, 'images', [])
-    dv(chart, 'arclines', [])
-    dv(chart, 'arcs', [])
+    dv(chart, 'defaults', [])
+    elementTypes.forEach(elementType => {
+      dv(chart, elementType, [])
+    })
   })
   // ### TODO ### 
   // Need to check that charts have id property
@@ -60,23 +65,6 @@ export async function parseRecipe(data, errHtmlEl) {
   allPromises = [...allPromises, ...recordImageAspectRatio(data)]
 
   await Promise.all(allPromises)
-}
-
-export function getArcParams (d, i) {
-  return {
-    innerRadius: d.rad1[i],
-    outerRadius: d.rad2[i],
-    startAngle: (d.angle_origin + d.ang1[i]) * Math.PI / 180,
-    endAngle: (d.angle_origin + d.ang2[i]) * Math.PI / 180
-  }
-}
-
-export function getArclineParams (d, i) {
-  return {
-    radius: d.rad[i],
-    startAngle: (d.angle_origin + d.ang1[i] - 90) * Math.PI / 180,
-    endAngle: (d.angle_origin + d.ang2[i] - 90) * Math.PI / 180
-  }
 }
 
 function dv(obj, prop, value) {
@@ -118,11 +106,9 @@ function cr(parent, idexOrName, ...props) {
 }
 
 function resolveNumericFormats (data, obj) {
-  
-  const radius_real = data.globals.radius_real
-  const radius_px= data.globals.radius_px
-  const angle_delta = data.globals.angle_delta
-
+  // ### TODO ###
+  // Surely the following array should go in data-tests.js
+  // or maybe whole function?
   const keys = [
     ['rad', 'px'],
     ['rad1', 'px'],
@@ -183,28 +169,33 @@ function resolveNumericFormats (data, obj) {
 
   function convertValue(val, modifier, type) {
 
+    let ret
     let multiplier
     if (type === 'px') {
-      multiplier = radius_px
+      multiplier = Number(obj.radius_px)
     } else if (type === 'deg') {
-      multiplier = angle_delta
+      multiplier = Number(obj.angle_delta)
     }
     if (modifier === '%' && multiplier) {
       // Value expressed as % of radius_px or angle_delta
-      return Number(val) / 100 * multiplier
+      ret = Number(val) / 100 * multiplier
     } else if (modifier === 'x' && multiplier) {
       // Value expressed as a multiplier of radius_px or angle_delta
-      return Number(val) * multiplier
-    } else if (radius_real && type === 'px') {
+      ret = Number(val) * multiplier
+    } else if (type === 'px') {
       // Radius value expressed as in real units
-      return Number(val) / radius_real * radius_px
+      ret = Number(val) / Number(obj.radius_real) * Number(obj.radius_px)
     } else if (type === 's') {
       // Value expressed directly
-      return  val
+      ret =  val
     } else {
       // Value expressed directly
-      return  Number(val)
+      ret =  Number(val)
     }
+    if (type === 'deg') {
+      ret = ret + Number(obj.angle_origin)
+    }
+    return ret
   }
 }
 
@@ -266,20 +257,19 @@ function resolveClones (data) {
 }
 
 function propogateDefaultProps(data) {
-  // ### TODO ###
-  // Optionally, limit the propogation of defaults to those elements
-  // that are allowed to have those defaults. Would need to upate data-tests first
-  // to ensure that all properties are accounted for.
-  const recipeDefaults = data.defaults
-  const elementTypes = ['images', 'arcs', 'arclines', 'spokes', 'text', 'arrows']
+  // Works by propogating all defaults (and converters), whether or not they are permitted on
+  // on an element type and later clearing out those that are not.
+  // Another way of doing it would be to limit the propogation of defaults to those elements
+  // that are allowed to have them. 
+  const recipeDefaults = {...data.defaults, ...data.converters}
   data.charts.forEach(chart => {
     const chartDefaults = chart.defaults ? chart.defaults : {}
-    elementTypes.forEach(type => {
-      if (chart[type]) {
-        const defaults = chart[type].find(e => e.id === 'default')
+    elementTypes.forEach(elementType => {
+      if (chart[elementType]) {
+        const defaults = chart[elementType].find(e => e.id === 'default')
         // console.log('defaults1', defaults)
         // console.log('defaults0', data.defaults)
-        chart[type].forEach(element => {
+        chart[elementType].forEach(element => {
           if (defaults && element.id !== 'default') {
             // Element collection defaults
             Object.keys(defaults).forEach(elementDefault => {
@@ -301,6 +291,7 @@ function propogateDefaultProps(data) {
             Object.keys(recipeDefaults).forEach(recipeDefault => {
               // If the recipe default does not exist on the element then add.
               if (!element[recipeDefault]) {
+                //console.log('Updating with recipe default', chart.id, elementType, element.id, recipeDefault, recipeDefaults[recipeDefault])
                 element[recipeDefault] = recipeDefaults[recipeDefault]
               }
             })
@@ -450,6 +441,7 @@ function unpermittedProps(data, errHtmlEl) {
             if (!permittedElementProps.find(permittedProperty => permittedProperty === property)) {
               //console.log(`${property} not permitted on ${elementType}`)
               console.log('errHtmlEl', errHtmlEl)
+
               if (errHtmlEl) {
                 const row = errHtmlEl.append('tr')
                 row.append('td').text(chart.id)

@@ -3,6 +3,7 @@ Library for ecological economics visualisations.
 
 ## TODO
 - Checks for non-element objects, e.g. id attribute on chart; permitted element type etc.
+- Check validity of converter values
 - What about top-level defaults which are propogated and reqired on elements? Probaly best to keep propogating them
 but account for them in unpermittedProps - don't remove. Actually maybe these should go in globals?
 - Error trapping on invalid values to api functions

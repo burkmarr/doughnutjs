@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import { getArcParams } from './data.js'
 
 export function createArcElements(g, arcs, trans, currentArcParams) {
 
@@ -82,6 +81,16 @@ export function initialiseArcParameters(arcs, currentArcParams) {
       delete currentArcParams[k]
     }
   })
+}
+
+export function getArcParams (d, i) {
+
+  return {
+    innerRadius: d.rad1[i],
+    outerRadius: d.rad2[i],
+    startAngle: (d.ang1[i]) * Math.PI / 180,
+    endAngle: (d.ang2[i]) * Math.PI / 180
+  }
 }
 
 

@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import { getArclineParams } from './data.js'
 
 export function createArclineElements(g, arclines, trans, currentArclineParams) {
 
@@ -100,4 +99,12 @@ export function initialiseArclineParameters (arclines, currentArclineParams) {
       delete currentArclineParams[k]
     }
   })
+}
+
+export function getArclineParams (d, i) {
+  return {
+    radius: d.rad[i],
+    startAngle: (d.ang1[i] - 90) * Math.PI / 180,
+    endAngle: (d.ang2[i] - 90) * Math.PI / 180
+  }
 }

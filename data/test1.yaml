@@ -3,11 +3,12 @@ globals:
   height_px: 600 # pixles
   duration: 1000
   transition: yes
-defaults:
+converters:
   angle_origin: 0 # Base angle from which others are measured
-  angle_delta: 0 # Base angle from which others are measured
-  radius_px: 150 # 1 chart unit in pixels
+  angle_delta: 0 # Angle unit to use for multiplier or percentage
+  radius_px: 150 # Pixel unit to use for multiplier or percentage
   radius_real: 400 # real world units corresponding to 1 chart unit
+defaults:
   opacity: 0.8
   rad: 0
   rot: 0

@@ -35,11 +35,11 @@ export function createImageElements(g, images, trans, currentImageParams) {
 
     if (i === 0) {
       selection.attr('transform', d => {
-        const oxy = getOffset(d.ang[i], d.rad[i], d.angle_origin)
+        const oxy = getOffset(d.ang[i], d.rad[i])
         const deltaWidth = -d.width[i]/2 + oxy[0]
         const deltaHeight = -d.width[i]/2 + oxy[1]
         return `
-        translate(${deltaWidth}, ${deltaHeight}) 
+          translate(${deltaWidth}, ${deltaHeight}) 
           rotate(${d.rot[i]}) 
         `
       })
@@ -69,10 +69,10 @@ export function createImageElements(g, images, trans, currentImageParams) {
         rad: iRad(t),
         rot: iRot(t)
       }
-      const oxy = getOffset(iAng(t), iRad(t), d.angle_origin)
+      const oxy = getOffset(iAng(t), iRad(t))
       const deltaWidth = -iWidth(t)/2 + oxy[0]
       const deltaHeight = -iWidth(t)/2 + oxy[1]
-
+      
       currentImageParams[d.id] = {...d.currentImageParams}
       return `
         translate(${deltaWidth}, ${deltaHeight}) 
@@ -99,9 +99,8 @@ export function initialiseImageParameters(images, currentImageParams) {
   })
 }
 
-
-function getOffset(angle, rad, angle_origin) {
-  const angleRad = (angle + angle_origin - 90) * Math.PI / 180
+function getOffset(angle, rad) {
+  const angleRad = (angle - 90) * Math.PI / 180
   const x0 = rad * Math.cos(angleRad)
   const y0 = rad * Math.sin(angleRad)
   return [x0,y0]

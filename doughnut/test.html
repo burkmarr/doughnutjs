@@ -1,0 +1,94 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>HTML5 Template</title>
+  <meta name="description" content="Donut visualisation test">
+  <meta name="author" content="Rich Burkmar">
+
+  <!-- <link rel="stylesheet" href="./styles.css?v=1.0"> -->
+
+  <link rel="stylesheet" href="./css/doughnut.css">
+  <style>
+    /* body {
+      font-family: Arial, Helvetica, sans-serif;
+    } */
+  </style>
+
+</head>
+
+<body>
+  <button type="button" onclick="nextChart()">Next</button>
+  <button type="button" onclick="previousChart()">Previous</button>
+  <button type="button" onclick="displayChart()">Chart</button>
+
+  <input type="number" id="chartno" name="chartno" min="0" />
+
+  <br><br>
+
+  <button type="button" onclick="loadRecipe(1)">Recipe 1</button>
+  <button type="button" onclick="loadRecipe(2)">Recipe 2</button>
+  <button type="button" onclick="loadRecipe(3)">Recipe 3</button>
+
+  <div id="donut-div" style="width: 100%"></div>
+  <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
+  
+  <!-- Allows us to test without having to build first -->
+
+  <script type="importmap">
+    {
+      "imports": {
+        "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm",
+        "js-yaml": "https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.mjs"
+      }
+    }
+  </script>
+
+  <!-- <script type="module">
+    import roughjs from 'https://cdn.skypack.dev/roughjs'
+  </script> -->
+  <!-- <script type="importmap">
+    {
+      "imports": {
+        "d3": "http://localhost:8080/src/d3.v7.js",
+        "js-yaml": "http://localhost:8080/src/js-yaml.mjs"
+      }
+    }
+  </script> -->
+  <script type="module">
+    // ###############
+    import { getProperties } from "./src/data-tests.js"
+    getProperties()
+    // ###############
+
+    import { doughnut } from "./src/main.js"
+    const chart = await doughnut({selector:'#donut-div'})
+
+    //chart.fixGlobals({transition: 'no'})
+
+    //chart.loadRecipe('./data/test1.yaml')
+    chart.fixGlobals({width_px: 600, height_px: 600})
+
+    window.nextChart = function() {
+      chart.displayNextChart()
+    }
+    window.previousChart = function() {
+      chart.displayPreviousChart()
+    }
+    window.displayChart = function() {
+      chart.displayChart(document.getElementById("chartno").value)
+    }
+
+    window.loadRecipe = function(n) {
+      if (n === 3) {
+        chart.fixGlobals({width_px: null, height_px: null})
+      }
+      chart.loadRecipe(`./data/test${n}.yaml`)
+    }
+
+    displayChart
+  </script>
+</body>
+</html>

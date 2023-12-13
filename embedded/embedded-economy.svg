@@ -1,14 +1,12 @@
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>R&D page for Embedded Economy SVG</title>
-  <style>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 
-  </style>
-</head>
-<body>
-  <div style="width: 100%">
-    <svg viewBox="0 0 3088 2237" style="border: solid black">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+  width="3088pt" height="2237pt" viewBox="0 0 3088 2237"
+  preserveAspectRatio="xMidYMid meet"  
+  style="border: solid black">
+
       <style>
         @import url("https://fonts.googleapis.com/css?family=Poppins");
       </style>
@@ -187,43 +185,3 @@
         <text  x="2020" y="2170" id="dnjs-attribution-after-text">After: Kate Raworth and Marcia Mihotich. CC-BY-SA 4.0</text>
       </g>
     </svg>
-  </div>
-</body>
-<script src="../../work/d3.v7.js"></script>
-
-<script>
-  const w = 3088 
-  const h = 2237
-
-  const cx=1541
-  const cy=1125
-
-
-
-  const svg = document.querySelector('svg')
-  const pt = svg.createSVGPoint()
-  function cursorPoint(evt){
-    pt.x = evt.clientX; pt.y = evt.clientY
-    return pt.matrixTransform(svg.getScreenCTM().inverse())
-  }
-  svg.addEventListener('click',function(evt){
-    const pt = cursorPoint(evt)
-    console.log('svg', Math.round(pt.x), Math.round(pt.y))
-    console.log('radius', Math.round(Math.sqrt((pt.x-cx)*(pt.x-cx)+(pt.y-cy)*(pt.y-cy))))
-    //console.log('centre', Math.round(pt.x-w/2), Math.round(pt.y-h/2))
-    console.log('centre', Math.round(pt.x-cx), Math.round(pt.y-cy))
-  },false)
-
-  //xyFromAngleAndRad(197, 190)
-  xyFromAngleAndRad(197, 190)
-
- // xyFromAngleAndRad(100, 0)
-
-  function xyFromAngleAndRad(rad, ang) {
-    const x = rad * Math.sin(Math.PI*(ang)/180) 
-    const y = rad * Math.cos(Math.PI*(ang)/180)
-    console.log(x, y)
-    console.log('x,y:', Math.round(cx+x), Math.round(cy-y))
-  }
-</script>
-</html>

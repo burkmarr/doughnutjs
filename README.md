@@ -21,6 +21,7 @@ Todo: description.
 - Transition global needs to be replaced with optional params for transition e.g. duration, delay etc.
 - Fading of arcs towards outer and inner edge.
 - Error trapping on invalid values to api functions.
+- Recipe load falls over if image not found.
 
 
 

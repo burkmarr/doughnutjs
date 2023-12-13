@@ -1,7 +1,136 @@
-#dnjs-earth {
-  stroke: blue;
+
+
+/* :not(text):not(textPath) */
+*:not(text):not(textPath) {
+  fill: none;
+  stroke: red;
+  stroke-width: 5px;
 }
-#dnjs-economy-flow-arrows {
+text {
+  font-family: Poppins; 
+  font-size: 63; 
+  font-weight: 400; 
+  fill:black !important; 
+  letter-spacing: 1; 
+  stroke: black; 
+  stroke-width: 0;
+}
+
+#dnjs-earth {
+  stroke-width: 30;
+}
+#dnjs-society {
+  stroke-width: 17;
+}
+/* #dnjs-earth2society-background {
+} */
+/* dnjs-society2economy-background {
+} */
+
+#dnjs-economy-outer-background {
+  stroke: none;
+}
+
+#dnjs-earth-text-background, 
+#dnjs-society-text-background, 
+#dnjs-economy-text-background {
+  fill: white;
+  stroke: none;
+}
+
+svg path {
+  fill: inherit;
+}
+
+/* #dnjs-household-quarter-background,
+#dnjs-state-quarter-background,
+#dnjs-commons-quarter-background, */
+use.dnjs-market-quarter-background {
+  stroke: none;
+  fill: blue;
+}
+
+#dnjs-financial-flows-background {
+  stroke: none;
+}
+
+/* #dnjs-econ-spoke1,
+#dnjs-econ-spoke2,
+#dnjs-econ-spoke3,
+#dnjs-econ-spoke4 {
+} */
+
+/* #dnjs-earth-background,
+#dnjs-society-background,
+#dnjs-economy-background {
+
+} */
+
+.dnjs-matter-flow-line {
+  stroke: red;
+  stroke-width: 50;
+}
+.dnjs-matter-flow-background {
+  fill: red;
+  stroke: none;
+  opacity: 0.1;
+}
+.dnjs-arrowhead {
+  stroke: red;
+  stroke-width: 5;
+}
+
+.dnjs-energy-flow-large-background, .dnjs-energy-flow-small-background {
+  fill: red;
+  stroke: none;
+  opacity: 0.1;
+}
+.dnjs-energy-flow-large-foreground, .dnjs-energy-flow-small-foreground {
+  stroke: red;
+  stroke-width: 5;
+}
+
+.dnjs-financial-flow-line {
+  stroke: red;
+  stroke-width: 5;
+}
+
+/* #dnjs-market-household-flow-arrow,
+#dnjs-household-state-flow-arrow,
+#dnjs-state-commons-flow-arrow,
+#dnjs-commons-market-flow-arrow {
+
+} */
+
+#dnjs-economy-text, 
+#dnjs-society-text, 
+#dnjs-earth-text {
+  font-size:65; 
+  font-weight: 900; 
+  letter-spacing: 2; 
+}
+#dnjs-commons-text, 
+#dnjs-household-text, 
+#dnjs-market-text,
+#dnjs-state-text {
+  font-size: 60; 
+  font-weight: 900; 
+  letter-spacing: 2.5; 
+}
+/* #dnjs-se-solar-text,
+#dnjs-se-energy-text,
+#dnjs-energy-text,
+#dnjs-wh-waste-text,
+#dnjs-wh-heat-text,
+#dnjs-heat-text {
+} */
+
+#dnjs-attribution-title-text,
+#dnjs-attribution-after-text {
+  font-size:35;
+}
+
+#XXX-dnjs-economy-flow-arrows {
   -webkit-animation:spin 4s linear infinite;
   -moz-animation:spin 4s linear infinite;
   animation:spin 4s linear infinite;

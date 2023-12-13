@@ -1,110 +1,136 @@
-
-
-/* :not(text):not(textPath) */
-*:not(text):not(textPath) {
-  fill: none;
-  stroke: red;
+* {
+  fill: lightgoldenrodyellow;
+  stroke: blue;
   stroke-width: 5px;
 }
-text {
+text, textPath {
   font-family: Poppins; 
   font-size: 63; 
   font-weight: 400; 
-  fill:black !important; 
+  fill:red; 
   letter-spacing: 1; 
   stroke: black; 
   stroke-width: 0;
 }
 
+/* Earth and Society ellipses - separate lines and backgrounds */
 #dnjs-earth {
   stroke-width: 30;
+}
+#dnjs-earth2society-background {
+  fill: inherit;
 }
 #dnjs-society {
   stroke-width: 17;
 }
-/* #dnjs-earth2society-background {
-} */
-/* dnjs-society2economy-background {
-} */
-
+#dnjs-society2economy-background {
+  fill: inherit;
+}
 #dnjs-economy-outer-background {
   stroke: none;
 }
-
-#dnjs-earth-text-background, 
-#dnjs-society-text-background, 
-#dnjs-economy-text-background {
-  fill: white;
+/* Economy quarters background */
+#dnjs-household-quarter-background,
+#dnjs-state-quarter-background,
+#dnjs-commons-quarter-background,
+#dnjs-market-quarter-background {
   stroke: none;
-}
-
-svg path {
   fill: inherit;
 }
-
-/* #dnjs-household-quarter-background,
-#dnjs-state-quarter-background,
-#dnjs-commons-quarter-background, */
-use.dnjs-market-quarter-background {
-  stroke: none;
-  fill: blue;
-}
-
-#dnjs-financial-flows-background {
-  stroke: none;
-}
-
-/* #dnjs-econ-spoke1,
+/* Lines between economy quarters */
+#dnjs-econ-spoke1,
 #dnjs-econ-spoke2,
 #dnjs-econ-spoke3,
 #dnjs-econ-spoke4 {
-} */
-
-/* #dnjs-earth-background,
-#dnjs-society-background,
-#dnjs-economy-background {
-
-} */
-
-.dnjs-matter-flow-line {
-  stroke: red;
+  stroke: inherit;
+}
+/* Innner circle - financial flows - background */
+/* Also use this for border outline if required (stroke) */
+#dnjs-financial-flows-background {
+  stroke: none;
+  fill: inherit;
+}
+/* Label backgrounds for Earth, Society & economy */
+#dnjs-earth-text-background, 
+#dnjs-society-text-background, 
+#dnjs-economy-text-background {
+  fill: inherit;
+  stroke: none;
+}
+/* Flow arrow for living matter & materials */
+/* Outline and background separately */
+#dnjs-matter-flow-line {
+  stroke: inherit;
   stroke-width: 50;
 }
-.dnjs-matter-flow-background {
-  fill: red;
+#dnjs-matter-flow-background {
+  fill: inherit;
   stroke: none;
-  opacity: 0.1;
 }
-.dnjs-arrowhead {
-  stroke: red;
+#dnjs-matter-flow-ahead {
+  stroke: inherit;
   stroke-width: 5;
+  fill: none;
 }
-
-.dnjs-energy-flow-large-background, .dnjs-energy-flow-small-background {
-  fill: red;
+/* Flow arrow for waste matter */
+/* Outline and background separately */
+#dnjs-waste-flow-line {
+  stroke: inherit;
+  stroke-width: 50;
+}
+#dnjs-waste-flow-background {
+  fill: inherit;
   stroke: none;
-  opacity: 0.1;
 }
-.dnjs-energy-flow-large-foreground, .dnjs-energy-flow-small-foreground {
-  stroke: red;
+#dnjs-waste-flow-ahead {
+  stroke: inherit;
   stroke-width: 5;
+  fill: none;
 }
-
-.dnjs-financial-flow-line {
-  stroke: red;
-  stroke-width: 5;
+/* Large Energy and heat flow arrows */
+/* Backgrounds and lines separate */
+#dnjs-solar-energy-flow-background,
+#dnjs-energy-flow-background,
+#dnjs-waste-heat-background,
+#dnjs-heat-flow-background {
+  fill: inherit;
+  stroke: none;
 }
-
-/* #dnjs-market-household-flow-arrow,
-#dnjs-household-state-flow-arrow,
-#dnjs-state-commons-flow-arrow,
-#dnjs-commons-market-flow-arrow {
-
-} */
-
-#dnjs-economy-text, 
+#dnjs-solar-energy-flow-foreground,
+#dnjs-energy-flow-foreground,
+#dnjs-waste-heat-foreground,
+#dnjs-head-flow-foreground {
+  stroke: inherit;
+  stroke-width: inherit;
+}
+/* Financial flow arrows - lines and arrowheads */
+#dnjs-market-household-flow-aline,
+#dnjs-household-market-flow-aline,
+#dnjs-household-state-flow-aline,
+#dnjs-state-household-flow-aline,
+#dnjs-state-commons-flow-aline,
+#dnjs-commons-state-flow-aline,
+#dnjs-commons-market-flow-aline,
+#dnjs-market-commons-flow-aline {
+  stroke-width: inherit;
+  stroke: inherit;
+}
+#dnjs-market-household-flow-ahead,
+#dnjs-household-market-flow-ahead,
+#dnjs-household-state-flow-ahead,
+#dnjs-state-household-flow-ahead,
+#dnjs-state-commons-flow-ahead,
+#dnjs-commons-state-flow-ahead,
+#dnjs-commons-market-flow-ahead,
+#dnjs-market-commons-flow-ahead {
+  stroke-width: inherit;
+  stroke: inherit;
+  fill: none;
+}
+/* Text */
+#dnjs-earth-text,
 #dnjs-society-text, 
-#dnjs-earth-text {
+#dnjs-economy-text {
   font-size:65; 
   font-weight: 900; 
   letter-spacing: 2; 
@@ -117,13 +143,32 @@ use.dnjs-market-quarter-background {
   font-weight: 900; 
   letter-spacing: 2.5; 
 }
-/* #dnjs-se-solar-text,
+#dnjs-se-solar-text,
 #dnjs-se-energy-text,
 #dnjs-energy-text,
 #dnjs-wh-waste-text,
 #dnjs-wh-heat-text,
 #dnjs-heat-text {
-} */
+  /* fill: inherit; */
+}
+/* Text that follows curved paths */
+#dnjs-lmm-living-matter-text textPath,
+#dnjs-lmm-and-materials-text textPath,
+#dnjs-wm-waste-text textPath,
+#dnjs-wm-matter-text textPath {
+  fill: inherit;
+}
+#dnjs-ff-financial-text textPath {
+  font-size: 50;
+}
+#dnjs-ff-flows-text textPath
+{
+  font-size: 50;
+  letter-spacing: 5; 
+}
+
+
+/* style="font-family: Poppins; font-size:63; font-weight: 400; fill:black; letter-spacing: 1; stroke: black; stroke-width: 0 */
 
 #dnjs-attribution-title-text,
 #dnjs-attribution-after-text {

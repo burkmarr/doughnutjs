@@ -1,0 +1,232 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>R&D page for Embedded Economy SVG</title>
+  <style>
+    #dnjs-economy-flow-arrows {
+      -webkit-animation:spin 4s linear infinite;
+      -moz-animation:spin 4s linear infinite;
+      animation:spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 
+      100% { -moz-transform: rotate(360deg); } 
+    }
+    @-webkit-keyframes spin { 
+      100% { -webkit-transform: rotate(360deg); } 
+    }
+    @keyframes spin { 
+      100% { 
+        -webkit-transform: rotate(360deg); 
+        transform:rotate(360deg); 
+      } 
+    }
+  </style>
+</head>
+<body>
+  <div style="width: 100%">
+    <svg viewBox="0 0 3088 2237" style="border: solid black">
+      <style>
+        @import url("https://fonts.googleapis.com/css?family=Poppins");
+        @import url("./embedded-economy.css");
+      </style>
+
+      <!-- <image href="./English Embedded Economy.jpg" /> -->
+
+      <!-- Ellipse backgrounds -->
+      <path id="dnjs-earth2society-background" d="M 1541 136 A 1198 988 0 1 1 1540 136z M 1540 382 A 884 744 0 1 0 1541 382z" />
+      <path id="dnjs-society2economy-background" d="M 1541 382 A 884 744 0 1 1 1540 382z M 1540 579 A 545 545 0 1 0 1541 579z" />
+      <path id="dnjs-economy-outer-background" d="M 1541 579 A 545 545 0 1 1 1540 579z M 1540 928 A 197 197 0 1 0 1541 928z" />
+        
+      <!-- Ellipse lines -->
+      <ellipse id="dnjs-earth" cx="1541" cy="1125" rx="1198" ry="988" />
+      <ellipse id="dnjs-society" cx="1541" cy="1125" rx="884" ry="744" />
+      <circle id="dnjs-economy" cx="1541" cy="1125" r="545" />
+
+      <!-- Economy quater regions -->
+      <path id="dnjs-household-quarter-background" d="M 1156 740 A 545 545 0 0 1 1926 740 L 1680 986 A 197 197 0 0 0 1402 986z" />
+      <path id="dnjs-state-quarter-background" d="M 1926 740 A 545 545 0 0 1 1926 1510 L 1680 1264 A 197 197 0 0 0 1680 986z" />
+      <path id="dnjs-commons-quarter-background" d="M 1926 1510 A 545 545 0 0 1 1156 1510 L 1402 1264 A 197 197 0 0 0 1680 1264z" />
+      <path id="dnjs-market-quarter-background" d="M 1156 1510 A 545 545 0 0 1 1156 740 L 1402 986 A 197 197 0 0 0 1402 1264z" />
+      
+      <circle id="dnjs-financial-flows-background" cx="1541" cy="1125" r="197" />
+
+      <!-- Economy spokes -->
+      <line id="dnjs-econ-spoke1" x1="1156" y1="740" x2="1402" y2="986" />
+      <line id="dnjs-econ-spoke2" x1="1926" y1="740" x2="1680" y2="986" />
+      <line id="dnjs-econ-spoke3" x1="1926" y1="1510" x2="1680" y2="1264" />
+      <line id="dnjs-econ-spoke4" x1="1156" y1="1510" x2="1402" y2="1264" />
+
+      <!-- Ellipse label backgrounds -->
+      <rect id="dnjs-earth-text-background" x="1414" y="89" width="248" height="95" rx="15" />
+      <rect id="dnjs-society-text-background" x="1376" y="342" width="336" height="95" rx="15" />
+      <rect id="dnjs-economy-text-background" x="1347" y="557" width="380" height="95" rx="15" />
+
+      <!-- Matter and waste flows -->
+      <path id="dnjs-matter-flow-background" transform="translate(1230, 980) scale(-0.1, 0.1) rotate(179 2822 100)"
+      d="M1014,5038C1002,5025,951,4955,900,4881C587,4434,422,4030,354,3545C332,3395,329,2972,348,2830C421,2283,592,1874,921,1458C1089,1246,1391,961,1658,762C2053,467,2709,98,2833,100C2851,101,2845,110,2795,156C2762,186,2683,254,2620,307C1977,846,1604,1273,1370,1739C1250,1978,1188,2167,1138,2444C1110,2598,1108,2915,1134,3110C1182,3468,1290,3848,1410,4085C1470,4204,1578,4378,1619,4423z"/>
+      <path id="dnjs-matter-flow-line" transform="translate(1230, 980) scale(-0.1, 0.1) rotate(179 2822 100)" 
+      d="M1014,5038C1002,5025,951,4955,900,4881C587,4434,422,4030,354,3545C332,3395,329,2972,348,2830C421,2283,592,1874,921,1458C1089,1246,1391,961,1658,762C2053,467,2709,98,2833,100C2851,101,2845,110,2795,156C2762,186,2683,254,2620,307C1977,846,1604,1273,1370,1739C1250,1978,1188,2167,1138,2444C1110,2598,1108,2915,1134,3110C1182,3468,1290,3848,1410,4085C1470,4204,1578,4378,1619,4423"/>
+      <path id="dnjs-matter-flow-ahead" d="M 950 961 L 950 991 L 920 991" transform="rotate(-10 950 991)" />
+      
+      <path id="dnjs-waste-flow-background" transform="translate(1930, 1765) scale(0.1, 0.1) rotate(151 2822 100)" 
+      d="M1014,5038C1002,5025,951,4955,900,4881C587,4434,422,4030,354,3545C332,3395,329,2972,348,2830C421,2283,592,1874,921,1458C1089,1246,1391,961,1658,762C2053,467,2709,98,2833,100C2851,101,2845,110,2795,156C2762,186,2683,254,2620,307C1977,846,1604,1273,1370,1739C1250,1978,1188,2167,1138,2444C1110,2598,1108,2915,1134,3110C1182,3468,1290,3848,1410,4085C1470,4204,1578,4378,1619,4423z"/>
+      <path id="dnjs-waste-flow-line" transform="translate(1930, 1765) scale(0.1, 0.1) rotate(151 2822 100)"  
+      d="M1014,5038C1002,5025,951,4955,900,4881C587,4434,422,4030,354,3545C332,3395,329,2972,348,2830C421,2283,592,1874,921,1458C1089,1246,1391,961,1658,762C2053,467,2709,98,2833,100C2851,101,2845,110,2795,156C2762,186,2683,254,2620,307C1977,846,1604,1273,1370,1739C1250,1978,1188,2167,1138,2444C1110,2598,1108,2915,1134,3110C1182,3468,1290,3848,1410,4085C1470,4204,1578,4378,1619,4423"/>
+      <path id="dnjs-waste-flow-ahead" d="M 2209 1747 L 2209 1777 L 2179 1777" transform="rotate(80 2209 1777)" />
+      
+      <!-- Energy and heat flows -->
+      <g d="dnjs-solar-energy-flow">
+        <path id="dnjs-solar-energy-flow-background" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 72 1318z" />
+        <path id="dnjs-solar-energy-flow-foreground" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 70 1318  
+        M 70 977 L 140 977 M 70 1009 L 140 1009 M 70 1039 L 140 1039 M 70 1071 140 1071 M 70 1101 L 140 1101 M 70 1132 L 140 1132
+        M 70 1163 L 140 1163 M 70 1194 L 140 1194 M 70 1225 L 140 1225 M 70 1256 L 140 1256 M 70 1287 L 140 1287" />
+      </g>
+      <g d="dnjs-energy-flow">
+        <path id="dnjs-energy-flow-background" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217" />
+        <path id="dnjs-energy-flow-foreground" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217
+        M 570 1063 L 640 1063 M 570 1094 L 640 1094 M 570 1124 L 640 1124 M 570 1156 L 640 1156  M 570 1186 L 640 1186" />
+      </g>
+      <g d="dnjs-waste-heat-flow">
+        <path id="dnjs-waste-heat-background" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217" />
+        <path id="dnjs-waste-heat-foreground" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217
+        M 2130 1063 L 2200 1063 M 2130 1094 L 2200 1094 M 2130 1124 L 2200 1124 M 2130 1156 L 2200 1156  M 2130 1186 L 2200 1186" />
+      </g>
+      <g d="dnjs-heat-flow">
+        <path id="dnjs-heat-flow-background" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318z" />
+        <path id="dnjs-head-flow-foreground" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318  
+        M 2590 977 L 2660 977 M 2590 1009 L 2660 1009 M 2590 1039 L 2660 1039 M 2590 1071 2660 1071 M 2590 1101 L 2660 1101 M 2590 1132 L 2660 1132
+        M 2590 1163 L 2660 1163 M 2590 1194 L 2660 1194 M 2590 1225 L 2660 1225 M 2590 1256 L 2660 1256 M 2590 1287 L 2660 1287" />
+      </g>
+
+      <!-- Financial flow arcs and arrowheads -->
+      <g id="dnjs-economy-flow-arrows" style="transform-origin: 1541px 1125px">
+        <g id="dnjs-market-household-flow-arrow">
+          <path id="dnjs-market-household-flow-aline" d="M 1402 986 A 197 197 0 0 1 1507 931" />
+          <path id="dnjs-market-household-flow-ahead" d="M 1507 961 L 1507 931 L 1477 931" transform="rotate(35 1507 931)" />
+        </g>
+        <g id="dnjs-household-market-flow-arrow">
+          <path id="dnjs-household-market-flow-aline" d="M 1402 986 A 197 197 0 0 0 1347 1091" />
+          <path id="dnjs-household-market-flow-ahead" d="M 1347 1061 L 1347 1091 L 1317 1091" transform="rotate(55 1347 1091)" />
+        </g>
+
+        <g id="dnjs-household-state-flow-arrow">
+          <path id="dnjs-household-state-flow-aline" d="M 1680 986 A 197 197 0 0 1 1735 1091" />
+          <path id="dnjs-household-state-flow-ahead" d="M 1735 1061 L 1735 1091 L 1705 1091" transform="rotate(35 1735 1091)" />
+        </g>
+        <g id="dnjs-state-household-flow-arrow">
+          <path id="dnjs-state-household-flow-aline" d="M 1680 986 A 197 197 0 0 0 1575 931" />
+          <path id="dnjs-state-household-flow-ahead" d="M 1575 901 L 1575 931 L 1545 931" transform="rotate(145 1575 931)" />
+        </g>
+
+        <g id="dnjs-state-commons-flow-arrow">
+          <path id="dnjs-state-commons-flow-aline" d="M 1680 1264 A 197 197 0 0 0 1735 1159" />
+          <path id="dnjs-state-commons-flow-ahead" d="M 1735 1129 L 1735 1159 L 1705 1159" transform="rotate(235 1735 1159)" />
+        </g>
+        <g id="dnjs-commons-state-flow-arrow">
+          <path id="dnjs-commons-state-flow-aline" d="M 1680 1264 A 197 197 0 0 1 1575 1319" />
+          <path id="dnjs-commons-state-flow-ahead" d="M 1575 1289 L 1575 1319 L 1545 1319" transform="rotate(125 1575 1319)" />
+        </g>
+
+        <g id="dnjs-commons-market-flow-arrow">
+          <path id="dnjs-commons-market-flow-aline" d="M 1402 1264 A 197 197 0 0 1 1347 1159" />
+          <path id="dnjs-commons-market-flow-ahead" d="M 1347 1129 L 1347 1159 L 1317 1159" transform="rotate(215 1347 1159)" />
+        </g>
+        <g id="dnjs-market-commons-flow-arrow">
+          <path id="dnjs-market-commons-flow-aline" d="M 1402 1264 A 197 197 0 0 0 1507 1319" />
+          <path id="dnjs-market-commons-flow-ahead" d="M 1507 1289 L 1507 1319 L 1477 1319" transform="rotate(-35 1507 1319)" />
+        </g>
+      </g>
+
+      <!-- Text -->
+      <text id="dnjs-earth-text" x="1434" y="157">EARTH</text>
+      <text id="dnjs-society-text" x="1395" y="415">SOCIETY</text>
+      <text id="dnjs-economy-text" x="1366" y="626">ECONOMY</text>
+
+      <text id="dnjs-commons-text" x="1374" y="1511">commons</text>
+      <text id="dnjs-household-text" x="1369" y="815">household</text>
+      <text id="dnjs-market-text" x="1045" y="1144">market</text>
+      <text id="dnjs-state-text" x="1821" y="1145">state</text>
+
+      <text id="dnjs-se-solar-text" x="165" y="1107">solar</text>
+      <text id="dnjs-se-energy-text" x="165" y="1188">energy</text>
+      <text id="dnjs-energy-text" x="672" y="1145">energy</text>
+      <text id="dnjs-wh-waste-text" x="2228" y="1105">waste</text>
+      <text id="dnjs-wh-heat-text" x="2228" y="1190">heat</text>  
+      <text id="dnjs-heat-text" x="2729" y="1146">heat</text>  
+   
+      <path id="dnjs-lmm-living-matter-path" d="M 849 457 A 1081 892 0 0 1 1206 280" style="display:none"/>
+      <text id="dnjs-lmm-living-matter-text" >
+        <textPath href="#dnjs-lmm-living-matter-path">living matter</textPath>  
+      </text>
+
+      <path id="dnjs-lmm-and-materials-path" d="M 913 505 A 981 801 0 0 1 1252 353" style="display:none"/>
+      <text id="dnjs-lmm-and-materials-text">
+        <textPath href="#dnjs-lmm-and-materials-path">&amp; materials</textPath>  
+      </text>
+     
+      <path id="dnjs-wm-waste-path" d="M 1944 1895 A 1109 833 0 0 0 2121 1805" style="display:none;"/>
+      <text id="dnjs-wm-waste-text">
+        <textPath href="#dnjs-wm-waste-path">waste</textPath>  
+      </text>
+
+      <path id="dnjs-wm-matter-path" d="M 1971 1969 A 1109 833 0 0 0 2165 1876" style="display:none;"/>
+      <text id="dnjs-wm-matter-text">
+        <textPath href="#dnjs-wm-matter-path">matter</textPath>  
+      </text>
+
+      <path id="dnjs-ff-financial-path" d="M 1446 1045 A 118 105 0 0 1 1639 1046" style="display:none;"/>
+      <text id="dnjs-ff-financial-text">
+        <textPath href="#dnjs-ff-financial-path">financial</textPath>  
+      </text>
+
+      <path id="dnjs-ff-flows-path" d="M 1468 1262 A 156 156 0 0 0 1623 1255" style="display:none;"/>
+      <text id="dnjs-ff-flows-text">
+        <textPath href="#dnjs-ff-flows-path">flows</textPath>  
+      </text>
+
+      <!-- Attribution etc -->
+      <g id="dnjs-attribution-text" style="font-family: Poppins; font-size:35; font-weight: 400; fill:black; letter-spacing: 1; stroke: black; stroke-width: 0">
+        <text x="2570" y="2120"  id="dnjs-attribution-title-text" style="font-weight: bold">The Embedded Economy</text>
+        <text  x="2020" y="2170" id="dnjs-attribution-after-text">After: Kate Raworth and Marcia Mihotich. CC-BY-SA 4.0</text>
+      </g>
+    </svg>
+  </div>
+</body>
+<script src="../../work/d3.v7.js"></script>
+
+<script>
+  const w = 3088 
+  const h = 2237
+
+  const cx=1541
+  const cy=1125
+
+
+
+  const svg = document.querySelector('svg')
+  const pt = svg.createSVGPoint()
+  function cursorPoint(evt){
+    pt.x = evt.clientX; pt.y = evt.clientY
+    return pt.matrixTransform(svg.getScreenCTM().inverse())
+  }
+  svg.addEventListener('click',function(evt){
+    const pt = cursorPoint(evt)
+    console.log('svg', Math.round(pt.x), Math.round(pt.y))
+    console.log('radius', Math.round(Math.sqrt((pt.x-cx)*(pt.x-cx)+(pt.y-cy)*(pt.y-cy))))
+    //console.log('centre', Math.round(pt.x-w/2), Math.round(pt.y-h/2))
+    console.log('centre', Math.round(pt.x-cx), Math.round(pt.y-cy))
+  },false)
+
+  //xyFromAngleAndRad(197, 190)
+  xyFromAngleAndRad(197, 190)
+
+ // xyFromAngleAndRad(100, 0)
+
+  function xyFromAngleAndRad(rad, ang) {
+    const x = rad * Math.sin(Math.PI*(ang)/180) 
+    const y = rad * Math.cos(Math.PI*(ang)/180)
+    console.log(x, y)
+    console.log('x,y:', Math.round(cx+x), Math.round(cy-y))
+  }
+</script>
+</html>

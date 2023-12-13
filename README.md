@@ -5,6 +5,10 @@ Library for ecological economics visualisations.
 **Folder: embedded**
 Todo: description. 
 
+### TODO
+- Need to note in documentation that MS Word (and maybe other programs) don't render the curved text. So download a png for
+programs like these.
+
 ### Notes
 SVG font embedding: https://graphicdesign.stackexchange.com/questions/5162/how-do-i-embed-google-web-fonts-into-an-svg
 

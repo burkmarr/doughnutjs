@@ -2,6 +2,8 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 
+<?xml-stylesheet href="./embedded-economy.css" type="text/css"?>
+
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
   width="3088pt" height="2237pt" viewBox="0 0 3088 2237"
   preserveAspectRatio="xMidYMid meet"  
@@ -9,7 +11,12 @@
 
       <style>
         @import url("https://fonts.googleapis.com/css?family=Poppins");
+        * {
+          stroke: black;
+        }
       </style>
+      <!-- <style rel="stylesheet" href="http://localhost:8080/embedded/embedded-economy.css"></style> -->
+
 
       <!-- <image href="./English Embedded Economy.jpg" /> -->
 
@@ -21,7 +28,7 @@
       <path id="dnjs-economy-outer-region" d="M 1541 579 A 545 545 0 1 1 1540 579z M 1540 928 A 197 197 0 1 0 1541 928z" style="fill: none"/>
         
       <!-- Ellipse lines -->
-      <ellipse id="dnjs-earth" cx="1541" cy="1125" rx="1198" ry="988" style="stroke: black; stroke-width: 30; fill: none;"></ellipse>
+      <ellipse id="dnjs-earth" cx="1541" cy="1125" rx="1198" ry="988" style="xstroke: black; stroke-width: 30; fill: none;"></ellipse>
       <ellipse id="dnjs-society" cx="1541" cy="1125" rx="884" ry="744" style="stroke: black; stroke-width: 17; fill: none;"></ellipse>
       <circle id="dnjs-economy" cx="1541" cy="1125" r="545" style="stroke: black; stroke-width: 5; fill: none;"/>
 
@@ -88,40 +95,42 @@
       <line id="dnjs-econ-spoke4" x1="1156" y1="1510" x2="1402" y2="1264" style="stroke:black; stroke-width: 5"/>
 
       <!-- flow arcs and arrowheads -->
-      <g id="dnjs-market-household-flow-arrow">
-        <path id="dnjs-market-household-flow-aline" d="M 1402 986 A 197 197 0 0 1 1507 931" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-market-household-flow-ahead" d="M 1507 961 L 1507 931 L 1477 931" transform="rotate(35 1507 931)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
-      <g id="dnjs-household-market-flow-arrow">
-        <path id="dnjs-household-market-flow-aline" d="M 1402 986 A 197 197 0 0 0 1347 1091" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-household-market-flow-ahead" d="M 1347 1061 L 1347 1091 L 1317 1091" transform="rotate(55 1347 1091)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
+      <g id="dnjs-economy-flow-arrows" style="transform-origin: 1541px 1125px">
+        <g id="dnjs-market-household-flow-arrow">
+          <path id="dnjs-market-household-flow-aline" d="M 1402 986 A 197 197 0 0 1 1507 931" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-market-household-flow-ahead" d="M 1507 961 L 1507 931 L 1477 931" transform="rotate(35 1507 931)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
+        <g id="dnjs-household-market-flow-arrow">
+          <path id="dnjs-household-market-flow-aline" d="M 1402 986 A 197 197 0 0 0 1347 1091" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-household-market-flow-ahead" d="M 1347 1061 L 1347 1091 L 1317 1091" transform="rotate(55 1347 1091)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
 
-      <g id="dnjs-household-state-flow-arrow">
-        <path id="dnjs-household-state-flow-aline" d="M 1680 986 A 197 197 0 0 1 1735 1091" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-household-state-flow-ahead" d="M 1735 1061 L 1735 1091 L 1705 1091" transform="rotate(35 1735 1091)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
-      <g id="dnjs-state-household-flow-arrow">
-        <path id="dnjs-state-household-flow-aline" d="M 1680 986 A 197 197 0 0 0 1575 931" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-state-household-flow-ahead" d="M 1575 901 L 1575 931 L 1545 931" transform="rotate(145 1575 931)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
+        <g id="dnjs-household-state-flow-arrow">
+          <path id="dnjs-household-state-flow-aline" d="M 1680 986 A 197 197 0 0 1 1735 1091" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-household-state-flow-ahead" d="M 1735 1061 L 1735 1091 L 1705 1091" transform="rotate(35 1735 1091)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
+        <g id="dnjs-state-household-flow-arrow">
+          <path id="dnjs-state-household-flow-aline" d="M 1680 986 A 197 197 0 0 0 1575 931" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-state-household-flow-ahead" d="M 1575 901 L 1575 931 L 1545 931" transform="rotate(145 1575 931)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
 
-      <g id="dnjs-state-commons-flow-arrow">
-        <path id="dnjs-state-commons-flow-aline" d="M 1680 1264 A 197 197 0 0 0 1735 1159" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-state-commons-flow-ahead" d="M 1735 1129 L 1735 1159 L 1705 1159" transform="rotate(235 1735 1159)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
-      <g id="dnjs-commons-state-flow-arrow">
-        <path id="dnjs-commons-state-flow-aline" d="M 1680 1264 A 197 197 0 0 1 1575 1319" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-commons-state-flow-ahead" d="M 1575 1289 L 1575 1319 L 1545 1319" transform="rotate(125 1575 1319)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
+        <g id="dnjs-state-commons-flow-arrow">
+          <path id="dnjs-state-commons-flow-aline" d="M 1680 1264 A 197 197 0 0 0 1735 1159" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-state-commons-flow-ahead" d="M 1735 1129 L 1735 1159 L 1705 1159" transform="rotate(235 1735 1159)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
+        <g id="dnjs-commons-state-flow-arrow">
+          <path id="dnjs-commons-state-flow-aline" d="M 1680 1264 A 197 197 0 0 1 1575 1319" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-commons-state-flow-ahead" d="M 1575 1289 L 1575 1319 L 1545 1319" transform="rotate(125 1575 1319)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
 
-      <g id="dnjs-commons-market-flow-arrow">
-        <path id="dnjs-commons-market-flow-aline" d="M 1402 1264 A 197 197 0 0 1 1347 1159" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-commons-market-flow-ahead" d="M 1347 1129 L 1347 1159 L 1317 1159" transform="rotate(215 1347 1159)" style="fill: none; stroke: black; stroke-width: 5"/>
-      </g>
-      <g id="dnjs-market-commons-flow-arrow">
-        <path id="dnjs-market-commons-flow-aline" d="M 1402 1264 A 197 197 0 0 0 1507 1319" style="fill: none; stroke: black; stroke-width: 5"/>
-        <path id="dnjs-market-commons-flow-ahead" d="M 1507 1289 L 1507 1319 L 1477 1319" transform="rotate(-35 1507 1319)" style="fill: none; stroke: black; stroke-width: 5"/>
+        <g id="dnjs-commons-market-flow-arrow">
+          <path id="dnjs-commons-market-flow-aline" d="M 1402 1264 A 197 197 0 0 1 1347 1159" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-commons-market-flow-ahead" d="M 1347 1129 L 1347 1159 L 1317 1159" transform="rotate(215 1347 1159)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
+        <g id="dnjs-market-commons-flow-arrow">
+          <path id="dnjs-market-commons-flow-aline" d="M 1402 1264 A 197 197 0 0 0 1507 1319" style="fill: none; stroke: black; stroke-width: 5"/>
+          <path id="dnjs-market-commons-flow-ahead" d="M 1507 1289 L 1507 1319 L 1477 1319" transform="rotate(-35 1507 1319)" style="fill: none; stroke: black; stroke-width: 5"/>
+        </g>
       </g>
 
       <!-- Text -->

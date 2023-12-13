@@ -10,7 +10,10 @@ Todo: description.
 programs like these.
 
 ### Notes
-SVG font embedding: https://graphicdesign.stackexchange.com/questions/5162/how-do-i-embed-google-web-fonts-into-an-svg
+- SVG font embedding: https://graphicdesign.stackexchange.com/questions/5162/how-do-i-embed-google-web-fonts-into-an-svg
+- "use" element: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/SVG_and_CSS
+- https://stackoverflow.com/questions/9287544/how-to-select-an-element-within-an-embedded-object
+- https://stackoverflow.com/questions/4906148/how-to-apply-a-style-to-an-embedded-svg
 
 ## Doughnut and Planetary Limits charts
 **Folder: doughnutjs**

@@ -1,0 +1,89 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Test page for Embedded Economy SVG</title>
+  <style>
+    object[type="image/svg+xml"]  {
+      fill: grey;
+    }
+    #dnjs-economy-flow-arrows {
+      -webkit-animation:spin 4s linear infinite;
+      -moz-animation:spin 4s linear infinite;
+      animation:spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 
+      100% { -moz-transform: rotate(360deg); } 
+    }
+    @-webkit-keyframes spin { 
+      100% { -webkit-transform: rotate(360deg); } 
+    }
+    @keyframes spin { 
+      100% { 
+        -webkit-transform: rotate(360deg); 
+        transform:rotate(360deg); 
+      } 
+    }
+  </style>
+</head>
+<body>
+  <div style="width: 100%">
+    <img src="./embedded-economy.svg" width="100%">
+    <!-- <use href="./embedded-economy.svg"></use> -->
+    <object id="rtmp1" data="./embedded-economy.svg" type="image/svg+xml" onload="rtmp()" width="100%"></object>   
+  </div>
+</body>
+<script src="../../work/d3.v7.js"></script>
+
+<script>
+  const w = 3088 
+  const h = 2237
+
+  const cx=1541
+  const cy=1125
+
+
+
+  const svg = document.querySelector('svg')
+  //const pt = svg.createSVGPoint()
+  function cursorPoint(evt){
+    pt.x = evt.clientX; pt.y = evt.clientY
+    return pt.matrixTransform(svg.getScreenCTM().inverse())
+  }
+  // svg.addEventListener('click',function(evt){
+  //   const pt = cursorPoint(evt)
+  //   console.log('svg', Math.round(pt.x), Math.round(pt.y))
+  //   console.log('radius', Math.round(Math.sqrt((pt.x-cx)*(pt.x-cx)+(pt.y-cy)*(pt.y-cy))))
+  //   //console.log('centre', Math.round(pt.x-w/2), Math.round(pt.y-h/2))
+  //   console.log('centre', Math.round(pt.x-cx), Math.round(pt.y-cy))
+  // },false)
+
+  //xyFromAngleAndRad(197, 190)
+  xyFromAngleAndRad(197, 190)
+
+ xyFromAngleAndRad(100, 0)
+
+  function xyFromAngleAndRad(rad, ang) {
+    const x = rad * Math.sin(Math.PI*(ang)/180) 
+    const y = rad * Math.cos(Math.PI*(ang)/180)
+    console.log(x, y)
+    console.log('x,y:', Math.round(cx+x), Math.round(cy-y))
+  }
+
+  function rtmp() {
+    console.log("object loaded!")
+
+    // var obj = document.getElementById("rtmp1") // assuming you object has id "obj"
+    // var doc = obj.contentDocument // get the inner DOM
+    // var el = doc.getElementById("dnjs-earth")
+    // el.style.stroke = "blue"
+
+    //d3.selectAll("#dnjs-economy-flow-arrows").style('stroke', 'red')
+
+    // #dnjs-economy-flow-arrows {
+    //   -webkit-animation:spin 4s linear infinite;
+    //   -moz-animation:spin 4s linear infinite;
+    //   animation:spin 4s linear infinite;
+    // }
+  }
+</script>
+</html>

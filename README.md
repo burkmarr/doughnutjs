@@ -6,6 +6,9 @@ Library for ecological economics visualisations.
 Todo: description. 
 
 ### TODO
+- Test resetting origin to middle of document (convert all element values)
+- Test using 'use' tag - https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/SVG_and_CSS
+- Can I find a way of using Poppins is svg when included as img?
 - Need to note in documentation that MS Word (and maybe other programs) don't render the curved text. So download a png for
 programs like these.
 

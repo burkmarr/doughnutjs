@@ -1,33 +1,39 @@
 * {
-  fill: lightgoldenrodyellow;
-  stroke: blue;
+  fill: white;
+  stroke: black;
   stroke-width: 5px;
 }
 text, textPath {
   font-family: Poppins; 
   font-size: 63; 
   font-weight: 400; 
-  fill:red; 
+  fill:black; 
   letter-spacing: 1; 
   stroke: black; 
   stroke-width: 0;
 }
 
 /* Earth and Society ellipses - separate lines and backgrounds */
-#dnjs-earth {
+#dnjs-earth-line {
   stroke-width: 30;
+  fill: none;
 }
 #dnjs-earth2society-background {
   fill: inherit;
 }
-#dnjs-society {
+#dnjs-society-line {
   stroke-width: 17;
+  fill: none;
 }
 #dnjs-society2economy-background {
   fill: inherit;
 }
-#dnjs-economy-outer-background {
+/* #dnjs-economy-outer-background {
   stroke: none;
+} */
+/* Economy outer line */
+#dnjs-economy-line {
+  fill: none;
 }
 /* Economy quarters background */
 #dnjs-household-quarter-background,
@@ -38,10 +44,10 @@ text, textPath {
   fill: inherit;
 }
 /* Lines between economy quarters */
-#dnjs-econ-spoke1,
-#dnjs-econ-spoke2,
-#dnjs-econ-spoke3,
-#dnjs-econ-spoke4 {
+#dnjs-econ-spoke1-line,
+#dnjs-econ-spoke2-line,
+#dnjs-econ-spoke3-line,
+#dnjs-econ-spoke4-line {
   stroke: inherit;
 }
 /* Innner circle - financial flows - background */
@@ -102,6 +108,7 @@ text, textPath {
 #dnjs-head-flow-foreground {
   stroke: inherit;
   stroke-width: inherit;
+  fill: none;
 }
 /* Financial flow arrows - lines and arrowheads */
 #dnjs-market-household-flow-aline,
@@ -166,16 +173,13 @@ text, textPath {
   font-size: 50;
   letter-spacing: 5; 
 }
-
-
-/* style="font-family: Poppins; font-size:63; font-weight: 400; fill:black; letter-spacing: 1; stroke: black; stroke-width: 0 */
-
 #dnjs-attribution-title-text,
 #dnjs-attribution-after-text {
   font-size:35;
 }
 
-#XXX-dnjs-economy-flow-arrows {
+/* Rotating financial flows */
+/* #dnjs-economy-flow-arrows {
   -webkit-animation:spin 4s linear infinite;
   -moz-animation:spin 4s linear infinite;
   animation:spin 4s linear infinite;
@@ -191,4 +195,4 @@ text, textPath {
     -webkit-transform: rotate(360deg); 
     transform:rotate(360deg); 
   } 
-}
+} */

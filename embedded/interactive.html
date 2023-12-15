@@ -1,0 +1,92 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>R&D page for Embedded Economy SVG</title>
+  <link rel="stylesheet" href="./embedded-economy.css">
+</head>
+<body>
+  <div id="divSvg" style="width: 100%">
+    <!-- <object id="rtmp1" data="./embedded-economy.svg" type="image/svg+xml" width="100%"></object>    -->
+  </div>
+  <div>
+    <p>
+      Click on the on the element you wish to alter. The <i>id</i> attribute of any element element
+      under the point where you clicked will appear below. To idetify the element from the id, just
+      click on the id - the element will be highlighted. 
+    
+    </p>
+    <div id="elements-under-mouse">
+
+    </div>
+    <div>
+      Colour: <input type="text" style="width: 120px"  id="selColour">
+    </div>
+    
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.2/jscolor.min.js"></script>
+
+<script>
+  let highlightedId
+
+  d3.text('./embedded-economy.svg').then(text => {
+    // Dynamically load SVG
+    d3.select('#divSvg').html(text)
+    const svg = document.querySelector('svg')
+    svg.addEventListener('click',function(evt){
+      const pt = svg.createSVGPoint()
+      pt.x = evt.clientX; pt.y = evt.clientY
+      getElementsUnderPoint(pt.x, pt.y)
+    },false)
+  })
+
+  const getElementsUnderPoint = function(x, y) {
+
+    d3.select('#elements-under-mouse').html('')
+
+    const ids = elementsFromPoint(x, y, 3)
+    ids.forEach( function( id ){
+      const b = d3.select('#elements-under-mouse').append('button')
+      b.text(id)
+      b.on('click', function(){
+        if (highlightedId) {
+          d3.select(`#${highlightedId}`).style('fill', null).style('stroke', null)
+        }
+       // d3.select('svg').selectAll('*').style('opacity', 0.2)
+        d3.select(`#${highlightedId}`).style('opacity', 0.5)
+        highlightedId = b.text()
+        // if (highlightedId.endsWith('background')) {
+        //   d3.select(`#${highlightedId}`).style('fill', 'yellow').style('stroke', 'none')
+        // } else if (highlightedId.endsWith('text') || highlightedId.endsWith('path')) {
+        //   d3.select(`#${highlightedId}`).style('fill', 'magenta').style('stroke', 'none')
+        // } else {
+        //   d3.select(`#${highlightedId}`).style('fill', 'none').style('stroke', 'magenta')
+        // }
+      })
+      d3.select('#elements-under-mouse').append('br')
+    })
+  }
+  
+  function elementsFromPoint(x, y, d) {
+    let all = []
+    for(let i=x-d; i <= x+d; i++) {
+      for(let j=y-d; j <= y+d; j++) {
+        els = document.elementsFromPoint( i, j )
+          .filter(e => e.id > "" && e.id != "divSvg")
+          .forEach(e => {
+            if (!all.find(id => id === e.id)) {
+              all.push(e.id)
+            }
+          })
+      }
+    }
+    return all
+  }
+
+  const selColour = new JSColor('#selColour', {onFineChange: colourChanged})
+  function colourChanged() {
+    console.log('get colour', selColour.toHEXString())
+  }
+</script>
+</html>

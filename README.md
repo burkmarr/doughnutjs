@@ -6,9 +6,6 @@ Library for ecological economics visualisations.
 Todo: description. 
 
 ### TODO
-- Test resetting origin to middle of document (convert all element values)
-- Test using 'use' tag - https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/SVG_and_CSS
-- Can I find a way of using Poppins is svg when included as img?
 - Need to note in documentation that MS Word (and maybe other programs) don't render the curved text. So download a png for
 programs like these.
 
@@ -17,6 +14,7 @@ programs like these.
 - "use" element: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/SVG_and_CSS
 - https://stackoverflow.com/questions/9287544/how-to-select-an-element-within-an-embedded-object
 - https://stackoverflow.com/questions/4906148/how-to-apply-a-style-to-an-embedded-svg
+- https://tympanus.net/codrops/2019/01/22/svg-filter-effects-outline-text-with-femorphology/
 
 ## Doughnut and Planetary Limits charts
 **Folder: doughnutjs**

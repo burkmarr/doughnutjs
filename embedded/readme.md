@@ -2,6 +2,7 @@
 ## Quick links
 - [Embedded Economy SVG](https://github.com/burkmarr/doughnutjs/blob/main/embedded/embedded-economy.svg)
 - [Utility to generate customised Embedded Economy diagrams](https://burkmarr.github.io/doughnutjs/embedded/interactive.html)
+
 ## The SVG
 An SVG of the Embedded Economy diagram ([*embedded-economy.svg*](https://github.com/burkmarr/doughnutjs/blob/main/embedded/embedded-economy.svg)) has been created based on a JPEG image avalable from the
 [DEAL website](https://drive.google.com/drive/u/0/folders/1KsZp26_dQPlnyEuM4nHVcFn7dwErfGcE). Text in the SVG is in 

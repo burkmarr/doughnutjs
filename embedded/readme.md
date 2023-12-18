@@ -11,6 +11,8 @@ this repository to request it. If you do create a version for another language, 
 raising a pull request to merge it into this repo (or contact
 me separately).
 
+![Embedded Economy SVG](https://burkmarr.github.io/doughnutjs/embedded/customised-example-1.svg)
+
 Elements in the SVG have been marked up with CSS classes to make
 modifying the appearance of elements, or groups of elements,
 relatively easy. If you have CSS and/or Javascript skills, you could use this many of the classes in the SVG to style or animate elements of the SVG when included in a web page.

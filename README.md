@@ -13,8 +13,3 @@ Get [more information here](https://burkmarr.github.io/doughnutjs/embedded).
 A recipe-driven way of defining all sorts of visualisations based on
 concentric circles and quadrants and animating transitions between them.
 This library is under development.
-
-
-
-
-

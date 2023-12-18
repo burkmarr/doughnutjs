@@ -11,7 +11,7 @@ this repository to request it. If you do create a version for another language, 
 raising a pull request to merge it into this repo (or contact
 me separately).
 
-![Embedded Economy SVG](https://burkmarr.github.io/doughnutjs/embedded/customised-example-1.svg)
+![Embedded Economy SVG](https://burkmarr.github.io/doughnutjs/embedded/embedded-economy.svg)
 
 Elements in the SVG have been marked up with CSS classes to make
 modifying the appearance of elements, or groups of elements,
@@ -23,4 +23,8 @@ This *[interactive utility](https://burkmarr.github.io/doughnutjs/embedded/inter
 In general the SVG format is preferrable because it scales without pixellating, but in some circumstances the PNG format will be preferable. For example Microsoft Word cannot render the curved text (SVG textPath element), so to use in an MS Word document, you should download a PNG version.
 
 Full instructions on how to use the interactive utility are included in the utility itself.
+
+### Example SVG generated with the interactive tool
+
+![Customised Embedded Economy SVG](https://burkmarr.github.io/doughnutjs/embedded/customised-example-1.svg)
 

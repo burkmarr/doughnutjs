@@ -1,8 +1,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>R&D page for Embedded Economy SVG</title>
-  <!-- <link rel="stylesheet" href="./embedded-economy.css"> -->
+  <title>Generate a customised Embedded Economy diagram</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -14,16 +13,16 @@
     }
     @keyframes blinkBackground {
       25% {
-        fill: yellow;
-        background-color: yellow;
+        fill: magenta;
+        background-color: magenta;
       }
       50% {
         fill: white;
         background-color: white;
       }
       75% {
-        fill: yellow;
-        background-color: yellow;
+        fill: magenta;
+        background-color: magenta;
       }
     }
     .highlight-line {
@@ -61,20 +60,13 @@
   </style>
 </head>
 <body>
-  <!-- <img src="./embedded-economy.svg" style="width: 100%; border: solid black; background-color: lightgray;" /> -->
-  <div id="divSvg" style="width: 100%; border: solid black; background-image: url('transparent.png');" >
-    <!-- <object id="rtmp1" data="./embedded-economy.svg" type="image/svg+xml" width="100%"></object>    -->
-  </div>
-  <div>
-    <p>
-      Click on the on the element you wish to alter. The <i>id</i> attribute of any element element
-      under the point where you clicked will appear below. To idetify the element from the id, just
-      click on the id - the element will be highlighted. 
-    </p>
-
-    <div style="display: flex; flex-wrap: wrap;">
-      <div id="elements-under-mouse" style="flex: 1; padding-right: 1em"></div>
-      <div style="flex: 1">
+  <h3>Generate a customised Embedded Economy diagram (Doughnut Economics)</h3>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="svg-div" style="width: 50%; overflow: auto; resize:both; border: solid black; background-image: url('transparent.png');" >
+      <!-- <object id="rtmp1" data="./embedded-economy.svg" type="image/svg+xml" width="100%"></object>    -->
+    </div>
+    <div id="controls-div" style="flex: 1; width: 50%">
+      <div style="padding-left: 1em">
         <div id="selected-element" style="font-size: 1em; font-weight: bold; margin-bottom: 0.5em;"></div>
         <div id="el-controls">
           <div>
@@ -92,15 +84,72 @@
           <div id="colour-error"></div>
           <div id="colour-hidden" style="display:none"></div>
           <button style="margin-top: 1em; display: block" onclick="setTransparent()">Set to transparent</button>
+          <div style="margin-top: 0.5em">
+            Set colour opacity
+          </div>
+          <div style="display: block">
+            <input id="opacity-slider" type="range" min="0.05" max="1" value="1" step="0.05" class="slider" oninput="opacityChanged()">
+          </div>
           <button style="margin-top: 1em; display: block" onclick="loadSvg()">Clear all</button>
         </div>
-        <div style="margin-top: 1em">
-          <button onclick="saveChartImage(d3.select('svg'), true, 'embedded-economy-custom')">Download as SVG</button>
-          <button onclick="saveChartImage(d3.select('svg'), false, 'embedded-economy-custom')">Download as PNG</button>
-        </div>
       </div>
+      <div id="elements-under-mouse" style="padding: 1em 0 0 1em"></div>
     </div>
   </div>
+  <div style="margin-top: 1em">
+    <button onclick="saveChartImage(d3.select('svg'), true, 'embedded-economy-custom')">Download as SVG</button>
+    <button onclick="saveChartImage(d3.select('svg'), false, 'embedded-economy-custom')">Download as PNG</button>
+    <input type="checkbox" id="cb-hide-svg" name="cb-hide-svg" onclick="hideDisplayControls()">
+    <label for="cb-hide-svg"> Hide controls</label><br>
+  </div>
+  <p>
+    The size of the chart displayed on your computer
+    can be modified by dragging its bottom-right corner. This enables you
+    to select a size that suits your screen. If a scroll-bar appears on the right of
+    the chart, drag the corner downwards until it disappears.
+  </p>
+  <p>
+    Click on the <b>Embedded Economy chart</b> over the element you wish to alter. 
+    Identifiers (CSS classes) of any elements under that point 
+    which can be modified will appear on buttons. As you move your mouse pointer
+    over those buttons, the element(s) represented by each of them will be indicated
+    on the chart by flashing <b style="color: magenta">magenta</b>. Note that some elements can be
+    represented by more than one button if they are part of a group - once for the element
+    on its own and once for the group. When you see the element(s) you
+    wish to modify flashing, click the button.
+  </p>
+  <p>
+    Once the element(s) you wish to modify are selected by clicking the button, use the controls
+    on the right to change the colour and/or opacity. Click on the <i>set colour interactively</i>
+    control to set the colour using a colour picker. The numeric code starting with a '#' is the
+    'hex' code for the colour, but that needn't concern you. However, if you know the hex code 
+    for the colour you want, you can also type it (or paste it) directly in here. If you know
+    the <a href="https://www.w3schools.com/tags/ref_colornames.asp" target="_blank">'HTML colour name'</a>
+    of the colour you want, you can also set the colour directly by typing (or pasting) its name
+    into the <i>set colour manually</i> control and clicking the <i>set</i> button. Likewise if
+    you know the 'rgb values' of the colour you want, you can set the colour by typing (or pasting)
+    it into this control using the format 'rgb(&lt;red&gt;, &lt;green&gt;, &lt;blue&gt;)', e.g.
+    'rgb(165,42,42)'.
+  </p>
+  <p>
+    You can use the <i>set colour opaciy</i> slider to set the opacity (transparency) of the 
+    element. The lowest value you can set for opacity is 0.05 - which is virtually transparent.
+    If you want a fully transparent element (I you want to hide it completely), use the
+    <i>set to transparent</i> button instead. To remove all the styling you have applied, click
+    the <i>clear all</i> button.
+  </p>
+  <p>
+    When your chart appears as you would like it, you can download it as either an SVG or PNG
+    image using the <i>download as SVG</i> and <i>download as PNG</i> buttons.
+    If you are able to use an SVG image for whatever you want to do, then it is the
+    better choice because it scales without pixellation. But if you can't use an SVG then
+    select the PNG option. PNG images <i>do</i> pixellate when displayed at
+    large dimensions. To minimize pixellation, you can check the <i>hide controls</i> checkbox to maximise the
+    size of the chart before using the <i>download as PNG</i> button.
+  </p>
+  <p>
+    This tool is designed to be used on a large screen with a mouse pointer device.
+  </p>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.2/jscolor.min.js"></script>
@@ -112,16 +161,10 @@
   d3.selectAll('#el-controls input').attr("disabled", true)
   d3.selectAll('#el-controls button').attr("disabled", true)
 
-  d3.select('#dnjs-ff-financial-path').attr('transform', 'rotate(45)')
-  d3.select('#dnjs-ff-financial').attr('transform', 'rotate(45)')
-  d3.select('.dnjs-financial-flows-textpath').attr('transform', 'rotate(45)')
-  
-  
-
   function loadSvg() {
     d3.text('./embedded-economy.svg').then(text => {
       // Dynamically load SVG
-      d3.select('#divSvg').html(text)
+      d3.select('#svg-div').html(text)
       const svg = document.querySelector('svg')
       svg.addEventListener('click',function(evt){
         const pt = svg.createSVGPoint()
@@ -131,7 +174,17 @@
     })
   }
 
-  const getElementsUnderPoint = function(x, y) {
+  function hideDisplayControls() {
+    if (d3.select('#cb-hide-svg').property("checked")) {
+      d3.select('#controls-div').style('display', 'none')
+      d3.select('#svg-div').style('width', '100%')
+    } else {
+      d3.select('#controls-div').style('display', '')
+      d3.select('#svg-div').style('width', '50%')
+    }
+  }
+
+  function getElementsUnderPoint(x, y) {
     let highlightedClass
     let selector
 
@@ -143,9 +196,10 @@
     const ids = elementsFromPoint(x, y, 3)
     ids.forEach( function( id ){
       const b = d3.select('#elements-under-mouse').append('button')
-      b.style('width', '100%')
+      b.style('display', 'block')
       b.style('margin-bottom', '0.5em')
       b.style('min-width', '250px')
+      b.style('max-width', '450px')
       b.text(id)
       b.on('mouseover', function(){
         highlightedClass = b.text()
@@ -185,6 +239,9 @@
         selectedSelector = selector
 
         setPickerColour(getCurrentColour())
+
+        const currentOpacity = d3.select(selectedSelector).style('opacity')
+        d3.selectAll('#opacity-slider').property('value', currentOpacity)
       })
     })
   }
@@ -280,6 +337,11 @@
 
   function setTransparent() {
     changeColour('transparent')
+  }
+
+  function opacityChanged () {
+    const val = d3.select('#opacity-slider').property('value')
+    d3.selectAll(selectedSelector).style('opacity', val)
   }
 
   function saveChartImage(svg, asSvg, filename) {

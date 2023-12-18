@@ -15,12 +15,15 @@
     @keyframes blinkBackground {
       25% {
         fill: yellow;
+        background-color: yellow;
       }
       50% {
         fill: white;
+        background-color: white;
       }
       75% {
         fill: yellow;
+        background-color: yellow;
       }
     }
     .highlight-line {
@@ -59,7 +62,7 @@
 </head>
 <body>
   <!-- <img src="./embedded-economy.svg" style="width: 100%; border: solid black; background-color: lightgray;" /> -->
-  <div id="divSvg" style="width: 100%; border: solid black; background-color: white;" >
+  <div id="divSvg" style="width: 100%; border: solid black; background-image: url('transparent.png');" >
     <!-- <object id="rtmp1" data="./embedded-economy.svg" type="image/svg+xml" width="100%"></object>    -->
   </div>
   <div>
@@ -72,7 +75,7 @@
     <div style="display: flex; flex-wrap: wrap;">
       <div id="elements-under-mouse" style="flex: 1; padding-right: 1em"></div>
       <div style="flex: 1">
-        <div id="element-id-or-class" style="font-size: 1em; font-weight: bold; margin-bottom: 0.5em;"></div>
+        <div id="selected-element" style="font-size: 1em; font-weight: bold; margin-bottom: 0.5em;"></div>
 
         <div style>
           Set colour interactively
@@ -90,6 +93,9 @@
         <div id="colour-error"></div>
 
         <div id="colour-hidden" style="display:none"></div>
+        <div style="margin-top: 1em">
+          <button onclick="setTransparent()">Set to transparent</button>
+        </div>
         <div style="margin-top: 1em">
           <button onclick="loadSvg()">Clear all</button>
         </div>
@@ -133,11 +139,11 @@
       b.text(id)
       b.on('mouseover', function(){
         highlightedId = b.text()
-        if (highlightedId.startsWith('dnjs-class')) {
+        //if (highlightedId.startsWith('dnjs-class')) {
           selector = `.${highlightedId}`
-        } else {
-          selector = `#${highlightedId}`
-        }
+        // } else {
+        //   selector = `#${highlightedId}`
+        //}
         // Do the highlighting
         if (highlightedId.endsWith('background')) {
           d3.selectAll(selector).classed('highlight-fill', true)
@@ -159,7 +165,7 @@
         d3.selectAll(selector).classed('highlight-line', false)
         d3.selectAll(selector).classed('highlight-text', false)
 
-        d3.select('#element-id-or-class').text(b.text())
+        d3.select('#selected-element').text(`Colour: ${b.text()}`)
 
         let style
         if (highlightedId.endsWith('background') || highlightedId.endsWith('text') || highlightedId.endsWith('path')) {
@@ -217,7 +223,9 @@
 
   function changeColour(colour) {
     let style
-    if (selectedId.endsWith('background') || selectedId.endsWith('text') || selectedId.endsWith('path')) {
+    if (selectedId === 'dnjs-class-svg-background') {
+      style= 'background-color'
+    } else if (selectedId.endsWith('background') || selectedId.endsWith('text') || selectedId.endsWith('path')) {
       style = 'fill'
     } else {
       style = 'stroke'
@@ -228,10 +236,10 @@
       if (selectedId === 'dnjs-class-household-quarter-background' || selectedId === 'dnjs-class-economy-quarter-background'){
         d3.select('#dnjs-economy-text-background').attr('flood-color', colour)
       }
-      if (selectedId === 'dnjs-society2economy-background'){
+      if (selectedId === 'dnjs-class-society2economy-background'){
         d3.select('#dnjs-society-text-background').attr('flood-color', colour)
       }
-      if (selectedId === 'dnjs-earth2society-background'){
+      if (selectedId === 'dnjs-class-earth2society-background'){
         d3.select('#dnjs-earth-text-background').attr('flood-color', colour)
       }
     }
@@ -242,7 +250,7 @@
     for(let i=x-d; i <= x+d; i++) {
       for(let j=y-d; j <= y+d; j++) {
         els = document.elementsFromPoint( i, j )
-          .filter(e => e.id != "divSvg")
+          // .filter(e => e.id != "divSvg")
           .forEach(e => {
             let identifiers = []
             if (e.className.baseVal) {
@@ -253,9 +261,9 @@
                 }
               })
             }
-            if (identifiers.length === 0 && e.id) {
-              identifiers.push(e.id)
-            }
+            // if (identifiers.length === 0 && e.id) {
+            //   identifiers.push(e.id)
+            // }
             identifiers.forEach(i => {
               if (!all.find(id => id === i)) {
                 all.push(i)
@@ -265,6 +273,10 @@
       }
     }
     return all
+  }
+
+  function setTransparent() {
+    changeColour('transparent')
   }
 </script>
 </html>

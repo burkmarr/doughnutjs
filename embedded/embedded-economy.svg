@@ -100,27 +100,29 @@
     <path class="dnjs-waste-flow-line dnjs-matter-waste-flow-line" style="fill: none" d="M 2209 1747 L 2209 1777 L 2179 1777" transform="rotate(76 2209 1777)" />
     
     <!-- Energy and heat flows -->
-    <g id="dnjs-solar-energy-flow">
-      <path class="dnjs-solar-energy-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 72 1318" />
-      <path class="dnjs-solar-energy-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 70 1318  
-      M 70 977 L 140 977 M 70 1009 L 140 1009 M 70 1039 L 140 1039 M 70 1071 140 1071 M 70 1101 L 140 1101 M 70 1132 L 140 1132
-      M 70 1163 L 140 1163 M 70 1194 L 140 1194 M 70 1225 L 140 1225 M 70 1256 L 140 1256 M 70 1287 L 140 1287" />
-    </g>
-    <g id="dnjs-energy-flow">
-      <path class="dnjs-energy-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217" />
-      <path class="dnjs-energy-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217
-      M 570 1063 L 640 1063 M 570 1094 L 640 1094 M 570 1124 L 640 1124 M 570 1156 L 640 1156  M 570 1186 L 640 1186" />
-    </g>
-    <g id="dnjs-waste-heat-flow">
-      <path class="dnjs-waste-heat-background dnjs-energy-flows-background" style="stroke: none" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217" />
-      <path class="dnjs-waste-heat-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217
-      M 2130 1063 L 2200 1063 M 2130 1094 L 2200 1094 M 2130 1124 L 2200 1124 M 2130 1156 L 2200 1156  M 2130 1186 L 2200 1186" />
-    </g>
-    <g id="dnjs-heat-flow">
-      <path class="dnjs-heat-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318" />
-      <path class="dnjs-head-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318  
-      M 2590 977 L 2660 977 M 2590 1009 L 2660 1009 M 2590 1039 L 2660 1039 M 2590 1071 2660 1071 M 2590 1101 L 2660 1101 M 2590 1132 L 2660 1132
-      M 2590 1163 L 2660 1163 M 2590 1194 L 2660 1194 M 2590 1225 L 2660 1225 M 2590 1256 L 2660 1256 M 2590 1287 L 2660 1287" />
+    <g id="dnjs-energy-flows">
+      <g id="dnjs-solar-energy-flow">
+        <path class="dnjs-solar-energy-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 72 1318" />
+        <path class="dnjs-solar-energy-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 70 947 L 347 947 L 495 1117 L 347 1318 L 70 1318  
+        M 70 977 L 140 977 M 70 1009 L 140 1009 M 70 1039 L 140 1039 M 70 1071 140 1071 M 70 1101 L 140 1101 M 70 1132 L 140 1132
+        M 70 1163 L 140 1163 M 70 1194 L 140 1194 M 70 1225 L 140 1225 M 70 1256 L 140 1256 M 70 1287 L 140 1287" />
+      </g>
+      <g id="dnjs-energy-flow">
+        <path class="dnjs-energy-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217" />
+        <path class="dnjs-energy-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 570 1032 L 885 1032 L 958 1115 L 885 1217 L 570 1217
+        M 570 1063 L 640 1063 M 570 1094 L 640 1094 M 570 1124 L 640 1124 M 570 1156 L 640 1156  M 570 1186 L 640 1186" />
+      </g>
+      <g id="dnjs-waste-heat-flow">
+        <path class="dnjs-waste-heat-background dnjs-energy-flows-background" style="stroke: none" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217" />
+        <path class="dnjs-waste-heat-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 2130 1032 L 2445 1032 L 2520 1115 L 2445 1217 L 2130 1217
+        M 2130 1063 L 2200 1063 M 2130 1094 L 2200 1094 M 2130 1124 L 2200 1124 M 2130 1156 L 2200 1156  M 2130 1186 L 2200 1186" />
+      </g>
+      <g id="dnjs-heat-flow">
+        <path class="dnjs-heat-flow-background dnjs-energy-flows-background" style="stroke: none" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318" />
+        <path class="dnjs-head-flow-foreground dnjs-solar-energy-flows-foreground" style="fill: none" d="M 2590 947 L 2868 947 L 3014 1117 L 2868 1318 L 2590 1318  
+        M 2590 977 L 2660 977 M 2590 1009 L 2660 1009 M 2590 1039 L 2660 1039 M 2590 1071 2660 1071 M 2590 1101 L 2660 1101 M 2590 1132 L 2660 1132
+        M 2590 1163 L 2660 1163 M 2590 1194 L 2660 1194 M 2590 1225 L 2660 1225 M 2590 1256 L 2660 1256 M 2590 1287 L 2660 1287" />
+      </g>
     </g>
 
     <!-- Financial flow arcs and arrowheads -->
@@ -199,41 +201,47 @@
     <text class="dnjs-market-text dnjs-economy-text fs60 fw900" x="1045" y="1144">market</text>
     <text class="dnjs-state-text dnjs-economy-text fs60 fw900" x="1821" y="1145">state</text>
 
-    <text class="dnjs-solar-energy-text  dnjs-energy-flow-text" x="165" y="1107">solar</text>
-    <text class="dnjs-solar-energy-text  dnjs-energy-flow-text" x="165" y="1188">energy</text>
-    <text class="dnjs-energy-text  dnjs-energy-flow-text" x="672" y="1145">energy</text>
-    <text class="dnjs-waste-heat-text  dnjs-energy-flow-text" x="2228" y="1105">waste</text>
-    <text class="dnjs-waste-heat-text  dnjs-energy-flow-text" x="2228" y="1190">heat</text>  
-    <text class="dnjs-heat-text  dnjs-energy-flow-text" x="2729" y="1146">heat</text>  
+    <g id="dnjs-energy-flow-text">
+      <text class="dnjs-solar-energy-text  dnjs-energy-flow-text" x="165" y="1107">solar</text>
+      <text class="dnjs-solar-energy-text  dnjs-energy-flow-text" x="165" y="1188">energy</text>
+      <text class="dnjs-energy-text  dnjs-energy-flow-text" x="672" y="1145">energy</text>
+      <text class="dnjs-waste-heat-text  dnjs-energy-flow-text" x="2228" y="1105">waste</text>
+      <text class="dnjs-waste-heat-text  dnjs-energy-flow-text" x="2228" y="1190">heat</text>  
+      <text class="dnjs-heat-text  dnjs-energy-flow-text" x="2729" y="1146">heat</text>  
+    </g>
 
-    <path id="dnjs-lmm-living-matter-path" d="M 849 457 A 1081 892 0 0 1 1206 280" style="display:none"/>
+    <path id="dnjs-lmm-living-matter-path" d="M 849 457 A 1081 892 0 0 1 1251 264" style="display:none"/>
     <text id="dnjs-lmm-living-matter-text">
-      <textPath class="dnjs-living-matter-textpath" href="#dnjs-lmm-living-matter-path">living matter</textPath>  
+      <!-- The space after the text gets round a weird bug in firefox-->
+      <textPath class="dnjs-living-matter-textpath" href="#dnjs-lmm-living-matter-path">living matter </textPath>  
     </text>
 
     <path id="dnjs-lmm-and-materials-path" d="M 913 505 A 981 801 0 0 1 1252 353" style="display:none"/>
     <text id="dnjs-lmm-and-materials-text">
-      <textPath class="dnjs-living-matter-textpath" href="#dnjs-lmm-and-materials-path">&amp; materials</textPath>  
+      <!-- The space after the text gets round a weird bug in firefox-->
+      <textPath class="dnjs-living-matter-textpath" href="#dnjs-lmm-and-materials-path">&amp; materials </textPath>  
     </text>
     
     <path id="dnjs-wm-waste-path" d="M 1944 1895 A 1109 833 0 0 0 2121 1805" style="display:none;"/>
     <text id="dnjs-wm-waste-text">
-      <textPath class="dnjs-waste-textpath" href="#dnjs-wm-waste-path">waste</textPath>  
+      <!-- The space after the text gets round a weird bug in firefox-->
+      <textPath class="dnjs-waste-textpath" href="#dnjs-wm-waste-path">waste </textPath>  
     </text>
 
     <path id="dnjs-wm-matter-path" d="M 1971 1969 A 1109 833 0 0 0 2165 1876" style="display:none;"/>
     <text id="dnjs-wm-matter-text">
-      <textPath class="dnjs-waste-textpath" href="#dnjs-wm-matter-path">matter</textPath>  
+      <!-- The space after the text gets round a weird bug in firefox-->
+      <textPath class="dnjs-waste-textpath" href="#dnjs-wm-matter-path">matter </textPath>  
     </text>
 
-    <path id="dnjs-ff-financial-path" d="M 1446 1045 A 118 118 0 0 1 1639 1046" style="display:none;"/>
+    <path id="dnjs-ff-financial-path" d="M 1423 1125 A 118 118 0 0 1 1659 1125" style="display:none;"/>
     <text id="dnjs-ff-financial-text" text-anchor="middle">
       <textPath startOffset="50%" class="dnjs-financial-flows-textpath fs50" href="#dnjs-ff-financial-path">financial</textPath>
     </text>
-
-    <path id="dnjs-ff-flows-path" d="M 1468 1262 A 156 156 0 0 0 1623 1255" style="display:none;"/>
+    <path id="dnjs-ff-flows-path" d="M 1385 1125 A 156 156 0 0 0 1697 1125" style="display:none;"/>
     <text id="dnjs-ff-flows-text" text-anchor="middle">
-      <textPath startOffset="50%" class="dnjs-financial-flows-textpath fs50 ls5" href="#dnjs-ff-flows-path">flows</textPath>  
+      <!-- The space after the text gets round a weird bug in firefox-->
+      <textPath startOffset="50%" style="letter-spacing: 1px" class="dnjs-financial-flows-textpath fs50 ls5" href="#dnjs-ff-flows-path">flows </textPath>  
     </text>
 
     <!-- Attribution etc -->

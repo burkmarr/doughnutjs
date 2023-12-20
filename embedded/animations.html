@@ -1,0 +1,158 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Test some animations</title>
+  <style>
+
+    /* Glowing */
+    #dnjs-energy-flows {
+      animation: svg-shadow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes svg-shadow {
+      from {
+        filter: drop-shadow( 0 0 5px #fff) drop-shadow( 0 0 15px #e60073) drop-shadow( 0 0 20px #e60073);
+      }
+      to {
+        filter: drop-shadow( 0 0 20px #fff) drop-shadow( 0 0 25px #e60073) drop-shadow( 0 0 40px #e60073);
+      }
+    }
+
+    /* Rotating financial flows */
+    #dnjs-economy-flow-arrows {
+      animation:spin 4s linear infinite;
+    }
+    @keyframes spin { 
+      100% { 
+        transform:rotate(360deg); 
+      } 
+    }
+
+    /* Energy flows left to right animations */
+    #dnjs-energy-flows,
+    #dnjs-energy-flow-text
+    {
+      transform: "translate(-40px, 0px)";
+    }
+    #dnjs-energy-flows,
+    #dnjs-energy-flow-text
+    {
+      animation:flow 3s linear infinite;
+    }
+    @keyframes flow { 
+      100% { 
+        transform:translate(60px, 0px); 
+      } 
+    }
+
+    /* Blinking elements (for interactive) */
+    .highlight-fill {
+      animation-name: blinkBackground;
+      animation-duration: 0.5s;
+      animation-iteration-count: infinite;
+    }
+    @keyframes blinkBackground {
+      25% {
+        fill: magenta;
+        background-color: magenta;
+      }
+      50% {
+        fill: white;
+        background-color: white;
+      }
+      75% {
+        fill: magenta;
+        background-color: magenta;
+      }
+    }
+    .highlight-line {
+      animation-name: blinkLine;
+      animation-duration: 0.5s;
+      animation-iteration-count: infinite;
+    }
+    @keyframes blinkLine {
+      25% {
+        stroke: magenta;
+      }
+      50% {
+        stroke: white;
+      }
+      75% {
+        stroke: magenta;
+      }
+    }
+    .highlight-text {
+      animation-name: blinkText;
+      animation-duration: 0.5s;
+      animation-iteration-count: infinite;
+    }
+    @keyframes blinkText {
+      25% {
+        fill: magenta;
+      }
+      50% {
+        fill: white;
+      }
+      75% {
+        fill: magenta;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="svg-div" style="width: 50%; overflow: auto; resize:both; border: solid black; background-image: url('transparent.png');" >
+    </div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+  loadSvg()
+  function loadSvg() {
+    d3.text('./embedded-economy.svg').then(text => {
+      // Dynamically load SVG
+      d3.select('#svg-div').html(text)
+
+      // Insert defs
+      const svg = d3.select('#svg-div svg')
+
+      // Drop shadow
+      const def = svg.append('def')
+      const filter1 = def.append('filter')
+      filter1.attr('id', 'shadow').attr('x', '-20').attr('y', '-20').attr('height', '150').attr('width', '150')
+      const feOffset1 = filter1.append('feOffset')
+      feOffset1.attr('result', 'offset').attr('in', 'SourceAlpha').attr('dx', '100').attr('dy', '100')
+      const blur1 = filter1.append('feGaussianBlur')
+      blur1.attr('result','blur').attr('in','offset').attr('stdDeviation','3')
+      const blend1 = filter1.append('feBlend')
+      blend1.attr('in','SourceGraphic').attr('in2','blur').attr('mode','normal')
+
+      // Glow
+      // https://codepen.io/dipscom/pen/mVYjPw
+      const filter2 = def.append('filter')
+      filter2.attr('id', 'softGlow').attr('height', '300%').attr('width', '300%').attr('x', '-75%').attr('y', '-75%')
+
+      //filter2.append('feFlood').attr('flood-color','red').attr('height', '300%').attr('width', '300%').attr('x', '-75%').attr('y', '-75%')
+
+      //filter2.append('feFlood').attr('flood-color','red')
+		  // Thicken out the original shape
+      filter2.append('feMorphology').attr('operator','dilate').attr('radius','10').attr('in','SourceAlpha').attr('result','thicken')
+		  // Use a gaussian blur to create the soft blurriness of the glow
+      filter2.append('feGaussianBlur').attr('in','thicken').attr('stdDeviation','50').attr('result','blurred')
+		  // Change the colour
+      //filter2.append('feFlood').attr('flood-color','red').attr('flood-opacity','1').attr('result','glowColor')
+		  // Color in the glows
+      //filter2.append('feComposite').attr('in','glowColor').attr('in2','blurred').attr('operator','in').attr('result','softGlow_colored')
+      // Layer the effects together
+      const merge1 = filter2.append('feMerge')
+      merge1.append('feMergeNode').attr('in','blurred')
+      //merge1.append('feMergeNode').attr('in','softGlow_colored')
+      merge1.append('feMergeNode').attr('in','SourceGraphic')
+
+      console.log(def.node())
+      
+      svg.selectAll('.dnjs-energy-flows-background').attr('filter', 'url(#softGlow)')
+    })
+  }
+</script>
+</html>

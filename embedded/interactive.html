@@ -342,6 +342,16 @@
   function opacityChanged () {
     const val = d3.select('#opacity-slider').property('value')
     d3.selectAll(selectedSelector).style('opacity', val)
+
+    if (selectedClass === 'dnjs-household-quarter-background' || selectedClass === 'dnjs-economy-quarter-background'){
+      d3.select('#dnjs-economy-text-background').attr('flood-opacity', val)
+    }
+    if (selectedClass === 'dnjs-society2economy-background'){
+      d3.select('#dnjs-society-text-background').attr('flood-opacity', val)
+    }
+    if (selectedClass === 'dnjs-earth2society-background'){
+      d3.select('#dnjs-earth-text-background').attr('flood-opacity', val)
+    }
   }
 
   function saveChartImage(svg, asSvg, filename) {

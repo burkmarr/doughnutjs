@@ -7,7 +7,7 @@ defaults:
   angle0: 0 # Base angle from which others are measured
   angleSpan: 0 # Angle unit to use for multiplier or percentage
   radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage
-  radiusSpanReal: 1000 # real world units corresponding to 1 chart unit
+  radiusSpanReal: 1000 # Real world units corresponding to 1 pixel unit
   opacity: 0.8
   radius: 0
   rot: 0
@@ -29,7 +29,7 @@ charts:
       colour: red
       radius1: 0
     - id: climate-change
-      radius2: 0 60 0  %
+      radius2: 0 60 0 %
       angle1: 100
       angle2: 160
     - id: ocean-acidification

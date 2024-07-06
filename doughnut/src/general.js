@@ -1,38 +1,14 @@
 import * as yaml from 'js-yaml'
 
-export function addDef(el, name) {
-
-  const filters = {
-  // Text filter for Rockstrom 2009
-  whiteOutlineEffect: `
-      <filter id="whiteOutlineEffect" color-interpolation-filters="sRGB">
-      <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="1" />
-      <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0"/>
-      <feMerge>
-      <feMergeNode in="WHITENED"/>
-      <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-      </filter>
-    `,
-    otherOutlineEffect: `
-      <filter id="otherOutlineEffect" color-interpolation-filters="sRGB">
-      <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="1" />
-      <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0"/>
-      <feMerge>
-      <feMergeNode in="WHITENED"/>
-      <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-      </filter>
-    `
-  }
+export function addDef(el, def) {
 
   let defs
   if (el.select('defs').size()) {
     defs = el.select('defs')
-    defs.html(`${defs.html()}${filters[name]}`)
+    defs.html(`${defs.html()}${def}`)
   } else {
     defs = el.append('defs')
-    defs.html(filters[name])
+    defs.html(def)
   }
 }
 

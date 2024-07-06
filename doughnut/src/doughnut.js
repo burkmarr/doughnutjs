@@ -1,11 +1,11 @@
 import * as d3 from 'd3'
-import { old } from './old-stuff.js'
-import { fetchYaml } from './general.js'
+import { fetchYaml, cloneObj, addDef } from './general.js'
 import { parseRecipe } from './data.js'
-import { roughUp } from './roughUp.js'
 import { createImageElements, initialiseImageParameters } from './images.js'
 import { createArcElements, initialiseArcParameters } from './arcs.js'
 import { createArclineElements, initialiseArclineParameters } from './arclines.js'
+import { createSpokeElements, initialiseSpokeParameters } from './spokes.js'
+import { createTextElements, initialiseTextParameters } from './texts.js'
 
 export async function doughnut({
   selector = 'body',
@@ -15,8 +15,8 @@ export async function doughnut({
   let iLastChart = null
   let svg, svgWidth, svgHeight
   let recipeParsed = false
-  let gAll, gImages, gArcs, gArclines, gSpokes, gText
-  let currentParams = {arcs: {}, arclines: {}, images: {}}
+  let gAll, gImages, gArcs, gArclines, gSpokes, gTexts
+  let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}}
   const fixedGlobals = {}
   let rc
 
@@ -31,7 +31,7 @@ export async function doughnut({
 
     svgWidth = getGlobal('width_px')
     svgHeight = getGlobal('height_px')
-
+    
     if (svg && getGlobal('transition') !== 'yes') {
       svg.remove()
       svg = null
@@ -40,23 +40,20 @@ export async function doughnut({
     if (!svg) {
 
       svg = d3.select(selector).append('svg')
-        .attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
+        .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
         .style('overflow', 'visible')
 
-      //  Old visualisation
-      //old(d3, svg, 350)
-    
-      // Text style for Rockstrom 2009
-      //addDef(svg, 'whiteOutlineEffect')
-    
+      // Add any defs defined in recipe to SVG
+      recipe.globals.defs.forEach(d => addDef(svg, d.def))
+
       gAll = svg.append('g')
       gImages = gAll.append('g') // Not centred because that is done indepedently
       gArcs = gAll.append('g')
       gArclines = gAll.append('g')
       gSpokes = gAll.append('g')
-      gText = gAll.append('g')
+      gTexts = gAll.append('g')
     } else {
-      svg.attr("viewBox", "0 0 " + svgWidth + " " +  svgHeight)
+      svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     }
 
     // Transform gAll to centre elements on canvas
@@ -66,6 +63,8 @@ export async function doughnut({
     initialiseImageParameters(recipe.charts[iChart].images, currentParams.images)
     initialiseArcParameters(recipe.charts[iChart].arcs, currentParams.arcs)
     initialiseArclineParameters(recipe.charts[iChart].arclines, currentParams.arclines)
+    initialiseSpokeParameters(recipe.charts[iChart].spokes, currentParams.spokes)
+    initialiseTextParameters(recipe.charts[iChart].texts, currentParams.texts)
     
     const trans = svg.transition().duration(0).ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
@@ -75,17 +74,20 @@ export async function doughnut({
 
     }
    
-    // Remeber current chart as the last chart
+    // Remember current chart as the last chart
     iLastChart = iChart
 
     // Create elements
     createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
     createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
     createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
+    createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
+    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts)
   }
 
   function getGlobal(k) {
 
+    console.log(k, fixedGlobals)
     if (typeof(fixedGlobals[k]) !== 'undefined') {
       // There's a value for this key in fixedGlobals
       return fixedGlobals[k]
@@ -143,14 +145,13 @@ export async function doughnut({
     recipeParsed = false
 
     recipe = await fetchYaml(file)
-    const recipe0 = JSON.parse(JSON.stringify(recipe))
+    console.log('Raw recipe', cloneObj(recipe))
 
     const errHtmlEl = errorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
 
-    console.log('recipe', recipe0)
     parseRecipe(recipe, errHtmlEl)
-    
+
     if (errHtmlEl.selectAll('tr').size() > 1) {
       // There are errors
       errorDiv.style('display', '')
@@ -161,7 +162,7 @@ export async function doughnut({
       errorDiv.style('display', 'none')
       if (svg) svg.style('display', '')
       recipeParsed = true
-      console.log('parsedRecipe', recipe)
+      console.log('Parsed recipe', recipe)
     }
   }
 

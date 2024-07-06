@@ -4,9 +4,9 @@ globals:
   duration: 1000
 defaults:
   angle0: 0 # Base angle from which others are measured
-  angleSpan: 0 # Base angle from which others are measured
-  radiusSpanPx: 150 # 1 chart unit in pixels
-  radiusSpanReal: 400 # real world units corresponding to 1 chart unit
+  angleSpan: 0 # Angle unit to use for multiplier or percentage
+  radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage
+  radiusSpanReal: 400 # Real world units corresponding to 1 pixel unit
   opacity: 0 0.8 0
 charts:
   - id: chart2

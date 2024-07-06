@@ -1,111 +1,283 @@
-canvas:
-  width_px: 800 # pixels
-  height_px: 600 # pixles
-  angle0: 0 # Base angle from which others are measured
-  angleSpan: 0 # Base angle from which others are measured
-  radiusSpanPx: 150 # 1 chart unit in pixels
-  radiusSpanReal: 400 # real world units corresponding to 1 chart unit
+globals:
+  width_px: 600 # pixels
+  height_px: 400 # pixles
+  duration: 2000
+  transition: yes
+  defs:
+    - def: |
+        <filter id="whiteOutlineEffect" color-interpolation-filters="sRGB">
+        <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="1" />
+        <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0"/>
+        <feMerge>
+        <feMergeNode in="WHITENED"/>
+        <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+        </filter>
+defaults:
+  angle0: -20 # Base angle from which others are measured, e.g. -20
+  angleSpan: 0 # Angle unit to use for multiplier or percentage, e.g. 45
+  radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage, e.g. 150
+  radiusSpanReal: 400 # Real world units corresponding to 1 pixel unit, e.g. 400
 charts:
   - id: rockstrom2009
     images:
     - id: earth 
       location: images/rockstrom-earth.png
-      width: 0 100 0 %
-      opacity: 0 1 0
+      width: 200 %
+      opacity: 1
+      rot: 0
+      angle: 0
+      radius: 0
     arcs:
-    - id: safe-zone
-      colour: "#6D9100"
+    - id: default
+      opacity: 0.6
+      colour: red
       radius1: 0
-      radius2: 0 40 0 %
+    - id: safe-zone
+      colour: '#6D9100'
+      radius2: 40 %
       angle1: 0
       angle2: 360
     - id: climate-change
-      colour: red
-      radius1: 0
       radius2: 0 60 0 %
       angle1: 0
       angle2: 40
     - id: ocean-acidification
-      colour: red
-      radius1: 0
       radius2: 0 30 0 %
       angle1: 40
       angle2: 80
     - id: ozone-depletion
-      colour: red
-      radius1: 0
       radius2: 0 16 0 %
       angle1: 80
       angle2: 120
     - id: nitrogen-cycle
-      colour: red
-      radius1: 0
       radius2: 0 132 0 %
       angle1: 120
       angle2: 140
     - id: phosphorous-cycle
-      colour: red
-      radius1: 0
       radius2: 0 36 0 %
       angle1: 140
       angle2: 160
     - id: freshwater-use
-      colour: red
-      radius1: 0
       radius2: 0 22 0 %
       angle1: 160
       angle2: 200
     - id: landuse-change
-      colour: red
-      radius1: 0
       radius2: 0 24 0 %
       angle1: 200
       angle2: 240
     - id: biodiversity-loss
-      colour: red
-      radius1: 0
       radius2: 0 160 0 %
       angle1: 240
       angle2: 280
     - id: aerosol-loading
-      colour: red
-      radius1: 0
       radius2: 0
       angle1: 280
       angle2: 320
     - id: chemical-pollution
-      colour: red
-      radius1: 0
       radius2: 0
       angle1: 320
       angle2: 360
+    arclines: 
+    - id: default
+      stroke: red
+      stroke-width: 0.7
+      opacity: 0.9
     - id: zone-1
-      colour: #A6D800
-      radius1: 19 %
-      radius2: 20 %
+      stroke: '#A6D800'
+      radius: 20 %
       angle1: 0
       angle2: 360
     - id: zone-2
-      colour: #A6D800
-      radius1: 39 %
-      radius2: 40 %
+      stroke: '#A6D800'
+      radius: 40 %
       angle1: 0
       angle2: 360
     - id: zone-3
-      colour: red
-      radius1: 59 %
-      radius2: 60 %
+      radius: 60 %
       angle1: 0
       angle2: 360
     - id: zone-4
-      colour: red
-      radius1: 79 %
-      radius2: 80 %
+      radius: 80 %
       angle1: 0
       angle2: 360
     - id: zone-5
-      colour: red
-      radius1: 99 %
-      radius2: 100 %
+      radius: 100 %
       angle1: 0
+      angle2: 360
+    spokes:
+    - id: default
+      stroke: black
+      stroke-width: 0.7
+    - id: spoke1a
+      angle: 0
+      radius1: 0
+      radius2: 100 %
+    - id: spoke1b
+      angle: 0
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke2a
+      angle: 40
+      radius1: 0
+      radius2: 100 %
+    - id: spoke2b
+      angle: 40
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke3a
+      angle: 80
+      radius1: 0
+      radius2: 100 %
+    - id: spoke3b
+      angle: 80
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke4a
+      angle: 120
+      radius1: 0
+      radius2: 100 %
+    - id: spoke4b
+      angle: 120
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke5a
+      angle: 160
+      radius1: 0
+      radius2: 100 %
+    - id: spoke5b
+      angle: 160
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke6a
+      angle: 200
+      radius1: 0
+      radius2: 100 %
+    - id: spoke6b
+      angle: 200
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke7a
+      angle: 240
+      radius1: 0
+      radius2: 100 %
+    - id: spoke7b
+      angle: 240
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke8a
+      angle: 280
+      radius1: 0
+      radius2: 100 %
+    - id: spoke8b
+      angle: 280
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    - id: spoke9a
+      angle: 320
+      radius1: 0
+      radius2: 100 %
+    - id: spoke9b
+      angle: 320
+      radius1: 100 %
+      radius2: 120 %
+      stroke-dasharray: 1
+    texts:
+    - id: default
+      radius: 103 %
+      fontSize: 9
+      opacity: 0 1 0
+    - id: climate-chage
+      text: Climate change
+      angle1: 0
+      angle2: 40
+    - id: ocean-acidification
+      text: Ocean acidification
+      angle1: 40
+      angle2: 80
+    - id: ozone-depletion-1
+      text: Stratospheric
+      radius: 111 %
+      angle1: 80
+      angle2: 120
+    - id: ozone-depletion-2
+      text: ozone depletion
+      angle1: 80
+      angle2: 120
+    - id: nk-cycle-1
+      radius: 126 %
+      text: Nitrogen
+      angle1: 120
+      angle2: 140
+    - id: nk-cycle-2
+      radius: 119 %
+      text: cycle
+      angle1: 120
+      angle2: 140
+    - id: nk-cycle-3
+      radius: 126 %
+      text: Phosphorous
+      angle1: 140
+      angle2: 160
+    - id: nk-cycle-4
+      radius: 119 %
+      text: cycle
+      angle1: 140
+      angle2: 160
+    - id: nk-cycle-5
+      radius: 110 %
+      text: (biogeochemical
+      angle1: 120
+      angle2: 160
+    - id: nk-cycle-6
+      text: flow boundary)
+      angle1: 120
+      angle2: 160
+    - id: freshwater-use-1
+      radius: 110 %
+      text: Global
+      angle1: 160
+      angle2: 200
+    - id: freshwater-use-2
+      text: freshwater use
+      angle1: 160
+      angle2: 200
+    - id: landuse-change
+      text: Change in land use
+      angle1: 200
+      angle2: 240
+    - id: biodiversity-loss
+      text: Biodiversity loss
+      angle1: 240
+      angle2: 280
+    - id: aerosol-loading-1
+      text: Atmospheric
+      radius: 117 %
+      angle1: 280
+      angle2: 320
+    - id: aerosol-loading-2
+      text: aerosol loading
+      radius: 110 %
+      angle1: 280
+      angle2: 320
+    - id: aerosol-loading-3
+      text: (not yet quantified)
+      angle1: 280
+      angle2: 320
+    - id: chemical-pollution-1
+      text: Ocean acidification
+      radius: 110 %
+      angle1: 320
+      angle2: 360
+    - id: chemical-pollution-2
+      text: (not yet quantified)
+      angle1: 320
       angle2: 360

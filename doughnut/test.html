@@ -30,7 +30,8 @@
 
   <button type="button" onclick="loadRecipe(1)">Recipe 1</button>
   <button type="button" onclick="loadRecipe(2)">Recipe 2</button>
-  <button type="button" onclick="loadRecipe(3)">Recipe 3</button>
+  <button type="button" onclick="loadRecipe(3)">Recipe 3</button> 
+  <button type="button" onclick="loadRockstrom()">Rockstrom</button>
 
   <div id="donut-div" style="width: 100%"></div>
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
@@ -49,27 +50,14 @@
   <!-- <script type="module">
     import roughjs from 'https://cdn.skypack.dev/roughjs'
   </script> -->
-  <!-- <script type="importmap">
-    {
-      "imports": {
-        "d3": "http://localhost:8080/src/d3.v7.js",
-        "js-yaml": "http://localhost:8080/src/js-yaml.mjs"
-      }
-    }
-  </script> -->
-  <script type="module">
-    // ###############
-    import { getProperties } from "./src/data-tests.js"
-    getProperties()
-    // ###############
 
+  <script type="module">
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
 
     //chart.fixGlobals({transition: 'no'})
-
     //chart.loadRecipe('./data/test1.yaml')
-    chart.fixGlobals({width_px: 600, height_px: 600})
+    //chart.fixGlobals({width_px: 600, height_px: 600})
 
     window.nextChart = function() {
       chart.displayNextChart()
@@ -88,7 +76,9 @@
       chart.loadRecipe(`./data/test${n}.yaml`)
     }
 
-    displayChart
+    window.loadRockstrom = function () {
+      chart.loadRecipe(`./data/rockstrom2009.yaml`)
+    }
   </script>
 </body>
 </html>

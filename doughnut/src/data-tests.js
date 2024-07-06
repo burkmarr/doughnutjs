@@ -12,20 +12,20 @@ const f = {
   },
   NumberNoMod: {
     re: ['^[-.0-9]+$', '^[-.0-9]+\\s+[-.0-9]+\\s+[-.0-9]+$'],
-    disp: ['n', 'n m', 'n n n', 'n n m'],
+    disp: ['n', 'n m', 'n n n', 'n n n m'],
     example: ['80', '80 %', '0 80 0', '0 80 0 %'],
     expl: 'Where n is a number and m is a modifier (x, % or r).'
   },
   zeroToOne: {
-    re: ['^[01]+$', '^0\.[0-9]$'],
-    disp: ['0 or 1', '0.d'],
-    example: ['0 or 1', '0.5'],
+    re: ['^[01]$|^0\.[0-9]$', '([01]|0\.[0-9])\\s+([01]|0\.[0-9])\\s+([01]|0\.[0-9])$'],
+    disp: ['0|1', '0.d', '0|1|0.d 0|1|0.d 0|1|0.d' ],
+    example: ['0', '0.5', '0 0.5 1'],
     expl: 'Where d is a single digit.'
   },
   colour: {
     re: ['^[a-z]+$', '^#?[A-Da-f0-9]{6}$', '^rgb\\((\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3})\\)$'],
     disp: ['named HTML color', 'hex color specification', 'rgb colour specification'],
-    example: ['magenta', '#B3C9F4', 'rgb(179,201,0)'],
+    example: ['magenta', '\'#B3C9F4\'', 'rgb(179,201,0)'],
     expl: ''
   },
   string: {
@@ -40,14 +40,20 @@ const f = {
     example: ['images/rockstrom-earth.png'],
     expl: ''
   },
+  text: {
+    re: ['^(?!\\s*$).+'],
+    disp: ['A string without spaces'],
+    example: ['Change in land use'],
+    expl: ''
+  }
 }
 
 // Error check definitions
-const  properties = [
+const properties = [
   {
     name: 'id',
     optionalOn: [],
-    mandatoryOn: ['images', 'arcs', 'arclines'],
+    mandatoryOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
     formats: f.string,
   },
   {
@@ -65,36 +71,36 @@ const  properties = [
   {
     name: 'radius',
     optionalOn: [],
-    mandatoryOn: ['images', 'arclines'],
+    mandatoryOn: ['images', 'arclines', 'texts'],
     formats: f.numberWithMod,
   },
   {
     name: 'radius1',
     optionalOn: [],
-    mandatoryOn: ['arcs'],
+    mandatoryOn: ['arcs', 'spokes'],
     formats: f.numberWithMod,
   },
   {
     name: 'radius2',
     optionalOn: [],
-    mandatoryOn: ['arcs'],
+    mandatoryOn: ['arcs', 'spokes'],
     formats: f.numberWithMod,
   },
   {
     name: 'angle',
     optionalOn: [],
-    mandatoryOn: ['images'],
+    mandatoryOn: ['images', 'spokes'],
     formats: f.NumberNoMod,
   },
   {
     name: 'angle1',
-    optionalOn: [],
+    optionalOn: ['texts'],
     mandatoryOn: ['arcs', 'arclines'],
     formats: f.NumberNoMod,
   },
   {
     name: 'angle2',
-    optionalOn: [],
+    optionalOn: ['texts'],
     mandatoryOn: ['arcs', 'arclines'],
     formats: f.NumberNoMod,
   },
@@ -106,7 +112,7 @@ const  properties = [
   },
   {
     name: 'opacity',
-    optionalOn: ['arcs'],
+    optionalOn: ['arcs', 'texts'],
     mandatoryOn: ['images', 'arclines'],
     formats: f.zeroToOne,
   },
@@ -119,23 +125,23 @@ const  properties = [
   {
     name: 'stroke',
     optionalOn: ['arcs'],
-    mandatoryOn: ['arclines'],
+    mandatoryOn: ['arclines', 'spokes'],
     formats: f.colour,
   },
   {
     name: 'stroke-width',
     optionalOn: ['arcs'],
-    mandatoryOn: ['arclines'],
+    mandatoryOn: ['arclines', 'spokes'],
     formats: f.NumberNoMod,
   },
   {
-    name: 'angle0',
-    optionalOn: [],
+    name: 'stroke-dasharray',
+    optionalOn: ['arcs', 'arclines', 'spokes'],
     mandatoryOn: [],
     formats: f.NumberNoMod,
   },
   {
-    name: 'angleSpan',
+    name: 'angle0',
     optionalOn: [],
     mandatoryOn: [],
     formats: f.NumberNoMod,
@@ -169,7 +175,19 @@ const  properties = [
     optionalOn: [],
     mandatoryOn: ['arcs'],
     formats: f.NumberNoMod,
-  }
+  },
+  {
+    name: 'text',
+    optionalOn: [],
+    mandatoryOn: ['texts'],
+    formats: f.text,
+  },
+  {
+    name: 'fontSize',
+    optionalOn: [],
+    mandatoryOn: ['texts'],
+    formats: f.NumberNoMod,
+  },
 ]
 
 export function getProperties () {

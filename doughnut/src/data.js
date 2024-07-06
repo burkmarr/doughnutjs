@@ -2,16 +2,13 @@ import { cloneObj } from './general.js'
 import { getProperties } from './data-tests.js'
 import { getArcParams } from './arcs.js'
 import { getArclineParams } from './arclines.js'
-import * as d3 from 'd3'
+import { getSpokeParams } from './spokes.js'
+import { getTextParams } from './texts.js'
 
-const elementTypes = ['arcs', 'arclines', 'images']
+const elementTypes = ['arcs', 'arclines', 'images', 'spokes', 'texts']
 
 export async function parseRecipe(data, errHtmlEl) {
  
-  let allPromises = [] // For the return value
-
-  // Resolve cloned charts
-
   // Top level default values
   dv(data, 'globals', {})
   dv(data, 'defaults', {})
@@ -21,7 +18,7 @@ export async function parseRecipe(data, errHtmlEl) {
   dv(data.globals, 'duration', 1000)
   dv(data.globals, 'transition', 'yes')
 
-  // These are given defaults so we do 
+  // We provide these defaults so we do 
   // not have to check for them
   dv(data.defaults, 'angle0', 0)
   dv(data.defaults, 'angleSpan', 360)
@@ -41,10 +38,10 @@ export async function parseRecipe(data, errHtmlEl) {
   // Need to check that charts have id property
 
   // Validate property value formats and return if fails
-  if (!validateProps(data, errHtmlEl)) return Promise.all(allPromises)
+  if (!validateProps(data, errHtmlEl)) return
   
-  // Highlight unpermitted properties
-  if (!unpermittedProps(data, errHtmlEl)) return Promise.all(allPromises)
+  // Highlight unpermitted properties and return if fails
+  if (!unpermittedProps(data, errHtmlEl)) return
 
   // Resolve clones
   resolveClones(data)
@@ -53,24 +50,16 @@ export async function parseRecipe(data, errHtmlEl) {
   propogateDefaultProps(data)
 
   // Find missing values
-  if (!missingProps(data, errHtmlEl)) return Promise.all(allPromises)
-
-  // Remove remove unpermitted properties
-  // I DONT think I should implement this
-  // Safer not to and shouldn't have any implications for
-  // user or performance
-  //unpermittedProps(data)
+  if (!missingProps(data, errHtmlEl)) return
 
   // Resolve all the number formats
-  resolveNumericFormats(data, data)
+  resolveNumericFormats(data)
 
   // Initialise additional properties required for tweening
   initialiseTweenProps(data)
 
   // Record the aspect ratio of any images
-  allPromises = [...allPromises, ...recordImageAspectRatio(data)]
-
-  await Promise.all(allPromises)
+  await Promise.all(recordImageAspectRatio(data))
 }
 
 function dv(obj, prop, value) {
@@ -80,7 +69,15 @@ function dv(obj, prop, value) {
   }
 }
 
-function resolveNumericFormats (data, obj) {
+//function resolveNumericFormats (data, obj) {
+function resolveNumericFormats (obj) {
+
+  // This function is called recursively
+  // for each object in recipe
+
+  //console.log('obj', obj)
+  //console.log('data', data)
+
   // ### TODO ###
   // Surely the following array should go in data-tests.js
   // or maybe whole function?
@@ -100,9 +97,15 @@ function resolveNumericFormats (data, obj) {
     ['colour', 's'],
     ['stroke', 's'],
     ['stroke-width', 'n'],
+    ['fontSize', 'n'],
     // ['stroke-dasharray', 's']
   ]
+  //console.log('keys',  Object.keys(obj))
   Object.keys(obj).forEach(key => {
+
+    // if (obj.id === 'spoke1a' && key === 'angle') {
+    //   console.log('obj', {...obj})
+    // }
 
     const keyMatch = keys.find(ki => ki[0] === key)
     
@@ -112,19 +115,20 @@ function resolveNumericFormats (data, obj) {
 
       if (!Array.isArray(obj[key])) {
 
+        // Convert all number properties to strings
         if (typeof obj[key] === 'number') {
           obj[key] = obj[key].toString()
         }
 
+        // Extract any modifier and remove from values.
         const vals = obj[key].split(' ')
-
         let modifier
         if (vals[vals.length-1] === '%' || vals[vals.length-1] === 'x' || vals[vals.length-1] === 'r') {
           modifier = vals[vals.length-1]
           vals.pop()
         }
       
-        // At this point, vals should either be of length one or three
+        // At this point, vals should either be of length one or three.
         // If anything else, act as if it is one.
         const newVal = []
         if (vals.length === 3) {
@@ -141,11 +145,19 @@ function resolveNumericFormats (data, obj) {
       }
     }
     if (typeof obj[key] === 'object' && obj[key] !== null) {
-      resolveNumericFormats(data, obj[key])
+      //resolveNumericFormats(data, obj[key])
+      resolveNumericFormats(obj[key])
     }
   })
 
   function convertValue(val, modifier, type) {
+
+    // This function converts values based on their modifier (if any)
+    // and their type.
+    // Modifiers:
+    //   r: values expressed in real world units
+    //   %: values expressed as percentage
+    //   x: values expressed as multipliers
 
     let ret
     let multiplier
@@ -178,6 +190,7 @@ function resolveNumericFormats (data, obj) {
       // Value expressed directly
       ret =  Number(val)
     }
+    // For angles, add the offset angle
     if (type === 'deg') {
       ret = ret + Number(obj.angle0)
     }
@@ -186,6 +199,8 @@ function resolveNumericFormats (data, obj) {
 }
 
 function resolveClones (data) {
+  // A cloned chart allows a chart in a recipe to be based on
+  // another in the recipe and then modify slightly.
   data.charts.forEach(chart => {
     if (chart.clone) {
       const toChart = chart
@@ -195,7 +210,7 @@ function resolveClones (data) {
       //console.log('toChart', cloneObj(toChart))
 
       if (fromChart) {
-        const types = ['defaults', 'images', 'arcs', 'arclines']
+        const types = ['defaults', 'images', 'arcs', 'arclines', 'spokes', 'texts']
         types.forEach(elementType => {
           const fromChartElements = fromChart[elementType]
           let toChartElements = toChart[elementType]
@@ -244,7 +259,7 @@ function resolveClones (data) {
 
 function propogateDefaultProps(data) {
   // Works by propogating all defaults whether or not they are permitted on
-  // on an element type and later clearing out those that are not.
+  // on an element type.
   // Another way of doing it would be to limit the propogation of defaults to those elements
   // that are allowed to have them. 
   const recipeDefaults = data.defaults
@@ -476,6 +491,20 @@ function initialiseTweenProps(data) {
     })
   })
 
+  // Initialise the currentSpokeParams property
+  data.charts.forEach(chart => {
+    chart.spokes.forEach(spoke => {
+      spoke.currentSpokeParams = getSpokeParams(spoke, 0)
+    })
+  })
+
+  // Initialise the currentTextParams property
+  data.charts.forEach(chart => {
+    chart.texts.forEach(text => {
+      text.currentTextParams = getTextParams(text, 0)
+    })
+  })
+  
   // Initialise the currentImageParams property
   data.charts.forEach(chart => {
     chart.images.forEach(image => {
@@ -500,7 +529,6 @@ function recordImageAspectRatio(data) {
       }
     })
   })
-
   return allPromises
 
   function getImageWidth(src, dataImage){

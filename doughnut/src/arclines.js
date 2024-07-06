@@ -54,36 +54,6 @@ export function createArclineElements(g, arclines, trans, currentArclineParams) 
   }
 }
 
-export function arcLine(arclineParams) {
-  const as = Math.round(arclineParams.startAngle * 180 / Math.PI)
-  const ae = Math.round(arclineParams.endAngle * 180 / Math.PI)
-
-  // Using path Arc generator problematic because when you do a full cirlce,
-  // it disappears - so you can only do 0-359 which leaves a gap
-  // const largeArcFlag = (ae - as) > 180 || ae > 360 && ae - 360 === es ? 1 : 0
-  // const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
-  // const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
-  // const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
-  // const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
-  // const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
-
-  // Instead calcualted circles and arcs directly
-  let path = ''
-  for (var i = as; i <= ae; i++) {
-
-    var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
-    var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
-
-    if (!path) {
-      path = `M${x} ${y}`
-    } else {
-      path = `${path} L${x} ${y}`
-    }
-  }
-  path = `${path}`
-  return path
-}
-
 export function initialiseArclineParameters (arclines, currentArclineParams) {
   // For all arclines, update currentArclineParams if an arcline
   // with that id has already been used
@@ -107,4 +77,34 @@ export function getArclineParams (d, i) {
     startAngle: (d.angle1[i] - 90) * Math.PI / 180,
     endAngle: (d.angle2[i] - 90) * Math.PI / 180
   }
+}
+
+function arcLine(arclineParams) {
+  const as = Math.round(arclineParams.startAngle * 180 / Math.PI)
+  const ae = Math.round(arclineParams.endAngle * 180 / Math.PI)
+
+  // Using SVG path Arc generator problematic because when you do a full cirlce,
+  // it disappears - so you can only do 0-359 which leaves a gap
+  // const largeArcFlag = (ae - as) > 180 || ae > 360 && ae - 360 === es ? 1 : 0
+  // const x1 = arclineParams.radius * Math.cos(arclineParams.startAngle)
+  // const y1 = arclineParams.radius * Math.sin(arclineParams.startAngle)
+  // const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
+  // const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
+  // const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
+
+  // Instead calcualted circles and arcs directly
+  let path = ''
+  for (var i = as; i <= ae; i++) {
+
+    var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
+    var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
+
+    if (!path) {
+      path = `M${x} ${y}`
+    } else {
+      path = `${path} L${x} ${y}`
+    }
+  }
+  path = `${path}`
+  return path
 }

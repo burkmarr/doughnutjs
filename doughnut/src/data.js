@@ -45,7 +45,7 @@ export async function parseRecipe(data, errHtmlEl) {
 
   // Resolve clones
   resolveClones(data)
- 
+
   // Propagate default values
   propogateDefaultProps(data)
 
@@ -75,11 +75,8 @@ function resolveNumericFormats (obj) {
   // This function is called recursively
   // for each object in recipe
 
-  //console.log('obj', obj)
-  //console.log('data', data)
-
   // ### TODO ###
-  // Surely the following array should go in data-tests.js
+  // Should the following array should go in data-tests.js
   // or maybe whole function?
   const keys = [
     ['cornerRadius', 'n'],
@@ -96,9 +93,14 @@ function resolveNumericFormats (obj) {
     ['opacity', 'n'],
     ['colour', 's'],
     ['stroke', 's'],
-    ['stroke-width', 'n'],
+    ['strokeWidth', 'n'],
     ['fontSize', 'n'],
-    // ['stroke-dasharray', 's']
+    ['strokeDasharray', 's'],
+    ['fontWeight', 'n'] // Mabey make this non threeable but will need to change code for it in text.js if so
+    // fontColour', 's']
+    // fontStyle - cannot be set of three
+    // fontFamily - cannot be set of three
+
   ]
   //console.log('keys',  Object.keys(obj))
   Object.keys(obj).forEach(key => {
@@ -128,13 +130,17 @@ function resolveNumericFormats (obj) {
           vals.pop()
         }
       
-        // At this point, vals should either be of length one or three.
+        // At this point, vals should either be of length one, two or three.
         // If anything else, act as if it is one.
         const newVal = []
         if (vals.length === 3) {
           newVal[0] = convertValue(vals[0], modifier, type)
           newVal[1] = convertValue(vals[1], modifier, type)
           newVal[2] = convertValue(vals[2], modifier, type)
+        } else if (vals.length === 2) {
+          newVal[0] = convertValue(vals[0], modifier, type)
+          newVal[1] = convertValue(vals[1], modifier, type)
+          newVal[2] = convertValue(vals[1], modifier, type)
         } else {
           newVal[0] = convertValue(vals[0], modifier, type)
           newVal[1] = convertValue(vals[0], modifier, type)
@@ -206,11 +212,21 @@ function resolveClones (data) {
       const toChart = chart
       const fromChart = data.charts.find(c => c.id === chart.clone)
 
-      //console.log('fromChart', cloneObj(fromChart))
-      //console.log('toChart', cloneObj(toChart))
-
       if (fromChart) {
-        const types = ['defaults', 'images', 'arcs', 'arclines', 'spokes', 'texts']
+        // Clone any chart default values
+        if (fromChart.defaults) {
+          if (!toChart.defaults) {
+            toChart.defaults = fromChart.defaults
+          } else {
+            Object.keys(fromChart.defaults).forEach(k => {
+              if (typeof toChart.defaults[k] === 'undefined') {
+                toChart.defaults[k] = fromChart.defaults[k]
+              }
+            })
+          }
+        }
+        // Now do element types
+        const types = ['images', 'arcs', 'arclines', 'spokes', 'texts']
         types.forEach(elementType => {
           const fromChartElements = fromChart[elementType]
           let toChartElements = toChart[elementType]
@@ -218,28 +234,39 @@ function resolveClones (data) {
           if (fromChartElements) {
             let toChartElementsCloned
             if (toChartElements) {
-              // Clone the target array element array
+              // Clone the target chart current element array
               toChartElementsCloned = cloneObj(toChartElements)
-              //console.log('toChartElementsCloned', cloneObj(toChartElementsCloned))
             }
 
+            // if (toChart.id === 'rockstrom2009c') {
+            //   console.log('toChartElementsCloned', toChartElementsCloned)
+            // }
+
             // First copy entire element type array from source to target
+            // replacing any elements already there (stored in toChartElementsCloned)
             data.charts.find(c => c.id === toChart.id)[elementType] = cloneObj(fromChartElements)
             toChartElements = toChart[elementType]
 
-            //console.log('toChart', cloneObj(toChart))
-            //console.log('toChartElements', cloneObj(toChartElements))
-
             if (toChartElementsCloned) {
-              // Now loop through the elements previously cloned from target and
-              // Update in the copied,
+              // Now loop through the elements that were already existing in the target
+              // and either replace the value of the copied properties or remove the
+              // element if this is indicated.
               toChartElementsCloned.forEach(toChartElementCloned => {
-                const toChartElement = toChartElements.find(toChartElement => toChartElement.id === toChartElementCloned.id)
+                const toChartElement = toChart[elementType].find(toChartElement => toChartElement.id === toChartElementCloned.id)
                 if (toChartElement) {
-                  //console.log('toChartElement', cloneObj(toChartElement))
-                  Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
-                    toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
-                  })
+                  if (toChartElementCloned.remove === true) {
+                    // The element is marked for removal in target chart.
+                    toChart[elementType] = toChart[elementType].filter( toChartElement => toChartElement.id !== toChartElementCloned.id)
+                  } else {
+                    // Replace any existing properties in toChartElement (the copied element)
+                    // with any that were already specified.
+                    Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
+                      toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
+                    })
+                  }
+                } else {
+                  // The element in toChartElementsCloned is a completely new one
+                  toChart[elementType].push(toChartElementCloned)
                 }
               })
             }
@@ -249,9 +276,9 @@ function resolveClones (data) {
             delete toChart[elementType]
           }
         })
-        //console.log('toChart', toChart)
       } else {
         // Referenced clone id not found - need to warm
+        console.log('Clone target identified by id', chart.clone, 'not found')
       }
     }
   })
@@ -268,11 +295,10 @@ function propogateDefaultProps(data) {
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
         const defaults = chart[elementType].find(e => e.id === 'default')
-        // console.log('defaults1', defaults)
-        // console.log('defaults0', data.defaults)
-        chart[elementType].forEach(element => {
-          if (defaults && element.id !== 'default') {
-            // Element collection defaults
+        chart[elementType].filter(element => element.id !== 'default').forEach(element => {
+
+          // Element collection defaults
+          if (defaults) {
             Object.keys(defaults).forEach(elementDefault => {
               // If the default does not exist on the element then add.
               if (!element[elementDefault]) {
@@ -292,7 +318,6 @@ function propogateDefaultProps(data) {
             Object.keys(recipeDefaults).forEach(recipeDefault => {
               // If the recipe default does not exist on the element then add.
               if (!element[recipeDefault]) {
-                //console.log('Updating with recipe default', chart.id, elementType, element.id, recipeDefault, recipeDefaults[recipeDefault])
                 element[recipeDefault] = recipeDefaults[recipeDefault]
               }
             })
@@ -336,7 +361,6 @@ function validateProps(data, errHtmlEl) {
               if (property === propDef.name) {
                 //console.log(chart.id, elementType, element.id, property, element[property])
                 let permittedFormat = false
-
                 for (let i=0; i<propDef.formats.re.length; i++) {
                   const regex = new RegExp(propDef.formats.re[i])
                   if (regex.test(element[property])) {
@@ -454,8 +478,7 @@ function unpermittedProps(data, errHtmlEl) {
           Object.keys(element).forEach(property => {
             if (!permittedElementProps.find(permittedProperty => permittedProperty === property)) {
               //console.log(`${property} not permitted on ${elementType}`)
-              console.log('errHtmlEl', errHtmlEl)
-
+              //console.log('errHtmlEl', errHtmlEl)
               if (errHtmlEl) {
                 const row = errHtmlEl.append('tr')
                 row.append('td').text(chart.id)

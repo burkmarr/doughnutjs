@@ -25,14 +25,14 @@ export function createTextElements(g, texts, trans, currentTextParams) {
       enter => {
         const sel = enter.append('text')
           .classed('text-text', true)
-          .style('font-family', 'arial')
-          .style('filter', 'url(#whiteOutlineEffect)')
+          .style('font-family', d => d.fontFamily)
+          .style('font-style', d => d.fontStyle) 
+          .style('filter', d => `url(#${d.fontFilter})`)
         sel.append('textPath') 
           .text(d => d.text)
           .attr('xlink:href', d => `#text-path-${d.id}`) 
           .style('text-anchor','middle') 
           .attr('startOffset', '50%')
-
         return textTextCommonAttrs(sel, 0)
       },
       update => update,
@@ -76,10 +76,9 @@ export function createTextElements(g, texts, trans, currentTextParams) {
   function textTextCommonAttrs(selection, i) {
     selection
       .style('opacity', d => d.opacity ? d.opacity[i] : null)
-      .attr('font-size', d => {
-        console.log(i, d.fontSize[i])
-        return d.fontSize[i]
-      })
+      .style('font-weight', d => d.fontWeight)
+      .style('font-size', d => d.fontSize[i])
+      .style('fill', d => d.fontColour)
 
     return selection
   }
@@ -107,8 +106,6 @@ export function getTextParams (d, i) {
     radius: d.radius[i],
     startAngle: (d.angle1[i] - 90) * Math.PI / 180,
     endAngle: (d.angle2[i] - 90) * Math.PI / 180,
-    opacity: d.opacity ? d.opacity[i] : null,
-    fontSize: d.fontSize[i]
   }
 }
 

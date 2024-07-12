@@ -70,7 +70,7 @@ charts:
     arclines:
     - id: default
       stroke: red
-      stroke-width: 1
+      strokeWidth: 1
       opacity: 1
     - id: zone-1
       stroke: '#A6D800'

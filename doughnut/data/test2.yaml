@@ -33,7 +33,7 @@ charts:
     arclines: 
     - id: 'default'
       stroke: red
-      stroke-width: 3
+      strokeWidth: 3
       opacity: 1
     - id: zone-3
       radius: 100 %

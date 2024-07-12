@@ -27,8 +27,6 @@ export async function doughnut({
 
     if (!recipeParsed) return
 
-    console.log("Display chart", iChart)
-
     svgWidth = getGlobal('width_px')
     svgHeight = getGlobal('height_px')
     
@@ -87,7 +85,7 @@ export async function doughnut({
 
   function getGlobal(k) {
 
-    console.log(k, fixedGlobals)
+    //console.log(k, fixedGlobals)
     if (typeof(fixedGlobals[k]) !== 'undefined') {
       // There's a value for this key in fixedGlobals
       return fixedGlobals[k]

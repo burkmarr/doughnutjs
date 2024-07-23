@@ -22,6 +22,23 @@ globals:
               <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+    - def: |
+        <radialGradient id="rockred" cx="0" cy="0" fr="200" r="230" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="red" />
+          <stop offset="100%" stop-color="white" />
+        </radialGradient>
+    - def: |
+        <radialGradient id="stockorange" cx="0" cy="0" fr="0" r="190" gradientUnits="userSpaceOnUse">
+          <stop offset="30%" stop-color="#FBA733" />
+          <stop offset="100%" stop-color="#FD6F43" />
+        </radialGradient>
+    - def: |
+        <radialGradient id="stockgrey" cx="0" cy="0" fr="0" r="190" gradientUnits="userSpaceOnUse">
+          <stop offset="30%" stop-color="rgb(210,210,210)" />
+          <stop offset="80%" stop-color="white" />
+        </radialGradient>
+
+        
 charts:
   - id: rockstrom2009a
     defaults:
@@ -41,7 +58,7 @@ charts:
     arcs:
     - id: default
       opacity: 0.6
-      colour: red
+      colour: def-rockred
       radius1: 0
     - id: safe-zone
       colour: '#6D9100'
@@ -120,22 +137,22 @@ charts:
       radius2: 0 40 %
       angle1: 6 x
       angle2: 7 x
-    - id: aerosol-1
-      radius2: 0
-      angle1: 7 x
-      angle2: 8 x
-    - id: aerosol-1-i
-      radius2: 0
-      angle1: 7 x
-      angle2: 8 x
-    - id: novel-1
-      radius2: 0
-      angle1: 8 x
-      angle2: 9 x
-    - id: novel-1-i
-      radius2: 0
-      angle1: 8 x
-      angle2: 9 x
+    # - id: aerosol-1
+    #   radius2: 0
+    #   angle1: 7 x
+    #   angle2: 8 x
+    # - id: aerosol-1-i
+    #   radius2: 0
+    #   angle1: 7 x
+    #   angle2: 8 x
+    # - id: novel-1
+    #   radius2: 0
+    #   angle1: 8 x
+    #   angle2: 9 x
+    # - id: novel-1-i
+    #   radius2: 0
+    #   angle1: 8 x
+    #   angle2: 9 x
     arclines: 
     - id: default
       stroke: red
@@ -378,18 +395,6 @@ charts:
     - id: biosphere-1-i
       angle1: 7 x
       angle2: 8 x
-    - id: aerosol-1
-      angle1: 2 x
-      angle2: 3 x
-    - id: aerosol-1-i
-      angle1: 2 x
-      angle2: 3 x
-    - id: novel-1
-      angle1: 9 x
-      angle2: 10 x
-    - id: novel-1-i
-      angle1: 9 x
-      angle2: 10 x
     texts:
     - id: climate-1
       text: Climate change
@@ -462,7 +467,7 @@ charts:
       angle: 0
     arcs:
     - id: default
-      colour: '#FAA235'
+      colour: def-stockorange
     - id: safe-zone
       remove: true
     - id: climate-1
@@ -485,13 +490,27 @@ charts:
       colour: '#009B2F'
     - id: biosphere-1
       opacity: 1
-      radius2: 120 %
+      radius2: 130 %
     - id: biosphere-1-i
       colour: '#009B2F'
+    - id: aerosol-1
+      angle1: 2 x
+      angle2: 3 x
+      colour: def-stockgrey
+      radius2: 0 120 0 %
     - id: aerosol-1-i
-      colour: '#009B2F'
+      angle1: 2 x
+      angle2: 3 x
+      radius2: 0
+    - id: novel-1
+      angle1: 9 x
+      angle2: 10 x
+      colour: def-stockgrey
+      radius2: 0 120 9 %
     - id: novel-1-i
-      colour: '#009B2F'
+      angle1: 9 x
+      angle2: 10 x
+      radius2: 0
     arclines:
     - id: zone-1
       remove: true
@@ -506,7 +525,7 @@ charts:
       remove: true
     spokes:
     - id: spoke1b
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke2b
       remove: true
     - id: spoke3b
@@ -524,23 +543,23 @@ charts:
     - id: spoke9b
       remove: true
     - id: spoke1a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke2a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke3a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke4a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke5a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke6a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke7a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke8a
-      radius2: 120 %
+      radius2: 135 %
     - id: spoke9a
-      radius2: 120 % 
+      radius2: 135 % 
     texts:
     - id: safe-space
       radius: 35 %

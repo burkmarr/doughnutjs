@@ -2,8 +2,6 @@ import * as d3 from 'd3'
 
 export function createTextElements(g, texts, trans, currentTextParams, globals) {
 
-  console.log('textglobals1', globals)
-
   // Text paths
   g.selectAll('.path-text')
     .data(texts, d => d.id)
@@ -131,6 +129,10 @@ export function getTextParams (d, i) {
 }
 
 function getTextPath(d, textParams, globals) {
+
+  // Todo - path style tan
+  // https://www.bbc.co.uk/bitesize/guides/zc62srd/revision/6
+  
   if (d.textPathStyle === 'arc') {
     return getArcPath(d, textParams)
   } else {

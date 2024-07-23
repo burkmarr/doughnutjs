@@ -33,9 +33,9 @@ const f = {
     expl: 'Where d is a single digit.'
   },
   colour: {
-    re: ['^[a-z]+$', '^#?[A-Fa-f0-9]{6}$', '^rgb\\((\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3})\\)$'],
-    disp: ['named HTML color', 'hex color specification', 'rgb colour specification'],
-    example: ['magenta', '\'#B3C9F4\'', 'rgb(179,201,0)'],
+    re: ['^[a-z]+$', '^#?[A-Fa-f0-9]{6}$', '^rgb\\((\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3})\\)$', '^def-[a-z]+$'],
+    disp: ['named HTML colour', 'hex colour specification', 'rgb colour specification', 'colour definition name'],
+    example: ['magenta', '\'#B3C9F4\'', 'rgb(179,201,0)', 'def-rockred'],
     expl: ''
   },
   string: {

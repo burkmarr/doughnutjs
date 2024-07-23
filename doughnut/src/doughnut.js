@@ -79,7 +79,7 @@ export async function doughnut({
 
     // Create elements
     createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
-    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
+    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs, svg)
     createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
     createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
     createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts, recipe.globals)

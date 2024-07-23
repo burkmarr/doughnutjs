@@ -55,10 +55,6 @@
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
 
-    //chart.fixGlobals({transition: 'no'})
-    //chart.loadRecipe('./data/test1.yaml')
-    //chart.fixGlobals({width_px: 600, height_px: 600})
-
     window.nextChart = function() {
       chart.displayNextChart()
     }
@@ -70,13 +66,12 @@
     }
 
     window.loadRecipe = function(n) {
-      if (n === 3) {
-        chart.fixGlobals({width_px: null, height_px: null})
-      }
+      chart.overrideGlobals({width_px: 600, height_px: 600})
       chart.loadRecipe(`./data/test${n}.yaml`)
     }
 
     window.loadRockstrom = function () {
+      chart.overrideGlobals({width_px: null, height_px: null})
       chart.loadRecipe(`./data/rockstrom2009.yaml`)
     }
   </script>

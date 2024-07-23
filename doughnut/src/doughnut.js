@@ -27,10 +27,10 @@ export async function doughnut({
 
     if (!recipeParsed) return
 
-    svgWidth = getGlobal('width_px')
-    svgHeight = getGlobal('height_px')
+    svgWidth = recipe.globals['width_px']
+    svgHeight = recipe.globals['height_px']
     
-    if (svg && getGlobal('transition') !== 'yes') {
+    if (svg && recipe.globals['transition'] !== 'yes') {
       svg.remove()
       svg = null
     }
@@ -42,7 +42,9 @@ export async function doughnut({
         .style('overflow', 'visible')
 
       // Add any defs defined in recipe to SVG
-      recipe.globals.defs.forEach(d => addDef(svg, d.def))
+      if (recipe.globals.defs) {
+        recipe.globals.defs.forEach(d => addDef(svg, d.def))
+      }
 
       gAll = svg.append('g')
       gImages = gAll.append('g') // Not centred because that is done indepedently
@@ -66,8 +68,8 @@ export async function doughnut({
     
     const trans = svg.transition().duration(0).ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
-    if (getGlobal('transition') === 'yes') {
-      trans.duration(getGlobal('duration'))
+    if (recipe.globals['transition'] === 'yes') {
+      trans.duration(recipe.globals['duration'])
     } else {
 
     }
@@ -80,20 +82,7 @@ export async function doughnut({
     createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
     createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
     createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
-    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts)
-  }
-
-  function getGlobal(k) {
-
-    //console.log(k, fixedGlobals)
-    if (typeof(fixedGlobals[k]) !== 'undefined') {
-      // There's a value for this key in fixedGlobals
-      return fixedGlobals[k]
-    } else {
-      // There's always a value in the recipe because software provides default
-      // if not specified.
-      return recipe.globals[k]
-    }
+    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts, recipe.globals)
   }
 
   // API //
@@ -150,6 +139,11 @@ export async function doughnut({
 
     parseRecipe(recipe, errHtmlEl)
 
+    // Update globals with fixed globals if set
+    Object.keys(fixedGlobals).forEach(k => {
+      recipe.globals[k] = fixedGlobals[k]
+    })
+
     if (errHtmlEl.selectAll('tr').size() > 1) {
       // There are errors
       errorDiv.style('display', '')
@@ -164,16 +158,13 @@ export async function doughnut({
     }
   }
 
-  function fixGlobals(globals) {
-    // The purpose of this API function is to fix
-    // global values so that they persist over invocations
-    // of different charts within a recipe or between
-    // recipes.
+  function overrideGlobals(globals) {
+    // The purpose of this API function is to allow recipe
+    // global values so be overriden and therefore
+    // persist over invocations of charts between recipes.
     Object.keys(globals).forEach(k => {
       if (typeof(fixedGlobals[k]) !== 'undefined') {
         // Value currently set for this key in fixedGlobals
-
-        //console.log(k, globals[k], globals)
         if (globals[k] === null) {
           // Passed value is null - unset the fGlobal value
           delete fixedGlobals[k]
@@ -193,7 +184,7 @@ export async function doughnut({
 
   return {
     loadRecipe: loadRecipe,
-    fixGlobals: fixGlobals,
+    overrideGlobals: overrideGlobals,
     displayChart: displayChart,
     displayNextChart: displayNextChart,
     displayPreviousChart: displayPreviousChart

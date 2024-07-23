@@ -5,50 +5,31 @@ globals:
   transition: yes
   defs:
     - def: |
-        <filter id="whiteOutlineEffect" color-interpolation-filters="sRGB">
+        <filter id="whiteOutline" color-interpolation-filters="sRGB">
           <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="1" />
-
           <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0"/>
-          
           <feMerge>
             <feMergeNode in="WHITENED"/>
             <feMergeNode in="SourceGraphic"/>
           </feMerge>
         </filter>
     - def: |
-        <filter id="blackOutlineEffect">
+        <filter id="greyOutline">
           <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="0.5" />
-          
-          <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 1 0"/>
-
+          <feColorMatrix in="MORPH" result="OUTLINE" type="matrix" values="0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 1 0"/>
           <feMerge>
               <feMergeNode in="OUTLINE" />
               <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-    - def: |
-        <filter id="greenOutlineEffect">
-          <feMorphology in="SourceAlpha" result="MORPH" operator="dilate" radius="1" />
-          
-          <feColorMatrix in="MORPH" result="WHITENED" type="matrix" values="0 0 0 0 0, 1 1 1 1 0, 0 0 0 0 0, 0 0 0 1 0"/>
-
-          <feMerge>
-              <feMergeNode in="OUTLINE" />
-              <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-# defaults:
-#   angle0: -20 # Base angle from which others are measured, e.g. -20
-#   angleSpan: 40 # Angle unit to use for multiplier or percentage, e.g. 45
-#   radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage, e.g. 150
-#   radiusSpanReal: 400 # Real world units corresponding to 1 pixel unit, e.g. 400
 charts:
-  - id: rockstrom2009
+  - id: rockstrom2009a
     defaults:
       angle0: -20 # Base angle from which others are measured, e.g. -20
       angleSpan: 40 # Angle unit to use for multiplier or percentage, e.g. 45
       radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage, e.g. 150
       radiusSpanReal: 400 # Real world units corresponding to 1 pixel unit, e.g. 400
+      textOffsetSpanPx: 10 # Pixel unit to use for multiplier or percentage for text offsets, e.g. 10
     images:
     - id: earth 
       location: images/rockstrom-earth.png
@@ -193,7 +174,7 @@ charts:
       radius2: 100 %
     - id: spoke1b
       angle: 0
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke2a
@@ -202,7 +183,7 @@ charts:
       radius2: 100 %
     - id: spoke2b
       angle: 1 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke3a
@@ -211,7 +192,7 @@ charts:
       radius2: 100 %
     - id: spoke3b
       angle: 2 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke4a
@@ -220,7 +201,7 @@ charts:
       radius2: 100 %
     - id: spoke4b
       angle: 3 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke5a
@@ -229,7 +210,7 @@ charts:
       radius2: 100 %
     - id: spoke5b
       angle: 4 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke6a
@@ -238,7 +219,7 @@ charts:
       radius2: 100 %
     - id: spoke6b
       angle: 5 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke7a
@@ -247,7 +228,7 @@ charts:
       radius2: 100 %
     - id: spoke7b
       angle: 6 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke8a
@@ -256,7 +237,7 @@ charts:
       radius2: 100 %
     - id: spoke8b
       angle: 7 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     - id: spoke9a
@@ -265,104 +246,84 @@ charts:
       radius2: 100 %
     - id: spoke9b
       angle: 8 x
-      radius1: 100 %
+      radius1: 100 100 120 %
       radius2: 120 %
       strokeDasharray: 1
     texts:
     - id: default
       radius: 103 %
       fontSize: 9
-      fontFamily: arial
-      fontFilter: whiteOutlineEffect
+      fontFilter: whiteOutline
       opacity: 0 1 0
     - id: climate-1
       text: Climate change
-      angle1: 9 x
-      angle2: 10 x
+      angle: 9.5 x
     - id: ocean-1
       text: Ocean acidification
-      angle1: 1 x
-      angle2: 2 x
+      angle: 1.5 x
     - id: ozone-1-a
       text: Stratospheric
-      radius: 111 %
-      angle1: 2 x
-      angle2: 3 x
+      angle: 2.5 x
+      textOffset: 1 x
     - id: ozone-1-b
       text: ozone depletion
-      angle1: 2 x
-      angle2: 3 x
+      angle: 2.5 x
     - id: biochem-1-a
-      radius: 126 %
       text: Nitrogen
-      angle1: 3 x
-      angle2: 3.5 x
+      textOffset: 3.3 x
+      angle: 3.25 x
     - id: biochem-1-b
-      radius: 119 %
       text: cycle
-      angle1: 3 x
-      angle2: 3.5 x
+      textOffset: 2.3 x
+      angle: 3.25 x
     - id: biochem-2-a
-      radius: 126 %
       text: Phosphorous
-      angle1: 3.5 x
-      angle2: 4 x
+      textOffset: 3.3 x
+      angle: 3.75 x
     - id: biochem-2-b
-      radius: 119 %
       text: cycle
-      angle1: 3.5 x
-      angle2: 4 x
+      textOffset: 2.3 x
+      angle: 3.75 x
     - id: biochem-0-a
-      radius: 110 %
       text: (biogeochemical
-      angle1: 3 x
-      angle2: 4 x 
+      textOffset: 1 x
+      angle: 3.5 x
     - id: biochem-0-b
       text: flow boundary)
-      angle1: 3 x
-      angle2: 4 x
+      angle: 3.5 x
     - id: freshwater-1-a
-      radius: 110 %
       text: Global
-      angle1: 4 x
-      angle2: 5 x
+      textOffset: 1 x
+      angle: 4.5 x
     - id: freshwater-1-b
       text: freshwater use
-      angle1: 4 x
-      angle2: 5 x
+      angle: 4.5 x
     - id: land-systems-1
       text: Change in land use
-      angle1: 5 x
-      angle2: 6 x
+      angle: 5.5 x
     - id: biosphere-1
       text: Biodiversity loss
-      angle1: 6 x
-      angle2: 7 x
+      angle: 6.5 x
     - id: aerosol-1-a
       text: Atmospheric
-      radius: 117 %
-      angle1: 7 x
-      angle2: 8 x
+      textOffset: 2 x
+      angle: 7.5 x
     - id: aerosol-1-b
       text: aerosol loading
-      radius: 110 %
-      angle1: 7 x
-      angle2: 8 x
+      textOffset: 1 x
+      angle: 7.5 x
     - id: aerosol-1-c
       text: (not yet quantified)
-      angle1: 7 x
-      angle2: 8 x
+      angle: 7.5 x
     - id: novel-1-a
       text: Chemical pollution
-      radius: 110 %
-      angle1: 8 x
-      angle2: 9 x
+      textOffset: 1 x
+      angle: 8.5 x
     - id: novel-1-b
       text: (not yet quantified)
-      angle1: 8 x
-      angle2: 9 x
+      angle: 8.5 x
   - id: rockstrom2009b
-    clone: rockstrom2009
+    clone: rockstrom2009a
     defaults:
       angle0: 0
     images:
@@ -432,91 +393,62 @@ charts:
     texts:
     - id: climate-1
       text: Climate change
-      angle1: 8 x
-      angle2: 9 x
+      angle: 8.5 x
     - id: ocean-1
       text: Ocean acidification
-      angle1: 3 x
-      angle2: 4 x
+      angle: 3.5 x
     - id: ozone-1-a
       text: Stratospheric
-      radius: 111 %
-      angle1: 1 x
-      angle2: 2 x
+      angle: 1.5 x
     - id: ozone-1-b
       text: ozone depletion
-      angle1: 1 x
-      angle2: 2 x
+      angle: 1.5 x
     - id: biochem-1-a
-      radius: 126 %
       text: Nitrogen
-      angle1: 4 x
-      angle2: 4.5 x
+      angle: 4.25 x
     - id: biochem-1-b
-      radius: 119 %
       text: cycle
-      angle1: 4 x
-      angle2: 4.5 x
+      angle: 4.25 x
     - id: biochem-2-a
-      radius: 126 %
       text: Phosphorous
-      angle1: 4.5 x
-      angle2: 5 x
+      angle: 4.75 x
     - id: biochem-2-b
-      radius: 119 %
       text: cycle
-      angle1: 4.5 x
-      angle2: 5 x
+      angle: 4.75 x
     - id: biochem-0-a
-      radius: 110 %
       text: (biogeochemical
-      angle1: 4 x
-      angle2: 5 x 
+      angle: 4.5 x
     - id: biochem-0-b
       text: flow boundary)
-      angle1: 4 x
-      angle2: 5 x
+      angle: 4.5 x
     - id: freshwater-1-a
-      radius: 110 %
       text: Global
-      angle1: 5 x
-      angle2: 6 x
+      angle: 5.5 x
     - id: freshwater-1-b
       text: freshwater use
-      angle1: 5 x
-      angle2: 6 x
+      angle: 5.5 x
     - id: land-systems-1
       text: Change in land use
-      angle1: 6 x
-      angle2: 7 x
+      angle: 6.5 x
     - id: biosphere-1
       text: Biodiversity loss
-      angle1: 7 x
-      angle2: 8 x
+      angle: 7.5 x
     - id: aerosol-1-a
       text: Atmospheric
-      radius: 117 %
-      angle1: 2 x
-      angle2: 3 x
+      angle: 2.5 x
     - id: aerosol-1-b
       text: aerosol loading
-      radius: 110 %
-      angle1: 2 x
-      angle2: 3 x
+      angle: 2.5 x
     - id: aerosol-1-c
       text: (not yet quantified)
-      angle1: 2 x
-      angle2: 3 x
+      angle: 2.5 x
     - id: novel-1-a
       text: Chemical pollution
-      radius: 110 %
-      angle1: 9 x
-      angle2: 10 x
+      angle: 9.5 x
     - id: novel-1-b
       text: (not yet quantified)
-      angle1: 9 x
-      angle2: 10 x
-  - id: rockstrom2009c
+      angle: 9.5 x
+  - id: stockholm2009a
     clone: rockstrom2009b
     images:
     - id: earth
@@ -530,31 +462,36 @@ charts:
       angle: 0
     arcs:
     - id: default
-      colour: orange
+      colour: '#FAA235'
     - id: safe-zone
       remove: true
+    - id: climate-1
+      opacity: 1
     - id: climate-1-i
-      colour: green
+      colour: '#009B2F'
     - id: ocean-1-i
-      colour: green
+      colour: '#009B2F'
     - id: ozone-1-i
-      colour: green
+      colour: '#009B2F'
+    - id: biochem-1
+      opacity: 1
     - id: biochem-1-i
-      colour: green
+      colour: '#009B2F'
     - id: biochem-2-i
-      colour: green
+      colour: '#009B2F'
     - id: freshwater-1-i
-      colour: green
+      colour: '#009B2F'
     - id: land-systems-1-i
-      colour: green
+      colour: '#009B2F'
     - id: biosphere-1
+      opacity: 1
       radius2: 120 %
     - id: biosphere-1-i
-      colour: green
+      colour: '#009B2F'
     - id: aerosol-1-i
-      colour: green
+      colour: '#009B2F'
     - id: novel-1-i
-      colour: green
+      colour: '#009B2F'
     arclines:
     - id: zone-1
       remove: true
@@ -567,13 +504,186 @@ charts:
       remove: true
     - id: zone-5
       remove: true
+    spokes:
+    - id: spoke1b
+      radius2: 120 %
+    - id: spoke2b
+      remove: true
+    - id: spoke3b
+      remove: true
+    - id: spoke4b
+      remove: true
+    - id: spoke5b
+      remove: true
+    - id: spoke6b
+      remove: true
+    - id: spoke7b
+      remove: true
+    - id: spoke8b
+      remove: true
+    - id: spoke9b
+      remove: true
+    - id: spoke1a
+      radius2: 120 %
+    - id: spoke2a
+      radius2: 120 %
+    - id: spoke3a
+      radius2: 120 %
+    - id: spoke4a
+      radius2: 120 %
+    - id: spoke5a
+      radius2: 120 %
+    - id: spoke6a
+      radius2: 120 %
+    - id: spoke7a
+      radius2: 120 %
+    - id: spoke8a
+      radius2: 120 %
+    - id: spoke9a
+      radius2: 120 % 
     texts:
     - id: safe-space
       radius: 35 %
       text: Safe operating space
-      angle1: 8 x
-      angle2: 10 x
+      angle: 9 x
       fontSize: 7
       fontColour: white
-      fontFilter: blackOutlineEffect
+      fontFilter: greyOutline
       opacity: 0 1
+      textPathStyle: arc
+      fontWeight: 400
+  - id: stockholm2009b
+    clone: stockholm2009a
+    texts:
+    - id: default
+      radius: 100 %
+      fontSize: 7
+      textPathStyle: line
+      fontWeight: 900
+      fontFilter: none
+    - id: climate-1
+      remove: true
+    - id: ocean-1
+      remove: true
+    - id: ozone-1-a
+      remove: true
+    - id: ozone-1-b
+      remove: true
+    - id: biochem-1-a
+      remove: true
+    - id: biochem-1-b
+      remove: true
+    - id: biochem-2-a
+      remove: true
+    - id: biochem-2-b
+      remove: true
+    - id: biochem-0-a
+      remove: true
+    - id: biochem-0-b
+      remove: true
+    - id: freshwater-1-a
+      remove: true
+    - id: freshwater-1-b
+      remove: true
+    - id: land-systems-1
+      remove: true
+    - id: biosphere-1
+      remove: true
+    - id: aerosol-1-a
+      remove: true
+    - id: aerosol-1-b
+      remove: true
+    - id: aerosol-1-c
+      remove: true
+    - id: novel-1-a
+      remove: true
+    - id: novel-1-b
+      remove: true
+    - id: climate-s-1
+      text: CLIMATE CHANGE
+      angle: 8.5 x
+    - id: novel-s-1-a
+      text: NOVEL ENTITIES
+      angle: 0.5 x
+    - id: novel-s-1-b
+      text: (Not yet quantified)
+      angle: 0.5 x
+      fontSize: 6
+      fontStyle: italic
+      fontWeight: 400
+      textOffset: -1 x
+    - id: ocean-s-1-a
+      text: OCEAN
+      angle: 3.5 x
+    - id: ocean-s-1-b
+      textOffset: -1 x
+      text: ACIDIFICATION
+      angle: 3.5 x
+    - id: ozone-s-1-a
+      text: STRATOSPHERIC OZONE
+      angle: 1.5 x
+    - id: ozone-s-1-b
+      text: DEPLETION
+      angle: 1.5 x
+      textOffset: -1 x
+    - id: aerosol-s-1-a
+      text: ATMOSPHERIC
+      angle: 2.5 x
+      textOffset: 1.5 x
+    - id: aerosol-s-1-b
+      text: AEROSOL
+      angle: 2.5 x
+      textOffset: 0.5 x
+    - id: aerosol-s-1-c
+      text: LOADING
+      angle: 2.5 x
+      textOffset: -0.5 x
+    - id: aerosol-s-1-d
+      text: (Not yet quantified)
+      angle: 2.5 x
+      fontSize: 6
+      fontStyle: italic
+      fontWeight: 400
+      textOffset: -1.5 x
+    - id: biochem-s-0-a
+      text: BIOCHEMICAL
+      angle: 4.5 x
+      radius: 115 %
+    - id: biochem-s-0-b
+      text: FLOWS
+      angle: 4.5 x
+      radius: 115 %
+      textOffset: -1 x
+    - id: biochem-s-1-a
+      text: N
+      angle: 4.25 x
+    - id: biochem-s-2-b
+      text: P
+      angle: 4.75 x
+    - id: freshwater-s-1-a
+      text: FRESHWATER USE
+      angle: 5.5 x
+    - id: land-systems-s-1-a
+      text: LAND-SYSTEM
+      angle: 6.5 x
+    - id: land-systems-s-1-b
+      text: CHANGE
+      angle: 6.5 x
+      textOffset: -1 x
+    - id: biosphere-s-1-a
+      text: BIOSPHERE
+      angle: 7.5 x
+    - id: biosphere-s-1-b
+      text: INTEGRITY
+      angle: 7.5 x
+      textOffset: -1 x
+    - id: increasing-risk
+      text: Increasing risk
+      angle: 357
+      radius: 95
+      textAlign: start
+      rot: -90
+      fontSize: 7
+      fontWeight: 500
+      fontColour: rgb(80,80,80)
+      textSpacing: 0.3

@@ -81,9 +81,6 @@ export function getArclineParams (d, i) {
 }
 
 function arcLine(arclineParams) {
-  const as = Math.round(arclineParams.startAngle * 180 / Math.PI)
-  const ae = Math.round(arclineParams.endAngle * 180 / Math.PI)
-
   // Using SVG path Arc generator problematic because when you do a full cirlce,
   // it disappears - so you can only do 0-359 which leaves a gap
   // const largeArcFlag = (ae - as) > 180 || ae > 360 && ae - 360 === es ? 1 : 0
@@ -92,13 +89,17 @@ function arcLine(arclineParams) {
   // const x2 = arclineParams.radius * Math.cos(arclineParams.endAngle)
   // const y2 = arclineParams.radius * Math.sin(arclineParams.endAngle)
   // const path =  `M ${x1} ${y1} A ${arclineParams.radius} ${arclineParams.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
-
-  // Instead calcualted circles and arcs directly
+  // Instead calcualte circles and arcs directly
   let path = ''
-  for (var i = as; i <= ae; i++) {
-
-    var x = (arclineParams.radius * Math.cos((i)*Math.PI/180)) + 0
-    var y = (arclineParams.radius * Math.sin((i)*Math.PI/180)) + 0
+  const incr = x => {
+    const i = 0.1
+    if (x === arclineParams.endAngle) return x+i
+    if (x+i > arclineParams.endAngle) return arclineParams.endAngle
+    return x+i
+  }
+  for (let i = arclineParams.startAngle; i <= arclineParams.endAngle; i=incr(i)) {
+    let x = arclineParams.radius * Math.cos(i)
+    let y = arclineParams.radius * Math.sin(i)
 
     if (!path) {
       path = `M${x} ${y}`

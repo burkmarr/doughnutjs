@@ -1,5 +1,5 @@
 import { cloneObj } from './general.js'
-import { getProperties } from './data-tests.js'
+import { getProperties } from './data-defs.js'
 import { getArcParams } from './arcs.js'
 import { getArclineParams } from './arclines.js'
 import { getSpokeParams } from './spokes.js'
@@ -17,16 +17,6 @@ export async function parseRecipe(data, errHtmlEl) {
   dv(data.globals, 'height_px', 650)
   dv(data.globals, 'duration', 1000)
   dv(data.globals, 'transition', 'yes')
-
-  // We provide these defaults so we do 
-  // not have to check for them
-  dv(data.defaults, 'angle0', 0)
-  dv(data.defaults, 'angleSpan', 360)
-  dv(data.defaults, 'radiusSpanPx', 150)
-  dv(data.defaults, 'radiusSpanReal', null)
-  dv(data.defaults, 'cornerRadius', 0)
-  dv(data.defaults, 'padAngle', 0)
-  dv(data.defaults, 'padRadius', 0)
 
   data.charts.forEach(chart => {
     dv(chart, 'defaults', [])
@@ -69,135 +59,88 @@ function dv(obj, prop, value) {
   }
 }
 
-//function resolveNumericFormats (data, obj) {
 function resolveNumericFormats (obj) {
 
   // This function is called recursively
   // for each object in recipe
+  const propDefs = getProperties()
 
-  // ### TODO ###
-  // Should the following array should go in data-tests.js
-  // or maybe whole function?
-  const keys = [
-    ['cornerRadius', 'n'],
-    ['padAngle', 'n'],
-    ['padRadius', 'n'],
-    ['radius', 'px'],
-    ['radius1', 'px'],
-    ['radius2', 'px'],
-    ['angle', 'deg'],
-    ['angle1', 'deg'],
-    ['angle2', 'deg'],
-    ['width', 'px'],
-    ['rot', 'n'],
-    ['opacity', 'n'],
-    ['colour', 's'],
-    ['stroke', 's'],
-    ['strokeWidth', 'n'],
-    ['fontSize', 'n'],
-    ['strokeDasharray', 's'],
-    ['fontWeight', 'n'] // Mabey make this non threeable but will need to change code for it in text.js if so
-    // fontColour', 's']
-    // fontStyle - cannot be set of three
-    // fontFamily - cannot be set of three
-
-  ]
-  //console.log('keys',  Object.keys(obj))
   Object.keys(obj).forEach(key => {
 
-    // if (obj.id === 'spoke1a' && key === 'angle') {
-    //   console.log('obj', {...obj})
-    // }
+    const propMatch = propDefs.find(pd => pd.name === key)
 
-    const keyMatch = keys.find(ki => ki[0] === key)
-    
-    if (keyMatch) {
-      const key = keyMatch[0]
-      const type = keyMatch[1]
-
+    if (propMatch && propMatch.threeable) {
       if (!Array.isArray(obj[key])) {
-
-        // Convert all number properties to strings
+        // Initially convert all number properties to strings (converted back later)
         if (typeof obj[key] === 'number') {
           obj[key] = obj[key].toString()
         }
-
         // Extract any modifier and remove from values.
+        //console.log(key, obj)
         const vals = obj[key].split(' ')
         let modifier
         if (vals[vals.length-1] === '%' || vals[vals.length-1] === 'x' || vals[vals.length-1] === 'r') {
           modifier = vals[vals.length-1]
           vals.pop()
         }
-      
         // At this point, vals should either be of length one, two or three.
         // If anything else, act as if it is one.
         const newVal = []
         if (vals.length === 3) {
-          newVal[0] = convertValue(vals[0], modifier, type)
-          newVal[1] = convertValue(vals[1], modifier, type)
-          newVal[2] = convertValue(vals[2], modifier, type)
+          newVal[0] = convertValue(vals[0], modifier, propMatch)
+          newVal[1] = convertValue(vals[1], modifier, propMatch)
+          newVal[2] = convertValue(vals[2], modifier, propMatch)
         } else if (vals.length === 2) {
-          newVal[0] = convertValue(vals[0], modifier, type)
-          newVal[1] = convertValue(vals[1], modifier, type)
-          newVal[2] = convertValue(vals[1], modifier, type)
+          newVal[0] = convertValue(vals[0], modifier, propMatch)
+          newVal[1] = convertValue(vals[1], modifier, propMatch)
+          newVal[2] = convertValue(vals[1], modifier, propMatch)
         } else {
-          newVal[0] = convertValue(vals[0], modifier, type)
-          newVal[1] = convertValue(vals[0], modifier, type)
-          newVal[2] = convertValue(vals[0], modifier, type)
+          newVal[0] = convertValue(vals[0], modifier, propMatch)
+          newVal[1] = convertValue(vals[0], modifier, propMatch)
+          newVal[2] = convertValue(vals[0], modifier, propMatch)
         }
         // Update value
         obj[key] = newVal
       }
     }
+    
+    // Recursive call for objects
     if (typeof obj[key] === 'object' && obj[key] !== null) {
-      //resolveNumericFormats(data, obj[key])
       resolveNumericFormats(obj[key])
     }
   })
 
-  function convertValue(val, modifier, type) {
+  function convertValue(val, modifier, propMatch) {
 
     // This function converts values based on their modifier (if any)
     // and their type.
     // Modifiers:
-    //   r: values expressed in real world units
+    //   r: values expressed in real world units (for radius only)
     //   %: values expressed as percentage
     //   x: values expressed as multipliers
 
     let ret
-    let multiplier
-    if (type === 'px') {
-      if (modifier === 'r') {
-        multiplier = Number(obj.radiusSpanPx)/Number(obj.radiusSpanReal)
-      } else {
-        multiplier = Number(obj.radiusSpanPx)
-      }
-    } else if (type === 'deg') {
-      multiplier = Number(obj.angleSpan)
+    let span = Number(obj[propMatch.span])
+    if (modifier === 'r') {
+      span = span/Number(obj.radiusSpanReal)
     }
 
-    if (modifier === '%' && multiplier) {
-      // Value expressed as % of radiusSpanPx or angleSpan
-      ret = Number(val) / 100 * multiplier
-    } else if (modifier === 'x' && multiplier) {
-      // Value expressed as a multiplier of radiusSpanPx or angleSpan
-      ret = Number(val) * multiplier
-    } else if (modifier === 'r' && multiplier) {
-      // Value expressed as a multiplier of radiusSpanReal
-      ret = Number(val) * multiplier
-    } else if (type === 'px') {
-      // Radius value expressed as in real units
-      ret = Number(val) / Number(obj.radiusSpanReal) * Number(obj.radiusSpanPx)
-    } else if (type === 's') {
-      // Value expressed directly
-      ret =  val
-    } else {
-      // Value expressed directly
+    if (modifier === '%' && span) {
+      // Value expressed as % of span
+      ret = Number(val) / 100 * span
+    } else if (modifier === 'x' && span) {
+      // Value expressed as a multiple of span
+      ret = Number(val) * span
+    } else if (modifier === 'r' && span) {
+      // Value expressed in real units
+      ret = Number(val) * span
+    } else if (propMatch.number) {
       ret =  Number(val)
+    } else {
+      ret =  val
     }
     // For angles, add the offset angle
-    if (type === 'deg') {
+    if (propMatch.name === 'angle' || propMatch.name === 'angle1' || propMatch.name === 'angle2') {
       ret = ret + Number(obj.angle0)
     }
     return ret
@@ -295,8 +238,11 @@ function propogateDefaultProps(data) {
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
         const defaults = chart[elementType].find(e => e.id === 'default')
+        const optionalProperties = getProperties().filter(propDef => {
+          return propDef.optionalOn.find(et => et === elementType) && propDef.hasOwnProperty('default')
+        })
         chart[elementType].filter(element => element.id !== 'default').forEach(element => {
-
+          
           // Element collection defaults
           if (defaults) {
             Object.keys(defaults).forEach(elementDefault => {
@@ -322,6 +268,15 @@ function propogateDefaultProps(data) {
               }
             })
           }
+          // By this point, all recipe defined defaults are propogated.
+          // Now go through any optional properties for this element type 
+          // that have a default value defined in the defition and if
+          // not defined on element, set it with the default value.
+          optionalProperties.forEach(optionalProperty => {
+            if (!element[optionalProperty.name]) {
+              element[optionalProperty.name] = optionalProperty.default
+            }
+          })
         })
       }
     })

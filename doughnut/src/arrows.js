@@ -40,9 +40,9 @@ export function createArrowElements(g, arrows, trans, currentArrowParams) {
       .style('opacity', d => d.opacity ? d.opacity[i] : null)
       .attr('transform', d => {
         const params = getArrowParams(d, i)
-        let x0 = params.radius * Math.cos(params.angle)
-        let y0 = params.radius * Math.sin(params.angle)
-        return `rotate(${d.rot[i]},${x0},${y0}) translate(${x0} ${y0-params.radius})`
+        let x0 = params.radius * Math.cos(params.angle - Math.PI/2)
+        let y0 = params.radius * Math.sin(params.angle - Math.PI/2)
+        return `rotate(${d.rot[i]},${x0},${y0})`
       })
   }
 
@@ -101,7 +101,7 @@ export function initialiseArrowParameters (arrows, currentArrowParams) {
 export function getArrowParams (d, i) {
   return {
     radius: d.radius[i],
-    angle: (d.angle[i] - 90) * Math.PI / 180,
+    angle: (d.angle[i]) * Math.PI / 180,
     al1: d.al1[i],
     al5: d.al5[i],
     al28: d.al28[i],
@@ -113,51 +113,6 @@ export function getArrowParams (d, i) {
   }
 }
 
-function arrowOld(ap) {
-  const x0 = ap.radius * Math.cos(ap.angle)
-  const y0 = ap.radius * Math.sin(ap.angle)
-
-  console.log('origin', x0, y0)
-  const x1 = x0
-  const y1 = y0-ap.al1
-  const x2 = x0+ap.aw28
-  const y2 = y0-ap.al28
-  const x3 = x0+ap.aw37
-  const y3 = y0-ap.al37
-  const x4 = ap.al46 !== null ? x0+ap.aw46 : 0
-  const y4 = y0+ap.al46
-  const x5 = x0
-  const y5 = y0+ap.al5
-  const x6 = x0-ap.aw46
-  const y6 = ap.al46 !== null ? y0+ap.al46 : 0
-  const x7 = x0-ap.aw37
-  const y7 = y0-ap.al37
-  const x8 = x0-ap.aw28
-  const y8 = y0-ap.al28
-  
-  let l456
-  if (ap.al46 !== null) {
-    l456 = `L${x4} ${y4} L${x5} ${y5} L${x6} ${y6}`
-  } else {
-    
-    // The formula for the equation of a circle is (x – h)2+ (y – k)2 = r2, 
-    // where (h, k) represents the coordinates of the center of the circle, 
-    // and r represents the radius of the circle.
-    // (x – h)*(x – h) + (y – k)*(y – k) = r*r
-    //  y = sqrt(r*r - (x – h)*(x – h)) + k
-
-    const r = ap.radius-ap.al5
-    const x = x0+ap.aw46
-    let y = Math.sqrt(r*r - (x - x0)*(x - x0)) + y0
-    // Need to reverse direction
-    y = y5+(y5-y)
-
-    l456 = `L${x0+ap.aw46} ${y} L${x5} ${y5} L${x0-ap.aw46} ${y}`
-  }
-  const path = `M${x1} ${y1} L${x2} ${y2} L${x3} ${y3} ${l456} L${x7} ${y7} L${x8} ${y8} L${x1} ${y1}`
-
-  return path
-}
 
 function arrow(ap) {
 
@@ -167,31 +122,53 @@ function arrow(ap) {
   const y2 = ap.radius+ap.al28
   const x3 = ap.aw37
   const y3 = ap.radius+ap.al37
-  const x4 = ap.al46 !== null ? ap.aw46 : 0
-  const y4 = ap.radius-ap.al46
+  const x4 = ap.al46 === null && ap.aw46 > ap.radius-ap.al5 ? ap.radius-ap.al5 : ap.aw46
+  const y4 = ap.al46 !== null ? ap.radius-ap.al46 : 0
   const x5 = 0
   const y5 = ap.radius-ap.al5
-  const x6 = -ap.aw46
+  const x6 = ap.al46 === null && ap.aw46 > ap.radius-ap.al5 ? -(ap.radius-ap.al5) : -ap.aw46
   const y6 = ap.al46 !== null ? ap.radius-ap.al46 : 0
   const x7 = -ap.aw37
   const y7 = ap.radius+ap.al37
   const x8 = -ap.aw28
   const y8 = ap.radius+ap.al28
   
-  let l456 = ''
+  let points
   if (ap.al46 !== null) {
-    l456 = `L${x4} ${y4} L${x5} ${y5} L${x6} ${y6}`
+    points= [[x1, y1], [x2, y2],[x3, y3], [x4, y4], [x5, y5], [x6, y6], [x7, y7], [x8, y8], [x1, y1]]
   } else {
-    const angleStart = Math.acos(ap.aw46/ap.radius)
-    const angleEnd = Math.acos(-ap.aw46/ap.radius)
-    for (let angle=angleStart; angle<=angleEnd; angle=angle+Math.PI/180) {
+    // al46 is not specified which signifies that the base of the 
+    // arrow is to be an arc of radius y5 and chord length 2*aw46.
+    points= [[x1, y1], [x2, y2],[x3, y3]]
+    const aw46 = ap.aw46 > ap.radius ? ap.radius : ap.aw46
+    const angleStart = Math.acos(aw46/ap.radius)
+    const angleEnd = Math.acos(-aw46/ap.radius)
+    const angles = [angleStart]
+    for (let angle=angleStart; angle<angleEnd; angle=angle+Math.PI/180) {
+      angles.push(angle)
+    }
+    angles.push(angleEnd)
+    angles.forEach(angle => {
       const x = Math.round(10 * y5 * Math.cos(angle))/10
       const y = Math.round(10 * y5 * Math.sin(angle))/10
-      l456 = `${l456} L${x} ${y}`
-    }
+      points.push([x, y])
+    })
+    points = [...points, [x7, y7], [x8, y8], [x1, y1]]
   }
-  const path = `M${x1} ${y1} L${x2} ${y2} L${x3} ${y3} ${l456} L${x7} ${y7} L${x8} ${y8} L${x1} ${y1}`
 
+  // Transform the points to the specified angle
+  const angle = ap.angle - Math.PI
+  const transPoints= points.map(p => {
+    const x = p[0] * Math.cos(angle) - p[1] * Math.sin(angle)
+    const y = p[1] * Math.cos(angle) + p[0] * Math.sin(angle)
+    return [x, y]
+  })
+  let path = ''
+  transPoints.forEach((p,i) => {
+    const op = i ? 'L' : ' M'
+    path = `${path}${op}${p[0]} ${p[1]}`
+  })
   return path
 }
+
 

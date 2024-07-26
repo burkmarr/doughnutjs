@@ -1,7 +1,7 @@
 globals:
   width_px: 600 # pixels
   height_px: 400 # pixles
-  duration: 3000
+  duration: 1000
   transition: yes
   defs:
     - def: |
@@ -323,37 +323,6 @@ charts:
     - id: novel-1-b
       text: (not yet quantified)
       angle: 8.5 x
-    arrows:
-    - id: test
-      radius: 50 %
-      angle: 90
-      rot: 0 -90 0
-      colour: lightgray
-      strokeWidth: 0.5
-      opacity: 0.5
-      al1: 0 25 %
-      al5: 0 25 %
-      al37: 0 20 %
-      al28: 0 20 %
-      al46: 0 30 %
-      aw28: 0 10 %
-      aw46: 0 8 %
-      aw37: 0 5 %
-    - id: test1
-      radius: 50 %
-      angle: 0
-      rot: 0 -180 0
-      colour: lightgray
-      strokeWidth: 0.5
-      opacity: 0.5
-      al1: 0 25 %
-      al5: 0 25 %
-      al37: 0 20 %
-      al28: 0 20 %
-      #al46: 0 30 %
-      aw28: 0 10 %
-      aw46: 0 25 %
-      aw37: 0 5 %
   - id: rockstrom2009b
     clone: rockstrom2009a
     defaults:
@@ -586,11 +555,38 @@ charts:
       opacity: 0 1
       textPathStyle: arc
       fontWeight: 400
+    - id: increasing-risk
+      text: Increasing risk
+      angle: 357
+      radius: 95
+      textAlign: start
+      rot: -90
+      fontSize: 7
+      fontWeight: 500
+      fontColour: rgb(80,80,80)
+      textSpacing: 0.3
+      textPathStyle: line
+    arrows:
+    - id: risk
+      radius: 0 
+      angle: 0
+      rot: 0
+      colour: black
+      strokeWidth: 0
+      opacity: 0.2
+      al1: 0 135 0 %
+      al5: 0
+      al37: 0 125 0 %
+      al28: 0 125 0 %
+      al46: 0
+      aw28: 0 6 0 %
+      aw46: 0
+      aw37: 0 3 0 %
   - id: stockholm2009b
     clone: stockholm2009a
     texts:
     - id: default
-      radius: 100 %
+      radius: 110 %
       fontSize: 7
       textPathStyle: line
       fontWeight: 900
@@ -711,13 +707,4 @@ charts:
       text: INTEGRITY
       angle: 7.5 x
       textOffset: -1 x
-    - id: increasing-risk
-      text: Increasing risk
-      angle: 357
-      radius: 95
-      textAlign: start
-      rot: -90
-      fontSize: 7
-      fontWeight: 500
-      fontColour: rgb(80,80,80)
-      textSpacing: 0.3
+

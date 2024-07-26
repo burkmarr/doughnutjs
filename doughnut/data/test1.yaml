@@ -46,6 +46,37 @@ charts:
       radius: 60 %
       angle1: 0
       angle2: 360
+    arrows:
+    - id: test
+      radius: 50 %
+      angle: 90
+      rot: 0 90 0
+      colour: lightgray
+      strokeWidth: 0.5
+      opacity: 0.5
+      al1: 25 %
+      al5: 0
+      al37: 20 %
+      al28: 20 %
+      al46: 30 %
+      aw28: 10 %
+      aw46: 8 %
+      aw37: 5 %
+    - id: test1
+      radius: 50 %
+      angle: 0
+      rot: 0
+      colour: lightgray
+      strokeWidth: 0.5
+      opacity: 0.5
+      al1: 0 25 %
+      al5: 0 25 %
+      al37: 0 20 %
+      al28: 0 20 %
+      #al46: 0 30 %
+      aw28: 0 10 %
+      aw46: 0 35 %
+      aw37: 0 5 %
   - id: chart2
     defaults:
       angle0: -20

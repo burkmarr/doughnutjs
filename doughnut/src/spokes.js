@@ -79,13 +79,11 @@ export function getSpokeParams (d, i) {
 }
 
 function spokeLine(spokeParams) {
-  const angle = Math.round(spokeParams.angle * 180 / Math.PI)
-  
-  const xi = (spokeParams.innerRadius * Math.cos((angle)*Math.PI/180)) + 0
-  const yi = (spokeParams.innerRadius * Math.sin((angle)*Math.PI/180)) + 0
+  const xi = spokeParams.innerRadius * Math.cos(spokeParams.angle)
+  const yi = spokeParams.innerRadius * Math.sin(spokeParams.angle)
 
-  const xo = (spokeParams.outerRadius * Math.cos((angle)*Math.PI/180)) + 0
-  const yo = (spokeParams.outerRadius * Math.sin((angle)*Math.PI/180)) + 0
+  const xo = spokeParams.outerRadius * Math.cos(spokeParams.angle)
+  const yo = spokeParams.outerRadius * Math.sin(spokeParams.angle)
 
   return `M${xi} ${yi} L${xo} ${yo}`
 }

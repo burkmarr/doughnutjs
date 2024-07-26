@@ -1,7 +1,7 @@
 globals:
   width_px: 600 # pixels
   height_px: 400 # pixles
-  duration: 2000
+  duration: 3000
   transition: yes
   defs:
     - def: |
@@ -42,7 +42,7 @@ globals:
 charts:
   - id: rockstrom2009a
     defaults:
-      angle0: -20 # Base angle from which others are measured, e.g. -20
+      angle0: 0 #-20 # Base angle from which others are measured, e.g. -20
       angleSpan: 40 # Angle unit to use for multiplier or percentage, e.g. 45
       radiusSpanPx: 150 # Pixel unit to use for multiplier or percentage, e.g. 150
       radiusSpanReal: 400 # Real world units corresponding to 1 pixel unit, e.g. 400
@@ -137,22 +137,6 @@ charts:
       radius2: 0 40 %
       angle1: 6 x
       angle2: 7 x
-    # - id: aerosol-1
-    #   radius2: 0
-    #   angle1: 7 x
-    #   angle2: 8 x
-    # - id: aerosol-1-i
-    #   radius2: 0
-    #   angle1: 7 x
-    #   angle2: 8 x
-    # - id: novel-1
-    #   radius2: 0
-    #   angle1: 8 x
-    #   angle2: 9 x
-    # - id: novel-1-i
-    #   radius2: 0
-    #   angle1: 8 x
-    #   angle2: 9 x
     arclines: 
     - id: default
       stroke: red
@@ -339,6 +323,37 @@ charts:
     - id: novel-1-b
       text: (not yet quantified)
       angle: 8.5 x
+    arrows:
+    - id: test
+      radius: 50 %
+      angle: 90
+      rot: 0 -90 0
+      colour: lightgray
+      strokeWidth: 0.5
+      opacity: 0.5
+      al1: 0 25 %
+      al5: 0 25 %
+      al37: 0 20 %
+      al28: 0 20 %
+      al46: 0 30 %
+      aw28: 0 10 %
+      aw46: 0 8 %
+      aw37: 0 5 %
+    - id: test1
+      radius: 50 %
+      angle: 0
+      rot: 0 -180 0
+      colour: lightgray
+      strokeWidth: 0.5
+      opacity: 0.5
+      al1: 0 25 %
+      al5: 0 25 %
+      al37: 0 20 %
+      al28: 0 20 %
+      #al46: 0 30 %
+      aw28: 0 10 %
+      aw46: 0 25 %
+      aw37: 0 5 %
   - id: rockstrom2009b
     clone: rockstrom2009a
     defaults:

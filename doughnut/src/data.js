@@ -4,8 +4,9 @@ import { getArcParams } from './arcs.js'
 import { getArclineParams } from './arclines.js'
 import { getSpokeParams } from './spokes.js'
 import { getTextParams } from './texts.js'
+import { getArrowParams } from './arrows.js'
 
-const elementTypes = ['arcs', 'arclines', 'images', 'spokes', 'texts']
+const elementTypes = ['arcs', 'arclines', 'images', 'spokes', 'texts', 'arrows']
 
 export async function parseRecipe(data, errHtmlEl) {
  
@@ -169,7 +170,7 @@ function resolveClones (data) {
           }
         }
         // Now do element types
-        const types = ['images', 'arcs', 'arclines', 'spokes', 'texts']
+        const types = ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows']
         types.forEach(elementType => {
           const fromChartElements = fromChart[elementType]
           let toChartElements = toChart[elementType]
@@ -480,6 +481,13 @@ function initialiseTweenProps(data) {
   data.charts.forEach(chart => {
     chart.texts.forEach(text => {
       text.currentTextParams = getTextParams(text, 0)
+    })
+  })
+
+  // Initialise the currentArrowParams property
+  data.charts.forEach(chart => {
+    chart.arrows.forEach(arrow => {
+      arrow.currentArrowParams = getArrowParams(arrow, 0)
     })
   })
   

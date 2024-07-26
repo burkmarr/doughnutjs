@@ -6,6 +6,7 @@ import { createArcElements, initialiseArcParameters } from './arcs.js'
 import { createArclineElements, initialiseArclineParameters } from './arclines.js'
 import { createSpokeElements, initialiseSpokeParameters } from './spokes.js'
 import { createTextElements, initialiseTextParameters } from './texts.js'
+import { createArrowElements, initialiseArrowParameters } from './arrows.js'
 
 export async function doughnut({
   selector = 'body',
@@ -15,8 +16,8 @@ export async function doughnut({
   let iLastChart = null
   let svg, svgWidth, svgHeight
   let recipeParsed = false
-  let gAll, gImages, gArcs, gArclines, gSpokes, gTexts
-  let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}}
+  let gAll, gImages, gArcs, gArclines, gSpokes, gTexts, gArrows
+  let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}, arrows: {}}
   const fixedGlobals = {}
   let rc
 
@@ -52,6 +53,7 @@ export async function doughnut({
       gArclines = gAll.append('g')
       gSpokes = gAll.append('g')
       gTexts = gAll.append('g')
+      gArrows = gAll.append('g')
     } else {
       svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     }
@@ -65,6 +67,7 @@ export async function doughnut({
     initialiseArclineParameters(recipe.charts[iChart].arclines, currentParams.arclines)
     initialiseSpokeParameters(recipe.charts[iChart].spokes, currentParams.spokes)
     initialiseTextParameters(recipe.charts[iChart].texts, currentParams.texts)
+    initialiseArrowParameters(recipe.charts[iChart].arrows, currentParams.arrows)
     
     const trans = svg.transition().duration(0).ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
@@ -83,6 +86,7 @@ export async function doughnut({
     createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
     createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
     createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts, recipe.globals)
+    createArrowElements(gArrows, recipe.charts[iChart].arrows, trans, currentParams.arrows)
   }
 
   // API //

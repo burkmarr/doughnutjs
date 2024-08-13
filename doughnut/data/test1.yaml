@@ -77,6 +77,21 @@ charts:
       aw28: 0 10 %
       aw46: 0 35 %
       aw37: 0 5 %
+    - id: test2
+      radius: 50 %
+      angle: 180
+      rot: 0
+      colour: lightgray
+      strokeWidth: 0.5
+      opacity: 0.5
+      al1: 0 -40 %
+      al5: 0 10 %
+      al37: 0 -30 %
+      al28: 0 -30 %
+      #al46: 0 30 %
+      aw28: 0 10 %
+      aw46: 0 15 %
+      aw37: 0 5 %
   - id: chart2
     defaults:
       angle0: -20

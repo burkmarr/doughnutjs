@@ -35,10 +35,8 @@ globals:
     - def: |
         <radialGradient id="stockgrey" cx="0" cy="0" fr="0" r="190" gradientUnits="userSpaceOnUse">
           <stop offset="30%" stop-color="rgb(210,210,210)" />
-          <stop offset="80%" stop-color="white" />
-        </radialGradient>
-
-        
+          <stop offset="90%" stop-color="white" />
+        </radialGradient>      
 charts:
   - id: rockstrom2009a
     defaults:
@@ -102,6 +100,7 @@ charts:
       angle1: 3 x
       angle2: 3.5 x
     - id: biochem-2
+      opacity: 1
       radius1: 36 %
       radius2: 36 %
       angle1: 3.5 x
@@ -490,7 +489,7 @@ charts:
       angle1: 9 x
       angle2: 10 x
       colour: def-stockgrey
-      radius2: 0 120 9 %
+      radius2: 0 120 0 %
     - id: novel-1-i
       angle1: 9 x
       angle2: 10 x
@@ -687,9 +686,11 @@ charts:
     - id: biochem-s-1-a
       text: N
       angle: 4.25 x
+      radius: 100 %
     - id: biochem-s-2-b
       text: P
       angle: 4.75 x
+      radius: 100 %
     - id: freshwater-s-1-a
       text: FRESHWATER USE
       angle: 5.5 x
@@ -700,11 +701,63 @@ charts:
       text: CHANGE
       angle: 6.5 x
       textOffset: -1 x
-    - id: biosphere-s-1-a
+    - id: biosphere-s-0-a
       text: BIOSPHERE
       angle: 7.5 x
-    - id: biosphere-s-1-b
+    - id: biosphere-s-0-b
       text: INTEGRITY
       angle: 7.5 x
       textOffset: -1 x
-
+  - id: stockholm2009c
+    clone: stockholm2009b
+    arcs:    
+    - id: biosphere-1
+      angle1: 7.5 x
+    - id: biosphere-1-i
+      angle1: 7.5 x
+    - id: biosphere-2
+      angle1: 7 x
+      angle2: 7 7.5 7 x
+      colour: def-stockgrey
+      radius1: 40 %
+      radius2: 120 %
+    - id: biosphere-2-i
+      angle1: 7 x
+      angle2: 7 7.5 7 x
+      colour: def-stockgrey
+      radius2: 40 %
+    - id: ozone-1-i
+      radius2: 26 %
+    - id: ocean-1-i
+      radius2: 37 %
+    - id: biochem-2
+      radius1: 40 %
+      radius2: 98 %
+    - id: biochem-2-i
+      radius2: 40 %
+    texts:
+    - id: biosphere-s-0-a
+      radius: 140 %
+    - id: biosphere-s-0-b
+      radius: 140 %
+    - id: biosphere-s-1
+      text: E/MSY
+      radius: 110 %
+      angle: 7.75 x
+      opacity: 0 1 0
+    - id: biosphere-s-2
+      text: BII
+      radius: 110 %
+      angle: 7.25 x
+      textOffset: 0.5 x
+      opacity: 0 1 0
+    - id: biosphere-s-2-a
+      text: (Not yet quantified)
+      radius: 110 %
+      angle: 7.25 x
+      textOffset: -0.5 x
+      opacity: 0 1 0
+      fontSize: 6
+      fontStyle: italic
+      fontWeight: 400
+      

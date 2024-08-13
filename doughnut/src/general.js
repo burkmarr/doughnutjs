@@ -1,4 +1,5 @@
 import * as yaml from 'js-yaml'
+import * as d3 from 'd3'
 
 export function addDef(el, def) {
 
@@ -36,6 +37,10 @@ export function fetchYaml(file) {
       resolve({})
     })
   })
+}
+
+export function fetchCsv(file) {
+  return d3.csv(file)
 }
 
 export function cloneObj(obj) {

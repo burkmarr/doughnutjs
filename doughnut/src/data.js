@@ -53,6 +53,227 @@ export async function parseRecipe(data, errHtmlEl) {
   await Promise.all(recordImageAspectRatio(data))
 }
 
+export async function parseRecipeCsv(data, errHtmlEl) {
+  //const chartNames = checkCols(data, errHtmlEl)
+  //if (!checkCols(data, errHtmlEl)) return
+  //console.log(charts)
+
+  data = cleanCsv(data)
+
+  if (!checkCsv(data, errHtmlEl)) return
+
+  data = restructureCsv(data)
+  console.log('Transformed CSV recipe', data)
+
+  // Validate property value formats and return if fails
+  if (!validateProps(data, errHtmlEl)) return
+  
+  // Highlight unpermitted properties and return if fails
+  if (!unpermittedProps(data, errHtmlEl)) return
+
+  return
+
+  // Propagate default values
+  propogateDefaultProps(data)
+
+  // Find missing values
+  if (!missingProps(data, errHtmlEl)) return
+
+  // Resolve all the number formats
+  resolveNumericFormats(data)
+
+  // Initialise additional properties required for tweening
+  initialiseTweenProps(data)
+
+  // Record the aspect ratio of any images
+  await Promise.all(recordImageAspectRatio(data))
+}
+
+function cleanCsv(data) {
+
+  const fixType = function (val) {
+    if (String(Number(val)) === val) {
+      return Number(val)
+    } else {
+      return val
+    }
+  }
+
+  // Remove any columns with no header.
+  // These can occur if CSV has a column with no header and there
+  // is (or was) data anywhere in the column.
+  const columns = data.columns.filter(c => c)
+  const cleanData = data.map(d => {
+    const dn = {}
+    columns.forEach(k => {
+      // Trim any spaces from around values
+      // Also change from string to number (fixType)
+      // where appropriate.
+      dn[k] = fixType(d[k].trim())
+    })
+    return dn
+  })
+  cleanData.columns = columns
+  return cleanData
+}
+
+function checkCsv(data, errHtmlEl) {
+  // type & entity
+  // Each combination must be unique
+
+  // chart
+  // Only entity names permissible are canvas, defs and globals
+
+  // chart>canvas & chart>defs
+  // All properties must have value in first chart and none in the others
+
+  // chart>canvas & chart>defs & chart>globals
+  // There must be no values in remaining cells
+
+  // chart>globals
+
+  // return errHtmlEl.selectAll('tr').size() === 1
+  return true
+}
+
+function restructureCsv(data) {
+  const charts = data.columns.filter((c,i) => i >= 3)
+  const typeAndEntity = data.filter(d => d.type && d.type !== 'chart').map(d => {
+    return {type: d.type, entity: d.entity}
+  })
+
+  // Propagate type and entity downward through csv data
+  let lastType, lastEntity
+  data.forEach(d => {
+    if (d.type) {
+      lastType = d.type
+      lastEntity= d.entity
+    } else {
+      d.type = lastType
+      d.entity = lastEntity
+    }
+  })
+
+  // Propagate property values across charts in csv data
+  data.forEach(d => {
+    for (let iChart = 0; iChart < charts.length; iChart++) {
+      if (iChart && d[charts[iChart]] === '=') {
+        d[charts[iChart]] = d[charts[iChart-1]]
+      }
+    }
+  })
+
+  // console.log('Propagated', data)
+
+  // Transform structure from that read in from CSV
+  // to that expected by the code (originally from yaml)
+  const tdata = {charts:[], defaults: {}, globals: {defs: []}}
+  tdata.charts = charts.map(c => {
+    const chart = {
+      id: c,
+      defaults: {},
+    }
+    elementTypes.forEach(et => {
+      chart[et] = []
+    })
+    return chart
+  })
+
+  // chart>canvas to globals
+  data.filter(d => d.type === 'chart' && d.entity === 'canvas' && d.property_z).forEach(d => {
+    // Global canvas taken from first chart
+    tdata.globals[d.property_z] = d[charts[0]]
+  })
+  // charts>defs to global defs collection
+  data.filter(d => d.type === 'chart' && d.entity === 'defs' && d.property_z).forEach(d => {
+    // Global defs taken from first chart
+    tdata.globals.defs.push(d[charts[0]])
+  })
+  // For now, charts>globals>duration to globals
+  // and other globals to defaults for chart
+  data.filter(d => d.type === 'chart' && d.entity === 'globals').forEach(d => {
+    if (d.property_z === 'duration') {
+      // From first chart
+      tdata.globals['duration'] = d[charts[0]]
+      tdata.globals['transition'] = 'yes'
+    } else if (d.property_z) {
+      charts.forEach(chartName => {
+        const chart = tdata.charts.find(c => c.id === chartName)
+        chart.defaults[d.property_z] = d[chartName]
+      })
+    }
+  })
+
+  // Now populate the chart entities
+  typeAndEntity.forEach(te => {
+    const rows = data.filter(d => d.type === te.type && d.entity === te.entity)
+    const header = rows[0]
+    const forCharts = charts.filter(name => header[name] === 'yes')
+    const properties = rows.slice(1)
+    properties.forEach((p,i) => {
+      const propName = p.property_z
+      forCharts.forEach(name => {
+        const tChart = tdata.charts.find(c => c.id === name)
+        const tEntityArray = tChart[`${te.type}s`]
+        let tEntity = tEntityArray.find(e => e.id === te.entity)
+        if (!tEntity) {
+          tEntity = {id: te.entity}
+          tEntityArray.push(tEntity)
+        }
+        if (p[name]) {
+          // default entity can have blank values in CSV where
+          // no value provided for a particular chart therefore
+          // only assign if value is not blank.
+          tEntity[propName] = p[name]
+        }
+      })
+    })
+  })
+
+  return tdata
+}
+
+function checkCols(data, errHtmlEl) {
+
+  const errMsg = (msg) => {
+    const row = errHtmlEl.append('tr')
+    row.append('td').text(msg)
+  }
+
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('CSV Problem')
+
+  const cols = data.columns
+
+  // Check for mandatory columns
+  if (cols[0] !== 'type') {
+    errMsg("The first column of the CSV must be 'type'.")
+  }
+  if (cols[1] !== 'entity') {
+    errMsg("The second column of the CSV must be 'entity'.")
+  }
+  if (cols[2] !== 'property_z') {
+    errMsg("The fourth column of the CSV must be 'property_z'.")
+  }
+  if (!cols.length > 3) {
+    errMsg("There must be at least four columns. The fourth and subsequent columns are named with unique chart identifiers.")
+  }
+
+  // Check charts are correctly named - they must be unique names and consist
+  // of any non-white characters.
+  const charts = cols.filter((c,i) => i >= 3 && c.length > 0) 
+  charts.forEach((c,i) => {
+    if (c.length === 0) {
+      errMsg(`There is no chart id for column ${i+4}, but there is data in that column. Either head the column with a chart id or remove the data.`)
+    } else if (!c.match(/^\S+$/)) {
+      errMsg(`The chart id for column ${i+4} is not valid - it cannot contain any spaces.`)
+    }
+  })
+  
+  return errHtmlEl.selectAll('tr').size() === 1
+}
+
 function dv(obj, prop, value) {
   // Default value
   if (!obj[prop]) {

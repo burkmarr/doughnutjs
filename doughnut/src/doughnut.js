@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
-import { fetchYaml, cloneObj, addDef } from './general.js'
-import { parseRecipe } from './data.js'
+import { fetchYaml, fetchCsv, cloneObj, addDef } from './general.js'
+import { parseRecipe, parseRecipeCsv } from './data.js'
 import { createImageElements, initialiseImageParameters } from './images.js'
 import { createArcElements, initialiseArcParameters } from './arcs.js'
 import { createArclineElements, initialiseArclineParameters } from './arclines.js'
@@ -22,6 +22,9 @@ export async function doughnut({
   let rc
 
   const errorDiv = d3.select(selector).append('div')
+    .style('display', 'none')
+
+  const csvErrorDiv = d3.select(selector).append('div')
     .style('display', 'none')
 
   async function updateChart(iChart) {
@@ -136,7 +139,7 @@ export async function doughnut({
     recipeParsed = false
 
     recipe = await fetchYaml(file)
-    console.log('Raw recipe', cloneObj(recipe))
+    console.log('Raw YAML recipe', cloneObj(recipe))
 
     const errHtmlEl = errorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
@@ -158,7 +161,39 @@ export async function doughnut({
       errorDiv.style('display', 'none')
       if (svg) svg.style('display', '')
       recipeParsed = true
-      console.log('Parsed recipe', recipe)
+      console.log('Parsed YAML recipe', recipe)
+    }
+  }
+
+  async function loadRecipeCsv(file) {
+
+    // iLastChart = null
+    // recipeParsed = false
+
+    const recipeCsv = await fetchCsv(file)
+    console.log('Raw CSV recipe', cloneObj(recipeCsv))
+
+    const errHtmlEl = csvErrorDiv.append('table')
+    errHtmlEl.attr('id', 'recipe-errors')
+
+    parseRecipeCsv(recipeCsv, errHtmlEl)
+
+    // // Update globals with fixed globals if set
+    // Object.keys(fixedGlobals).forEach(k => {
+    //   recipe.globals[k] = fixedGlobals[k]
+    // })
+
+    if (errHtmlEl.selectAll('tr').size() > 1) {
+      // There are errors
+      csvErrorDiv.style('display', '')
+      if (svg) svg.style('display', 'none')
+      recipeParsed = false
+    } else {
+      // No errors
+      csvErrorDiv.style('display', 'none')
+      if (svg) svg.style('display', '')
+      recipeParsed = true
+      console.log('Parsed CSV recipe', recipeCsv)
     }
   }
 
@@ -188,6 +223,7 @@ export async function doughnut({
 
   return {
     loadRecipe: loadRecipe,
+    loadRecipeCsv: loadRecipeCsv,
     overrideGlobals: overrideGlobals,
     displayChart: displayChart,
     displayNextChart: displayNextChart,

@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 
 export function addDef(el, def) {
 
+  console.log('addDef', def)
   let defs
   if (el.select('defs').size()) {
     defs = el.select('defs')

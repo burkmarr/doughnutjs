@@ -9,10 +9,10 @@ import { createTextElements, initialiseTextParameters } from './texts.js'
 import { createArrowElements, initialiseArrowParameters } from './arrows.js'
 
 export async function doughnut({
-  selector = 'body',
-  recipe = []
+  selector = 'body'
 } = {}) {
 
+  let recipe, recipeCsv
   let iLastChart = null
   let svg, svgWidth, svgHeight
   let recipeParsed = false
@@ -31,6 +31,8 @@ export async function doughnut({
 
     if (!recipeParsed) return
 
+    console.log('Final recipe', recipe)
+
     svgWidth = recipe.globals['width_px']
     svgHeight = recipe.globals['height_px']
     
@@ -47,7 +49,7 @@ export async function doughnut({
 
       // Add any defs defined in recipe to SVG
       if (recipe.globals.defs) {
-        recipe.globals.defs.forEach(d => addDef(svg, d.def))
+        recipe.globals.defs.forEach(def => addDef(svg, def))
       }
 
       gAll = svg.append('g')
@@ -167,16 +169,16 @@ export async function doughnut({
 
   async function loadRecipeCsv(file) {
 
-    // iLastChart = null
-    // recipeParsed = false
+    iLastChart = null
+    recipeParsed = false
 
-    const recipeCsv = await fetchCsv(file)
+    recipeCsv = await fetchCsv(file)
     console.log('Raw CSV recipe', cloneObj(recipeCsv))
 
     const errHtmlEl = csvErrorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
 
-    parseRecipeCsv(recipeCsv, errHtmlEl)
+    recipeCsv = await parseRecipeCsv(recipeCsv, errHtmlEl)
 
     // // Update globals with fixed globals if set
     // Object.keys(fixedGlobals).forEach(k => {
@@ -194,6 +196,8 @@ export async function doughnut({
       if (svg) svg.style('display', '')
       recipeParsed = true
       console.log('Parsed CSV recipe', recipeCsv)
+
+      recipe = recipeCsv
     }
   }
 

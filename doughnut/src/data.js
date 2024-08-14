@@ -63,7 +63,7 @@ export async function parseRecipeCsv(data, errHtmlEl) {
   if (!checkCsv(data, errHtmlEl)) return
 
   data = restructureCsv(data)
-  console.log('Transformed CSV recipe', data)
+  console.log('Transformed CSV recipe', cloneObj(data))
 
   // Validate property value formats and return if fails
   if (!validateProps(data, errHtmlEl)) return
@@ -71,10 +71,10 @@ export async function parseRecipeCsv(data, errHtmlEl) {
   // Highlight unpermitted properties and return if fails
   if (!unpermittedProps(data, errHtmlEl)) return
 
-  return
-
   // Propagate default values
   propogateDefaultProps(data)
+
+  console.log('Propogated CSV recipe', data)
 
   // Find missing values
   if (!missingProps(data, errHtmlEl)) return
@@ -87,6 +87,9 @@ export async function parseRecipeCsv(data, errHtmlEl) {
 
   // Record the aspect ratio of any images
   await Promise.all(recordImageAspectRatio(data))
+
+  // Return the new data object
+  return data
 }
 
 function cleanCsv(data) {
@@ -114,6 +117,7 @@ function cleanCsv(data) {
     return dn
   })
   cleanData.columns = columns
+
   return cleanData
 }
 
@@ -220,7 +224,7 @@ function restructureCsv(data) {
           tEntity = {id: te.entity}
           tEntityArray.push(tEntity)
         }
-        if (p[name]) {
+        if (p[name] !== null && p[name] !== '') {
           // default entity can have blank values in CSV where
           // no value provided for a particular chart therefore
           // only assign if value is not blank.
@@ -607,7 +611,7 @@ function missingProps(data, errHtmlEl) {
                 Mandatory prop not found. Specify it either:
                 <ul>
                 <li>directly on the element</li>
-                <li>or the element with id <i>defaults</i> under <i>${chart.id}>${elementType}</i>,</li>
+                <li>or the element with id <i>default</i> under <i>${chart.id}>${elementType}</i>,</li>
                 <li>or under the charts defaults <i>${chart.id}>defaults,</i>
                 <li>or under the top level <i>defaults</i>.</li>
                 </ul>

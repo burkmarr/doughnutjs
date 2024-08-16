@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { fetchYaml, fetchCsv, cloneObj, addDef } from './general.js'
-import { parseRecipe, parseRecipeCsv } from './data.js'
+import { parseRecipe } from './data.js'
 import { createImageElements, initialiseImageParameters } from './images.js'
 import { createArcElements, initialiseArcParameters } from './arcs.js'
 import { createArclineElements, initialiseArclineParameters } from './arclines.js'
@@ -31,26 +31,18 @@ export async function doughnut({
 
     if (!recipeParsed) return
 
-    console.log('Final recipe', recipe)
-
-    svgWidth = recipe.globals['width_px']
-    svgHeight = recipe.globals['height_px']
+    svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
+    svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
     
-    if (svg && recipe.globals['transition'] !== 'yes') {
+    if (svg && !recipe.charts[iChart].metrics.duration) {
       svg.remove()
       svg = null
     }
 
     if (!svg) {
-
       svg = d3.select(selector).append('svg')
         .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
         .style('overflow', 'visible')
-
-      // Add any defs defined in recipe to SVG
-      if (recipe.globals.defs) {
-        recipe.globals.defs.forEach(def => addDef(svg, def))
-      }
 
       gAll = svg.append('g')
       gImages = gAll.append('g') // Not centred because that is done indepedently
@@ -63,7 +55,11 @@ export async function doughnut({
       svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     }
 
-    // Transform gAll to centre elements on canvas
+    // Add any defined defs to SVG
+    const defs = recipe.charts[iChart].defs
+    Object.keys(defs).forEach(k => addDef(svg, k, defs[k]))
+
+    // Transform gAll to centre elements on SVG
     gAll.attr('transform', `translate(${svgWidth/2} ${svgHeight/2})`)
 
     // Initliase element parameters (aids transitions across charts and recipes)
@@ -76,8 +72,8 @@ export async function doughnut({
     
     const trans = svg.transition().duration(0).ease(d3.easeLinear) 
     //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
-    if (recipe.globals['transition'] === 'yes') {
-      trans.duration(recipe.globals['duration'])
+    if (recipe.charts[iChart].metrics.duration) {
+      trans.duration(recipe.charts[iChart].metrics.duration)
     } else {
 
     }
@@ -140,45 +136,13 @@ export async function doughnut({
     iLastChart = null
     recipeParsed = false
 
-    recipe = await fetchYaml(file)
-    console.log('Raw YAML recipe', cloneObj(recipe))
-
-    const errHtmlEl = errorDiv.append('table')
-    errHtmlEl.attr('id', 'recipe-errors')
-
-    parseRecipe(recipe, errHtmlEl)
-
-    // Update globals with fixed globals if set
-    Object.keys(fixedGlobals).forEach(k => {
-      recipe.globals[k] = fixedGlobals[k]
-    })
-
-    if (errHtmlEl.selectAll('tr').size() > 1) {
-      // There are errors
-      errorDiv.style('display', '')
-      if (svg) svg.style('display', 'none')
-      recipeParsed = false
-    } else {
-      // No errors
-      errorDiv.style('display', 'none')
-      if (svg) svg.style('display', '')
-      recipeParsed = true
-      console.log('Parsed YAML recipe', recipe)
-    }
-  }
-
-  async function loadRecipeCsv(file) {
-
-    iLastChart = null
-    recipeParsed = false
-
     recipeCsv = await fetchCsv(file)
     console.log('Raw CSV recipe', cloneObj(recipeCsv))
 
     const errHtmlEl = csvErrorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
 
-    recipeCsv = await parseRecipeCsv(recipeCsv, errHtmlEl)
+    recipeCsv = await parseRecipe(recipeCsv, errHtmlEl)
 
     // // Update globals with fixed globals if set
     // Object.keys(fixedGlobals).forEach(k => {
@@ -227,7 +191,6 @@ export async function doughnut({
 
   return {
     loadRecipe: loadRecipe,
-    loadRecipeCsv: loadRecipeCsv,
     overrideGlobals: overrideGlobals,
     displayChart: displayChart,
     displayNextChart: displayNextChart,

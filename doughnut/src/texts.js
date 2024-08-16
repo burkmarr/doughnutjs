@@ -190,7 +190,7 @@ function getLinePath(d, textParams, globals) {
   const x0 = textParams.radius * Math.cos(textParams.angle)
   const y = textParams.radius * Math.sin(textParams.angle) - textParams.textOffset
   let x1, x2
-  const twidth = 100 //globals['width_px']
+  const twidth = 100
 
   if (d.textAlign === 'middle') {
     if (d.textReverse) {

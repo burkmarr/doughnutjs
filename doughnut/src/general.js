@@ -1,17 +1,17 @@
 import * as yaml from 'js-yaml'
 import * as d3 from 'd3'
 
-export function addDef(el, def) {
-
-  console.log('addDef', def)
-  let defs
-  if (el.select('defs').size()) {
-    defs = el.select('defs')
-    defs.html(`${defs.html()}${def}`)
-  } else {
+export function addDef(el, name, def) {
+  let defs = el.select('defs')
+  if (!defs.size()) {
     defs = el.append('defs')
-    defs.html(def)
   }
+  let existing = defs.select(`#${name}`)
+  if (existing.size()) {
+    // Def already exists - replace it
+    existing.remove()
+  }
+  defs.html(`${defs.html()}${def}`)
 }
 
 export function fetchYaml(file) {

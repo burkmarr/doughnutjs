@@ -9,16 +9,6 @@ export function createImageElements(g, images, trans, currentImageParams) {
         const sel = enter.append('image')
           .attr('xlink:href', d => d.location)
           .classed('img', true)
-          // For debugging
-          // .style('outline', '2px blue solid')
-
-        // For debugging
-        // enter.append('rect')
-        //   .style('outline', '2px red solid')
-        //   .attr('width', d => d.width[1])
-        //   .attr('height', d => d.width[1])
-        //   .attr('fill-opacity', d => 0)
-
         return imageCommonAttrs(sel, 0)
       },
       update => update,
@@ -53,7 +43,6 @@ export function createImageElements(g, images, trans, currentImageParams) {
     return selection
   }
 
-  
   function imageTween(d, i) {
 
     const iAng = d3.interpolate(d.currentImageParams.angle, d.angle[i])

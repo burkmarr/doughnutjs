@@ -9,58 +9,15 @@ import { getArrowParams } from './arrows.js'
 const elementTypes = ['arcs', 'arclines', 'images', 'spokes', 'texts', 'arrows']
 
 export async function parseRecipe(data, errHtmlEl) {
- 
-  // Top level default values
-  dv(data, 'globals', {})
-  dv(data, 'defaults', {})
-  dv(data, 'charts', {})
-  dv(data.globals, 'width_px', 650)
-  dv(data.globals, 'height_px', 650)
-  dv(data.globals, 'duration', 1000)
-  dv(data.globals, 'transition', 'yes')
 
-  data.charts.forEach(chart => {
-    dv(chart, 'defaults', [])
-    elementTypes.forEach(elementType => {
-      dv(chart, elementType, [])
-    })
-  })
-  // ### TODO ### 
-  // Need to check that charts have id property
-
-  // Validate property value formats and return if fails
-  if (!validateProps(data, errHtmlEl)) return
-  
-  // Highlight unpermitted properties and return if fails
-  if (!unpermittedProps(data, errHtmlEl)) return
-
-  // Resolve clones
-  resolveClones(data)
-
-  // Propagate default values
-  propogateDefaultProps(data)
-
-  // Find missing values
-  if (!missingProps(data, errHtmlEl)) return
-
-  // Resolve all the number formats
-  resolveNumericFormats(data)
-
-  // Initialise additional properties required for tweening
-  initialiseTweenProps(data)
-
-  // Record the aspect ratio of any images
-  await Promise.all(recordImageAspectRatio(data))
-}
-
-export async function parseRecipeCsv(data, errHtmlEl) {
-  //const chartNames = checkCols(data, errHtmlEl)
-  //if (!checkCols(data, errHtmlEl)) return
-  //console.log(charts)
-
+  // First clean up CSV data and sort out data types
   data = cleanCsv(data)
 
-  if (!checkCsv(data, errHtmlEl)) return
+  // Check the column names of the CSV
+  if (!checkCols(data, errHtmlEl)) return
+
+  // Check other aspects of the CSV
+  if (!checkRows(data, errHtmlEl)) return
 
   data = restructureCsv(data)
   console.log('Transformed CSV recipe', cloneObj(data))
@@ -121,23 +78,139 @@ function cleanCsv(data) {
   return cleanData
 }
 
-function checkCsv(data, errHtmlEl) {
-  // type & entity
-  // Each combination must be unique
+function checkCols(data, errHtmlEl) {
 
-  // chart
-  // Only entity names permissible are canvas, defs and globals
+  const errMsg = (col, msg) => {
+    const row = errHtmlEl.append('tr')
+    row.append('td').text(col)
+    row.append('td').text(msg)
+  }
 
-  // chart>canvas & chart>defs
-  // All properties must have value in first chart and none in the others
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('Column')
+  errTableHdrRow.append('th').text('Problem')
 
-  // chart>canvas & chart>defs & chart>globals
-  // There must be no values in remaining cells
+  const cols = data.columns
 
-  // chart>globals
+  // Check for mandatory columns
+  if (cols[0] !== 'type') {
+    errMsg(cols[0], "The header of the first column of the CSV must be 'type'.")
+  }
+  if (cols[1] !== 'entity') {
+    errMsg(cols[1], "The header of the second column of the CSV must be 'entity'.")
+  }
+  if (cols[2] !== 'property_z') {
+    errMsg(cols[2], "The header of the fourth column of the CSV must be 'property_z'.")
+  }
+  if (!cols.length > 3) {
+    errMsg('', 'There must be at least four columns. The fourth and subsequent columns are named with unique chart identifiers.')
+  }
 
-  // return errHtmlEl.selectAll('tr').size() === 1
-  return true
+  // Check charts are correctly named - they must be unique names and consist
+  // only of non-white characters.
+  const charts = cols.filter((c,i) => i >= 3 && c.length > 0) 
+  charts.forEach((c,i) => {
+    if (!c.match(/^\S+$/)) {
+      errMsg(c, `The chart id (header) for this column is not valid - it cannot contain any spaces.`)
+    }
+  })
+  
+  return errHtmlEl.selectAll('tr').size() === 1
+}
+
+function checkRows(data, errHtmlEl) {
+
+  const errMsg = (row, col, msg) => {
+    const tr = errHtmlEl.append('tr')
+    tr.append('td').html(row)
+    tr.append('td').html(col)
+    tr.append('td').html(msg)
+  }
+
+  errHtmlEl.html('')
+  const errTableHdrRow = errHtmlEl.append('tr')
+  errTableHdrRow.append('th').text('Row number')
+  errTableHdrRow.append('th').text('Column')
+  errTableHdrRow.append('th').text('Problem')
+
+  // Type can only be one of chart, image, arc, arcline, spoke, arrow
+  const types = ['chart', 'image', 'arc', 'arcline', 'spoke', 'text', 'arrow']
+  data.forEach((d,i) => {
+    if (d.type && !types.includes(d.type)) {
+      errMsg(i+1,'type', `${d.type} is not a valid type. Must be one of ${types.join(', ')}.`)
+    }
+  })
+  // Entity of type chart must be either metric, def or default
+  const chartEntities = ['metric', 'def', 'default']
+  data.forEach((d,i) => {
+    if (d.type && d.type === 'chart' && !chartEntities.includes(d.entity)) {
+      errMsg(i+1,'entity', `'${d.entity}' is not a valid entity for chart type. Must be one of ${chartEntities.join(', ')}.`)
+    }
+  })
+  // Entity cannot contain whitespace
+  data.forEach((d,i) => {
+    if (d.entity && !d.entity.match(/^\S+$/)) {
+      errMsg(i+1,'entity', `'${d.entity}' is not a valid entity name because it contains spaces.`)
+    }
+  })
+
+  // Each type must have an entity and visa versa
+  data.forEach((d,i) => {
+    if ((d.type && !d.entity)) {
+      errMsg(i+1,'entity', 'A value is required for entity if there is a value for type.')
+    }
+    if (!d.type && d.entity) {
+      errMsg(i+1,'type', 'A value is required for type if there is a value for entity.')
+    }
+  })
+
+  // Each combination of type & entity must be unique
+  const typeEntity = data.filter(d => d.type && d.entity).map(d => `${d.type} ${d.entity}`)
+  const typeEntitySorted = typeEntity.slice().sort()
+  const duplicates = []
+  for (let i = 0; i < typeEntitySorted.length - 1; i++) {
+    if (typeEntitySorted[i+1] === typeEntitySorted[i]) {
+      duplicates.push(typeEntitySorted[i])
+    }
+  }
+  duplicates.forEach(d => {
+    data.forEach((r,i) => {
+      if (d === `${r.type} ${r.entity}`) {
+        errMsg(i+1,'type/entity', `The type/entity combination '<b>${r.type}/${r.entity}</b>' is repeated: they must be unique combinations.`)
+      }
+    })
+  })
+
+  // Check other cell values for rows where type/entity specified
+  data.forEach((d,i) => {
+    // Each type & entity must have a numeric z value in the property_z
+    // unless it is of type 'chart' or entity 'default'
+    if (d.type && d.entity && d.type !== 'chart' && d.entity !== 'default') {
+      if (typeof d.property_z !== 'number') {
+        errMsg(i+1,'property_z', `The z value '<b>${d.property_z}</b>' is not valid, it must be a number.`)
+      }
+    }
+    // Type/entity rows that are either of type 'chart' or entity 'default' must not have a z value
+    if (d.type && d.entity && d.type === 'chart' && d.property_z !== '') {
+      errMsg(i+1,'property_z', `There should be no z value for type 'chart' but it is set to '<b>${d.property_z}</b>'.`)
+    }
+    if (d.type && d.entity && d.entity === 'default' && d.property_z !== '') {
+      errMsg(i+1,'property_z', `There should be no z value for entity 'default' but it is set to '<b>${d.property_z}</b>'.`)
+    }
+    // Each type & entity must have a value of either 'yes' or 'no' against every
+    // chart column unless it is of type 'chart'
+    const charts = Object.keys(data[0]).slice(3)
+    if (d.type && d.entity && d.type !== 'chart') {
+      charts.forEach(c => {
+        if (d[c] !== 'yes' && d[c] !== 'no') {
+          errMsg(i+1,c, `Type/entity rows must have either the value 'yes' or 'no' against every chart column`)
+        }
+      })
+    }
+  })
+
+  return errHtmlEl.selectAll('tr').size() === 1
 }
 
 function restructureCsv(data) {
@@ -171,11 +244,13 @@ function restructureCsv(data) {
 
   // Transform structure from that read in from CSV
   // to that expected by the code (originally from yaml)
-  const tdata = {charts:[], defaults: {}, globals: {defs: []}}
+  const tdata = {charts:[], globals: {defs: []}}
   tdata.charts = charts.map(c => {
     const chart = {
       id: c,
       defaults: {},
+      metrics: {},
+      defs: {}
     }
     elementTypes.forEach(et => {
       chart[et] = []
@@ -183,31 +258,29 @@ function restructureCsv(data) {
     return chart
   })
 
-  // chart>canvas to globals
-  data.filter(d => d.type === 'chart' && d.entity === 'canvas' && d.property_z).forEach(d => {
-    // Global canvas taken from first chart
-    tdata.globals[d.property_z] = d[charts[0]]
+  // Chart-metric to chart metrics collection
+  data.filter(d => d.type === 'chart' && d.entity === 'metric' && d.property_z).forEach(d => {
+    charts.forEach(chartName => {
+      const chart = tdata.charts.find(c => c.id === chartName)
+      chart.metrics[d.property_z] = d[chartName]
+    })
   })
-  // charts>defs to global defs collection
-  data.filter(d => d.type === 'chart' && d.entity === 'defs' && d.property_z).forEach(d => {
-    // Global defs taken from first chart
-    tdata.globals.defs.push(d[charts[0]])
+  // Chart-def to chart defs collection
+  data.filter(d => d.type === 'chart' && d.entity === 'def' && d.property_z).forEach(d => {
+    charts.forEach(chartName => {
+      const chart = tdata.charts.find(c => c.id === chartName)
+      if (d[chartName]) {
+        chart.defs[d.property_z] = d[chartName]
+      }
+    })
   })
-  // For now, charts>globals>duration to globals
-  // and other globals to defaults for chart
-  data.filter(d => d.type === 'chart' && d.entity === 'globals').forEach(d => {
-    if (d.property_z === 'duration') {
-      // From first chart
-      tdata.globals['duration'] = d[charts[0]]
-      tdata.globals['transition'] = 'yes'
-    } else if (d.property_z) {
-      charts.forEach(chartName => {
-        const chart = tdata.charts.find(c => c.id === chartName)
-        chart.defaults[d.property_z] = d[chartName]
-      })
-    }
+  // Defaults to defaults for chart
+  data.filter(d => d.type === 'chart' && d.entity === 'default' && d.property_z).forEach(d => {
+    charts.forEach(chartName => {
+      const chart = tdata.charts.find(c => c.id === chartName)
+      chart.defaults[d.property_z] = d[chartName]
+    })
   })
-
   // Now populate the chart entities
   typeAndEntity.forEach(te => {
     const rows = data.filter(d => d.type === te.type && d.entity === te.entity)
@@ -235,54 +308,6 @@ function restructureCsv(data) {
   })
 
   return tdata
-}
-
-function checkCols(data, errHtmlEl) {
-
-  const errMsg = (msg) => {
-    const row = errHtmlEl.append('tr')
-    row.append('td').text(msg)
-  }
-
-  errHtmlEl.html('')
-  const errTableHdrRow = errHtmlEl.append('tr')
-  errTableHdrRow.append('th').text('CSV Problem')
-
-  const cols = data.columns
-
-  // Check for mandatory columns
-  if (cols[0] !== 'type') {
-    errMsg("The first column of the CSV must be 'type'.")
-  }
-  if (cols[1] !== 'entity') {
-    errMsg("The second column of the CSV must be 'entity'.")
-  }
-  if (cols[2] !== 'property_z') {
-    errMsg("The fourth column of the CSV must be 'property_z'.")
-  }
-  if (!cols.length > 3) {
-    errMsg("There must be at least four columns. The fourth and subsequent columns are named with unique chart identifiers.")
-  }
-
-  // Check charts are correctly named - they must be unique names and consist
-  // of any non-white characters.
-  const charts = cols.filter((c,i) => i >= 3 && c.length > 0) 
-  charts.forEach((c,i) => {
-    if (c.length === 0) {
-      errMsg(`There is no chart id for column ${i+4}, but there is data in that column. Either head the column with a chart id or remove the data.`)
-    } else if (!c.match(/^\S+$/)) {
-      errMsg(`The chart id for column ${i+4} is not valid - it cannot contain any spaces.`)
-    }
-  })
-  
-  return errHtmlEl.selectAll('tr').size() === 1
-}
-
-function dv(obj, prop, value) {
-  // Default value
-  if (!obj[prop]) {
-    obj[prop] = value
-  }
 }
 
 function resolveNumericFormats (obj) {
@@ -373,92 +398,11 @@ function resolveNumericFormats (obj) {
   }
 }
 
-function resolveClones (data) {
-  // A cloned chart allows a chart in a recipe to be based on
-  // another in the recipe and then modify slightly.
-  data.charts.forEach(chart => {
-    if (chart.clone) {
-      const toChart = chart
-      const fromChart = data.charts.find(c => c.id === chart.clone)
-
-      if (fromChart) {
-        // Clone any chart default values
-        if (fromChart.defaults) {
-          if (!toChart.defaults) {
-            toChart.defaults = fromChart.defaults
-          } else {
-            Object.keys(fromChart.defaults).forEach(k => {
-              if (typeof toChart.defaults[k] === 'undefined') {
-                toChart.defaults[k] = fromChart.defaults[k]
-              }
-            })
-          }
-        }
-        // Now do element types
-        const types = ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows']
-        types.forEach(elementType => {
-          const fromChartElements = fromChart[elementType]
-          let toChartElements = toChart[elementType]
-
-          if (fromChartElements) {
-            let toChartElementsCloned
-            if (toChartElements) {
-              // Clone the target chart current element array
-              toChartElementsCloned = cloneObj(toChartElements)
-            }
-
-            // if (toChart.id === 'rockstrom2009c') {
-            //   console.log('toChartElementsCloned', toChartElementsCloned)
-            // }
-
-            // First copy entire element type array from source to target
-            // replacing any elements already there (stored in toChartElementsCloned)
-            data.charts.find(c => c.id === toChart.id)[elementType] = cloneObj(fromChartElements)
-            toChartElements = toChart[elementType]
-
-            if (toChartElementsCloned) {
-              // Now loop through the elements that were already existing in the target
-              // and either replace the value of the copied properties or remove the
-              // element if this is indicated.
-              toChartElementsCloned.forEach(toChartElementCloned => {
-                const toChartElement = toChart[elementType].find(toChartElement => toChartElement.id === toChartElementCloned.id)
-                if (toChartElement) {
-                  if (toChartElementCloned.remove === true) {
-                    // The element is marked for removal in target chart.
-                    toChart[elementType] = toChart[elementType].filter( toChartElement => toChartElement.id !== toChartElementCloned.id)
-                  } else {
-                    // Replace any existing properties in toChartElement (the copied element)
-                    // with any that were already specified.
-                    Object.keys(toChartElementCloned).forEach(toChartElementClonedKey => {
-                      toChartElement[toChartElementClonedKey] = toChartElementCloned[toChartElementClonedKey]
-                    })
-                  }
-                } else {
-                  // The element in toChartElementsCloned is a completely new one
-                  toChart[elementType].push(toChartElementCloned)
-                }
-              })
-            }
-          } else {
-            // Element type array from target not found in source,
-            // so delete from target
-            delete toChart[elementType]
-          }
-        })
-      } else {
-        // Referenced clone id not found - need to warm
-        console.log('Clone target identified by id', chart.clone, 'not found')
-      }
-    }
-  })
-}
-
 function propogateDefaultProps(data) {
   // Works by propogating all defaults whether or not they are permitted on
   // on an element type.
   // Another way of doing it would be to limit the propogation of defaults to those elements
   // that are allowed to have them. 
-  const recipeDefaults = data.defaults
   data.charts.forEach(chart => {
     const chartDefaults = chart.defaults ? chart.defaults : {}
     elementTypes.forEach(elementType => {
@@ -485,15 +429,6 @@ function propogateDefaultProps(data) {
               element[chartDefault] = chartDefaults[chartDefault]
             }
           })
-          // Recipe defaults
-          if (recipeDefaults) {
-            Object.keys(recipeDefaults).forEach(recipeDefault => {
-              // If the recipe default does not exist on the element then add.
-              if (!element[recipeDefault]) {
-                element[recipeDefault] = recipeDefaults[recipeDefault]
-              }
-            })
-          }
           // By this point, all recipe defined defaults are propogated.
           // Now go through any optional properties for this element type 
           // that have a default value defined in the defition and if

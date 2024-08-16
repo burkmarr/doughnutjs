@@ -113,7 +113,6 @@ export function getArrowParams (d, i) {
   }
 }
 
-
 function arrow(ap) {
 
   const x1 = 0

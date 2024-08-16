@@ -26,6 +26,12 @@ const f = {
     example: ['500'],
     expl: 'Where n is a number between 1 and 1000 (no fractions).'
   },
+  zeroTo10000: {
+    re: ['^0$', '^[1-9]$', '^[1-9][0-9]$', '^[1-9][0-9][0-9]$', '^[1-9][0-9][0-9][0-9]$','^10000$'],
+    disp: ['n'],
+    example: ['5010000'],
+    expl: 'Where n is a number between 0 and 10000 (no fractions).'
+  },
   zeroToOne: {
     re: ['^[01]$|^0\.[0-9]$', '([01]|0\.[0-9])\\s+([01]|0\.[0-9])\\s+([01]|0\.[0-9])$'],
     disp: ['0|1', '0.d', '0|1|0.d 0|1|0.d 0|1|0.d' ],
@@ -48,7 +54,7 @@ const f = {
     re: ['^\\S+$'],
     disp: ['A string without spaces'],
     example: ['whiteOutlineEffect'],
-    expl: 'The id of a filter defined in the defs section of the data yaml.'
+    expl: 'The id of a filter defined in the chart-def section of the data csv.'
   },
   url: {
     re: ['^\\S+$'],
@@ -96,14 +102,14 @@ const f = {
 
 // Error check definitions
 const properties = [
-  {
-    name: 'remove',
-    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
-    mandatoryOn: [],
-    formats: f.trueFalse,
-    number: false,
-    threeable: false,
-  },
+  // {
+  //   name: 'remove',
+  //   optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
+  //   mandatoryOn: [],
+  //   formats: f.trueFalse,
+  //   number: false,
+  //   threeable: false,
+  // },
   {
     name: 'id',
     optionalOn: [],
@@ -237,7 +243,7 @@ const properties = [
   },
   {
     name: 'angle0',
-    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
+    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows'],
     mandatoryOn: [],
     formats: f.numberNoMod,
     default: 0,
@@ -246,7 +252,7 @@ const properties = [
   },
   {
     name: 'angleSpan',
-    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
+    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows'],
     mandatoryOn: [],
     formats: f.numberNoMod,
     default: 360,

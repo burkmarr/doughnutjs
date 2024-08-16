@@ -66,12 +66,10 @@
     }
 
     window.loadRecipe = function(n) {
-      chart.overrideGlobals({width_px: 600, height_px: 600})
       chart.loadRecipe(`./data/test${n}.yaml`)
     }
 
     window.loadRockstrom = function () {
-      //chart.overrideGlobals({width_px: null, height_px: null})
       chart.loadRecipe(`./data/boundaries-evolution.csv`)
     }
   </script>

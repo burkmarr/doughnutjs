@@ -7,31 +7,39 @@ import { getTextParams } from './texts.js'
 import { getArrowParams } from './arrows.js'
 
 const elementTypes = ['arcs', 'arclines', 'images', 'spokes', 'texts', 'arrows']
+let dataCsv
 
 export async function parseRecipe(data, errHtmlEl) {
+
+  console.log('Raw CSV recipe', cloneObj(data))
 
   // First clean up CSV data and sort out data types
   data = cleanCsv(data)
 
-  // Check the column names of the CSV
+  // Check the column names of the CSV and return if fails
   if (!checkCols(data, errHtmlEl)) return
 
-  // Check other aspects of the CSV
+  // Check other aspects of the CSV and return if fails
   if (!checkRows(data, errHtmlEl)) return
-
-  data = restructureCsv(data)
-  console.log('Transformed CSV recipe', cloneObj(data))
 
   // Validate property value formats and return if fails
   if (!validateProps(data, errHtmlEl)) return
-  
+
   // Highlight unpermitted properties and return if fails
   if (!unpermittedProps(data, errHtmlEl)) return
 
+  // At this point restructure the CSV structure into the format that
+  // we will use with D3. It is must easier to propagate default
+  // properties after this point. To do it in the CSV structure
+  // we would need to insert rows.
+  dataCsv = cloneObj(data)
+  data = restructureCsv(data)
+
+  console.log('Transformed CSV recipe', cloneObj(data))
+
   // Propagate default values
   propogateDefaultProps(data)
-
-  console.log('Propogated CSV recipe', data)
+  // console.log('Propogated recipe', data)
 
   // Find missing values
   if (!missingProps(data, errHtmlEl)) return
@@ -43,8 +51,10 @@ export async function parseRecipe(data, errHtmlEl) {
   initialiseTweenProps(data)
 
   // Record the aspect ratio of any images
-  await Promise.all(recordImageAspectRatio(data))
+  // I don't think this is needed anymore
+  // await Promise.all(recordImageAspectRatio(data))
 
+  console.log('Parsed recipe', data)
   // Return the new data object
   return data
 }
@@ -214,7 +224,8 @@ function checkRows(data, errHtmlEl) {
 }
 
 function restructureCsv(data) {
-  const charts = data.columns.filter((c,i) => i >= 3)
+  //const charts = data.columns.filter((c,i) => i >= 3)
+  const charts = Object.keys(data[0]).slice(3)
   const typeAndEntity = data.filter(d => d.type && d.type !== 'chart').map(d => {
     return {type: d.type, entity: d.entity}
   })
@@ -244,7 +255,7 @@ function restructureCsv(data) {
 
   // Transform structure from that read in from CSV
   // to that expected by the code (originally from yaml)
-  const tdata = {charts:[], globals: {defs: []}}
+  const tdata = {charts:[]}
   tdata.charts = charts.map(c => {
     const chart = {
       id: c,
@@ -399,33 +410,40 @@ function resolveNumericFormats (obj) {
 }
 
 function propogateDefaultProps(data) {
-  // Works by propogating all defaults whether or not they are permitted on
+  // Works by propagating all defaults whether or not they are permitted on
   // on an element type.
   // Another way of doing it would be to limit the propogation of defaults to those elements
   // that are allowed to have them. 
+  const propDefs = getProperties()
   data.charts.forEach(chart => {
     const chartDefaults = chart.defaults ? chart.defaults : {}
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
-        const defaults = chart[elementType].find(e => e.id === 'default')
-        const optionalProperties = getProperties().filter(propDef => {
+        // Get the chart element type defaults for this element type
+        const elementDefaults = chart[elementType].find(e => e.id === 'default')
+        // Identify properties allowed on this element type that have a default value
+        const propDefDefaults = propDefs.filter(propDef => {
           return propDef.optionalOn.find(et => et === elementType) && propDef.hasOwnProperty('default')
         })
+        // Now update any elements with defaults from these levels
         chart[elementType].filter(element => element.id !== 'default').forEach(element => {
           
-          // Element collection defaults
-          if (defaults) {
-            Object.keys(defaults).forEach(elementDefault => {
+          // First element collection defaults (highest priority)
+          if (elementDefaults) {
+            Object.keys(elementDefaults).forEach(elementDefault => {
               // If the default does not exist on the element then add.
               if (!element[elementDefault]) {
-                element[elementDefault] = defaults[elementDefault]
+                element[elementDefault] = elementDefaults[elementDefault]
               }
             })
           }
-          // Chart defaults
+          // Now chart defaults
           Object.keys(chartDefaults).forEach(chartDefault => {
-            // If the chart default does not exist on the element then add.
-            if (!element[chartDefault]) {
+            // If the chart default does not exist on the element then add if it
+            // is allowed on this element type
+            const propDef = propDefs.find(pd => pd.name === chartDefault)
+            const allowed =  [...propDef.mandatoryOn, ...propDef.optionalOn].includes(elementType)
+            if (allowed && !element[chartDefault]) {
               element[chartDefault] = chartDefaults[chartDefault]
             }
           })
@@ -433,9 +451,9 @@ function propogateDefaultProps(data) {
           // Now go through any optional properties for this element type 
           // that have a default value defined in the defition and if
           // not defined on element, set it with the default value.
-          optionalProperties.forEach(optionalProperty => {
-            if (!element[optionalProperty.name]) {
-              element[optionalProperty.name] = optionalProperty.default
+          propDefDefaults.forEach(propDef => {
+            if (!element[propDef.name]) {
+              element[propDef.name] = propDef.default
             }
           })
         })
@@ -456,70 +474,88 @@ function propogateDefaultProps(data) {
 }
 
 function validateProps(data, errHtmlEl) {
-  
+
+  const errMsg = (row, type, entity, prop, chart, value, msg) => {
+    const tr = errHtmlEl.append('tr')
+    tr.append('td').html(row)
+    tr.append('td').html(type)
+    tr.append('td').html(entity)
+    tr.append('td').html(prop)
+    tr.append('td').html(chart)
+    tr.append('td').html(value)
+    tr.append('td').html(msg)
+  }
+
   errHtmlEl.html('')
   const errTableHdrRow = errHtmlEl.append('tr')
-  errTableHdrRow.append('th').text('Chart ID')
-  errTableHdrRow.append('th').text('Element type')
-  errTableHdrRow.append('th').text('Element ID')
-  errTableHdrRow.append('th').text('Element prop')
-  errTableHdrRow.append('th').text('Prop value')
+  errTableHdrRow.append('th').text('Row')
+  errTableHdrRow.append('th').text('type')
+  errTableHdrRow.append('th').text('entity')
+  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('chart')
+  errTableHdrRow.append('th').text('value')
   errTableHdrRow.append('th').text('Permitted formats')
 
+  let cType, cEntity
   const propDefs = getProperties()
-  data.charts.forEach(chart => {
-    elementTypes.forEach(elementType => {
-      if (chart[elementType]) {
-        chart[elementType].forEach(element => {
-          Object.keys(element).forEach(property => {
-            const propDef = propDefs.find(propdef => propdef.name === property)
-            if (propDef) {
-              if (property === propDef.name) {
-                //console.log(chart.id, elementType, element.id, property, element[property])
-                let permittedFormat = false
-                for (let i=0; i<propDef.formats.re.length; i++) {
-                  const regex = new RegExp(propDef.formats.re[i])
-                  if (regex.test(element[property])) {
-                    permittedFormat = true
-                  }
-                }
-                if (!permittedFormat) {
-                  let err = '<ul>'
-                  propDef.formats.disp.forEach((d,i) => {
-                    err = `${err}<li><b>${d}</b> - e.g. <b>${propDef.formats.example[i]}</b></li>`
-                  })
-                  err = `${err}</ul> ${propDef.formats.expl}`
-                 
-                  const row = errHtmlEl.append('tr')
-                  row.append('td').text(chart.id)
-                  row.append('td').text(elementType)
-                  row.append('td').text(element.id)
-                  row.append('td').text(propDef.name)
-                  row.append('td').text(element[property]).classed('error-property-value', true)
-                  row.append('td').html(err)
-                }
+  const charts = Object.keys(data[0]).slice(3)
+
+  data.forEach((d,irow) => {
+    if (d.type) {
+      cType = d.type
+      cEntity = d.entity
+    } else {
+      // Check property value for each chart
+      charts.forEach(chart => {
+        if (cEntity !== 'def' && cEntity !== 'metric' && d[chart] !== '=' && d[chart] !== '') {
+          const propDef = propDefs.find(propdef => propdef.name === d.property_z)
+          if (propDef) {
+            let permittedFormat = false
+            for (let i=0; i<propDef.formats.re.length; i++) {
+              const regex = new RegExp(propDef.formats.re[i])
+              if (regex.test(d[chart])) {
+                permittedFormat = true
               }
-            } else {
-              // A property defintion was not found for a property of this name
-              //const err = `The property name <b>${property}</b> is not recognised. Check <b>${chart.id}>${elementType}>${element.id}</b>.`
-              //errHtmlEl.append('li').html(err)
             }
-          })
-        })
-      }
-    })
+            if (!permittedFormat) {
+              let err = '<ul>'
+              propDef.formats.disp.forEach((d,i) => {
+                err = `${err}<li><b>${d}</b> - e.g. <b>${propDef.formats.example[i]}</b></li>`
+              })
+              err = `${err}</ul> ${propDef.formats.expl}`
+              errMsg(irow+1, cType, cEntity, d.property_z, chart, d[chart], err)
+            }
+          } else {
+            errMsg(irow+1, cType, cEntity, d.property_z, chart, d[chart], 'No definition')
+          }
+        }
+      })
+    }
   })
+
   return errHtmlEl.selectAll('tr').size() === 1
 }
 
 function missingProps(data, errHtmlEl) {
 
+  const errMsg = (row, type, entity, prop, chart, msg) => {
+    const tr = errHtmlEl.append('tr')
+    tr.append('td').html(row)
+    tr.append('td').html(type)
+    tr.append('td').html(entity)
+    tr.append('td').html(prop)
+    tr.append('td').html(chart)
+    tr.append('td').html(msg)
+  }
+
   errHtmlEl.html('')
   const errTableHdrRow = errHtmlEl.append('tr')
-  errTableHdrRow.append('th').text('Chart ID')
-  errTableHdrRow.append('th').text('Element type')
-  errTableHdrRow.append('th').text('Element ID')
-  errTableHdrRow.append('th').text('Element prop')
+
+  errTableHdrRow.append('th').text('row')
+  errTableHdrRow.append('th').text('type')
+  errTableHdrRow.append('th').text('entity')
+  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('chart')
   errTableHdrRow.append('th').text('Problem')
 
   const propDefs = getProperties()
@@ -536,21 +572,23 @@ function missingProps(data, errHtmlEl) {
         chart[elementType].forEach(element => {
           mandatoryProps.forEach(mandatoryProp => {
             if (!Object.keys(element).find(prop => prop === mandatoryProp)) {
-              //console.log('Mandatory prop not found', chart.id, elementType, element.id, mandatoryProp)
-              const row = errHtmlEl.append('tr')
-              row.append('td').text(chart.id)
-              row.append('td').text(elementType)
-              row.append('td').text(element.id)
-              row.append('td').text(mandatoryProp)
-              row.append('td').html(`
+              const msg = `
                 Mandatory prop not found. Specify it either:
                 <ul>
-                <li>directly on the element</li>
-                <li>or the element with id <i>default</i> under <i>${chart.id}>${elementType}</i>,</li>
-                <li>or under the charts defaults <i>${chart.id}>defaults,</i>
-                <li>or under the top level <i>defaults</i>.</li>
+                <li>directly on the element (type <i>${elementType}</i> and entity <i>${element.id}</i>),</li>
+                <li>or the element with type <i>${elementType}</i> and entity <i>default</i>,</li>
+                <li>or under type <i>charts</i> and entity <i>defaults</i>.
                 </ul>
-              `)
+              `
+              // Find the row in CSV corresponding to element
+              let iRow
+              for (let i=0; i < dataCsv.length; i++) {
+                if (`${dataCsv[i].type}s` === elementType && dataCsv[i].entity === element.id) {
+                  iRow = i+1
+                  break
+                }
+              }
+              errMsg(iRow, elementType, element.id, mandatoryProp, chart.id, msg)
             }
           })
         })
@@ -563,53 +601,39 @@ function missingProps(data, errHtmlEl) {
 
 function unpermittedProps(data, errHtmlEl) {
 
+  const errMsg = (row, type, entity, prop, msg) => {
+    const tr = errHtmlEl.append('tr')
+    tr.append('td').html(row)
+    tr.append('td').html(type)
+    tr.append('td').html(entity)
+    tr.append('td').html(prop)
+    tr.append('td').html(msg)
+  }
+
   errHtmlEl.html('')
   const errTableHdrRow = errHtmlEl.append('tr')
-  errTableHdrRow.append('th').text('Chart ID')
-  errTableHdrRow.append('th').text('Element type')
-  errTableHdrRow.append('th').text('Element ID')
-  errTableHdrRow.append('th').text('Element prop')
-  errTableHdrRow.append('th').text('Problem')
+  errTableHdrRow.append('th').text('Row')
+  errTableHdrRow.append('th').text('type')
+  errTableHdrRow.append('th').text('entity')
+  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('Permitted formats')
 
+  let cType, cEntity
   const propDefs = getProperties()
 
-  // Checks if property is permitted on element type.
-  // If the errHtmlEl is set, it warns the user
-  // without removing the type and returns HTML.
-  // If errHtmlEl is not set, it does not warn
-  // the user, but removes the innapropriate property.
-  data.charts.forEach(chart => {
-    elementTypes.forEach(elementType => {
-      if (chart[elementType]) {
-        
-        const permittedElementProps = propDefs
-            .filter(propDef => {
-              let permitted = [...propDef.mandatoryOn, ...propDef.optionalOn]
-              if (!permitted.length) permitted = elementTypes
-              return permitted.find(propDef => propDef === elementType)
-            })
-            .map(propDef => propDef.name)
-        //console.log(`Permitted on ${elementType}: ${PermittedElementProps}`)
-        chart[elementType].forEach(element => {
-          Object.keys(element).forEach(property => {
-            if (!permittedElementProps.find(permittedProperty => permittedProperty === property)) {
-              //console.log(`${property} not permitted on ${elementType}`)
-              //console.log('errHtmlEl', errHtmlEl)
-              if (errHtmlEl) {
-                const row = errHtmlEl.append('tr')
-                row.append('td').text(chart.id)
-                row.append('td').text(elementType)
-                row.append('td').text(element.id)
-                row.append('td').text(property)
-                row.append('td').html('Property not permitted on the element type')
-              } else {
-                delete element.prop
-              }   
-            }
-          })
-        })
+  data.forEach((d,irow) => {
+    if (d.type) {
+      cType = d.type
+      cEntity = d.entity
+    } else {
+      if (cType !== 'chart') {
+        const propDef = propDefs.find(propdef => propdef.name === d.property_z)
+        let permitted = [...propDef.mandatoryOn, ...propDef.optionalOn]
+        if (!permitted.find(type => type === `${cType}s`)) {
+          errMsg (irow+1, cType, cEntity, d.property_z, 'Property not allowed on this element type.')
+        }
       }
-    })
+    }
   })
 
   return errHtmlEl.selectAll('tr').size() === 1
@@ -664,31 +688,31 @@ function initialiseTweenProps(data) {
   })
 }
 
-function recordImageAspectRatio(data) {
+// function recordImageAspectRatio(data) {
 
-  const allPromises = []
+//   const allPromises = []
 
-  data.charts.forEach(async chart => {
-    chart.images.forEach(async img => {
-      if (img.location) {
-        allPromises.push(getImageWidth(img.location, img))
-      }
-    })
-  })
-  return allPromises
+//   data.charts.forEach(async chart => {
+//     chart.images.forEach(async img => {
+//       if (img.location) {
+//         allPromises.push(getImageWidth(img.location, img))
+//       }
+//     })
+//   })
+//   return allPromises
 
-  function getImageWidth(src, dataImage){
-    return new Promise((resolve, reject) => {
-      let img = new Image()
-      img.onload = () => {
-        // dataImage.origWidth = img.width
-        // dataImage.origHeight = img.height
-        dataImage.aspectRatio = img.width / img.height
-        img = null
-        resolve()
-      }
-      img.onerror = reject
-      img.src = src
-    })
-  }
-}
+//   function getImageWidth(src, dataImage){
+//     return new Promise((resolve, reject) => {
+//       let img = new Image()
+//       img.onload = () => {
+//         // dataImage.origWidth = img.width
+//         // dataImage.origHeight = img.height
+//         dataImage.aspectRatio = img.width / img.height
+//         img = null
+//         resolve()
+//       }
+//       img.onerror = reject
+//       img.src = src
+//     })
+//   }
+// }

@@ -102,14 +102,6 @@ const f = {
 
 // Error check definitions
 const properties = [
-  // {
-  //   name: 'remove',
-  //   optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
-  //   mandatoryOn: [],
-  //   formats: f.trueFalse,
-  //   number: false,
-  //   threeable: false,
-  // },
   {
     name: 'id',
     optionalOn: [],
@@ -261,7 +253,7 @@ const properties = [
   },
   {
     name: 'radiusSpanPx',
-    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
+    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows'],
     mandatoryOn: [],
     formats: f.numberNoMod,
     default: 150,
@@ -270,7 +262,7 @@ const properties = [
   },
   {
     name: 'radiusSpanReal',
-    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts'],
+    optionalOn: ['images', 'arcs', 'arclines', 'spokes', 'texts', 'arrows'],
     mandatoryOn: [],
     formats: f.numberNoMod,
     default: 100,

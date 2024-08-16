@@ -18,7 +18,6 @@ export async function doughnut({
   let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gTexts, gArrows
   let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}, arrows: {}}
-  const fixedGlobals = {}
   let rc
 
   const errorDiv = d3.select(selector).append('div')
@@ -137,17 +136,11 @@ export async function doughnut({
     recipeParsed = false
 
     recipeCsv = await fetchCsv(file)
-    console.log('Raw CSV recipe', cloneObj(recipeCsv))
-
+    
     const errHtmlEl = csvErrorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
 
     recipeCsv = await parseRecipe(recipeCsv, errHtmlEl)
-
-    // // Update globals with fixed globals if set
-    // Object.keys(fixedGlobals).forEach(k => {
-    //   recipe.globals[k] = fixedGlobals[k]
-    // })
 
     if (errHtmlEl.selectAll('tr').size() > 1) {
       // There are errors
@@ -159,39 +152,13 @@ export async function doughnut({
       csvErrorDiv.style('display', 'none')
       if (svg) svg.style('display', '')
       recipeParsed = true
-      console.log('Parsed CSV recipe', recipeCsv)
-
+      
       recipe = recipeCsv
     }
   }
 
-  function overrideGlobals(globals) {
-    // The purpose of this API function is to allow recipe
-    // global values so be overriden and therefore
-    // persist over invocations of charts between recipes.
-    Object.keys(globals).forEach(k => {
-      if (typeof(fixedGlobals[k]) !== 'undefined') {
-        // Value currently set for this key in fixedGlobals
-        if (globals[k] === null) {
-          // Passed value is null - unset the fGlobal value
-          delete fixedGlobals[k]
-        } else {
-          // Set the fixedGlobals value
-          fixedGlobals[k] = globals[k]
-        }
-      } else {
-        // No value currently set for this key in fGlobal
-        // Set the fixedGlobals value if passed value not null
-        if (globals[k] !== null) {
-          fixedGlobals[k] =  globals[k]
-        }
-      }
-    })
-  }
-
   return {
     loadRecipe: loadRecipe,
-    overrideGlobals: overrideGlobals,
     displayChart: displayChart,
     displayNextChart: displayNextChart,
     displayPreviousChart: displayPreviousChart

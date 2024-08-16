@@ -208,13 +208,13 @@ function checkRows(data, errHtmlEl) {
     if (d.type && d.entity && d.entity === 'default' && d.property_z !== '') {
       errMsg(i+1,'property_z', `There should be no z value for entity 'default' but it is set to '<b>${d.property_z}</b>'.`)
     }
-    // Each type & entity must have a value of either 'yes' or 'no' against every
+    // Each type & entity must have a value of either 'yes' or '' against every
     // chart column unless it is of type 'chart'
     const charts = Object.keys(data[0]).slice(3)
     if (d.type && d.entity && d.type !== 'chart') {
       charts.forEach(c => {
-        if (d[c] !== 'yes' && d[c] !== 'no') {
-          errMsg(i+1,c, `Type/entity rows must have either the value 'yes' or 'no' against every chart column`)
+        if (d[c] !== 'yes' && d[c] !== '') {
+          errMsg(i+1,c, `Type/entity rows must have either no value or the value 'yes' against each chart column`)
         }
       })
     }

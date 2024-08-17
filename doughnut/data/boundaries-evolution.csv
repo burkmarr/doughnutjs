@@ -36,283 +36,267 @@ arc,safe-zone,40,yes,yes,yes,,,
 ,,angle2,360,=,=,,,
 ,,colour,#6D9100,=,=,,,
 ,,opacity,0.6,=,=,,,
-arc,climate-1,40,yes,yes,yes,yes,yes,
-,,radius1,0 40 %,=,=,=,=,
-,,radius2,0 60 %,=,=,=,=,
-,,angle1,9 x,=,8 x,=,=,
-,,angle2,10 x,=,9 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,climate-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 40 %,=,=,=,=,
-,,angle1,9 x,=,8 x,=,=,
-,,angle2,10 x,=,9 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,ocean-1,40,yes,yes,yes,yes,yes,
-,,radius1,0 30 %,=,=,=,=,
-,,radius2,0 30 %,=,=,=,=,
-,,angle1,1 x,=,3 x,=,=,
-,,angle2,2 x,=,4 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,ocean-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 30 %,=,=,=,=,
-,,angle1,1 x,=,3 x,=,=,
-,,angle2,2 x,=,4 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,ozone-1,40,yes,yes,yes,yes,yes,
-,,radius1,0 16 %,=,=,=,=,
-,,radius2,0 16 %,=,=,=,=,
-,,angle1,2 x,=,1 x,=,=,
-,,angle2,3 x,=,2 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,ozone-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 16 %,=,=,=,=,
-,,angle1,2 x,=,1 x,=,=,
-,,angle2,3 x,=,2 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,biochem-1,40,yes,yes,yes,yes,yes,
-,,radius1,0 40 %,=,=,=,=,
-,,radius2,0 132 %,=,=,=,=,
-,,angle1,3 x,=,4 x,=,=,
-,,angle2,3.5 x,=,4.5 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,biochem-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 40 %,=,=,=,=,
-,,angle1,3 x,=,4 x,=,=,
-,,angle2,3.5 x,=,4.5 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,biochem-2,40,yes,yes,yes,yes,yes,
-,,radius1,36 %,=,=,=,=,
-,,radius2,36 %,=,=,=,=,
-,,angle1,3.5 x,=,4.5 x,=,=,
-,,angle2,4 x,=,5 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,biochem-2-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 36 %,=,=,=,=,
-,,angle1,3.5 x,=,4.5 x,=,=,
-,,angle2,4 x,=,5 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,freshwater-1,40,yes,yes,yes,yes,yes,
-,,radius1,22 %,=,=,=,=,
-,,radius2,22 %,=,=,=,=,
-,,angle1,4 x,=,5 x,=,=,
-,,angle2,5 x,=,6 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,freshwater-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 22 %,=,=,=,=,
-,,angle1,4 x,=,5 x,=,=,
-,,angle2,5 x,=,6 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,land-systems-1,40,yes,yes,yes,yes,yes,
-,,radius1,24 %,=,=,=,=,
-,,radius2,24 %,=,=,=,=,
-,,angle1,5 x,=,6 x,=,=,
-,,angle2,6 x,=,7 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,land-systems-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 24 %,=,=,=,=,
-,,angle1,5 x,=,6 x,=,=,
-,,angle2,6 x,=,7 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,biosphere-1,40,yes,yes,yes,yes,yes,
-,,radius1,0 40 %,=,=,=,=,
-,,radius2,0 160 %,=,=,130 %,=,
-,,angle1,6 x,=,7 x,=,=,
-,,angle2,7 x,=,8 x,=,=,
-,,colour,def-rockred,=,=,def-stockorange,=,
-,,opacity,0.6,=,=,1,=,
-arc,biosphere-1-i,40,yes,yes,yes,yes,yes,
-,,radius1,0,=,=,=,=,
-,,radius2,0 40 %,=,=,=,=,
-,,angle1,6 x,=,7 x,=,=,
-,,angle2,7 x,=,8 x,=,=,
-,,colour,def-rockred,=,=,#009B2F,=,
-,,opacity,0.6,=,=,=,=,
-arc,aerosol-1,40,,,,yes,yes,
-,,radius1,,,,0,=,
-,,radius2,,,,0 120 0 %,=,
-,,angle1,,,,2 x,=,
-,,angle2,,,,3 x,=,
-,,colour,,,,def-stockgrey,=,
-,,opacity,,,,0.6,=,
-arc,aerosol-1-i,40,,,,yes,yes,
-,,radius1,,,,0,=,
-,,radius2,,,,0,=,
-,,angle1,,,,2 x,=,
-,,angle2,,,,3 x,=,
-,,colour,,,,#009B2F,=,
-,,opacity,,,,=,=,
-arc,novel-1,40,,,,yes,yes,
-,,radius1,,,,0,=,
-,,radius2,,,,0 120 0 %,=,
-,,angle1,,,,9 x,=,
-,,angle2,,,,10 x,=,
-,,colour,,,,def-stockgrey,=,
-,,opacity,,,,0.6,=,
-arc,novel-1-i,40,,,,yes,yes,
-,,radius1,,,,0,=,
-,,radius2,,,,0,=,
-,,angle1,,,,9 x,=,
-,,angle2,,,,10 x,=,
-,,colour,,,,#009B2F,=,
-,,opacity,,,,=,=,
-arcline,default,,yes,yes,yes,yes,yes,
-,,stroke,red,=,=,=,=,
-,,strokeWidth,0.7,=,=,=,=,
-,,opacity,0 0.9 0,=,=,=,=,
-,,angle1,0,=,=,=,=,
-,,angle2,360,=,=,=,=,
+arc,climate-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,0 40 %,=,=,=,=,18.5 r
+,,radius2,0 60 %,=,=,=,=,27 r
+,,angle1,9 x,=,8 x,=,=,=
+,,angle2,10 x,=,9 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,climate-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 40 %,=,=,=,=,18.5 r
+,,angle1,9 x,=,8 x,=,=,=
+,,angle2,10 x,=,9 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,ocean-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,0 30 %,=,=,=,=,=
+,,radius2,0 30 %,=,=,=,=,=
+,,angle1,1 x,=,3 x,=,=,=
+,,angle2,2 x,=,4 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,ocean-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 30 %,=,=,=,=,13.8 r
+,,angle1,1 x,=,3 x,=,=,=
+,,angle2,2 x,=,4 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,ozone-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,0 16 %,=,=,=,=,=
+,,radius2,0 16 %,=,=,=,=,=
+,,angle1,2 x,=,1 x,=,=,=
+,,angle2,3 x,=,2 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,ozone-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 16 %,=,=,=,=,9 r
+,,angle1,2 x,=,1 x,=,=,=
+,,angle2,3 x,=,2 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,biochem-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,0 40 %,=,=,=,=,18.5 r
+,,radius2,0 132 %,=,=,=,=,52.8 r
+,,angle1,3 x,=,4 x,=,=,=
+,,angle2,3.5 x,=,4.5 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,biochem-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 40 %,=,=,=,=,18.5 r
+,,angle1,3 x,=,4 x,=,=,=
+,,angle2,3.5 x,=,4.5 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,biochem-2,40,yes,yes,yes,yes,yes,yes
+,,radius1,36 %,=,=,=,=,=
+,,radius2,36 %,=,=,=,=,=
+,,angle1,3.5 x,=,4.5 x,=,=,=
+,,angle2,4 x,=,5 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,biochem-2-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 36 %,=,=,=,=,16.5 r
+,,angle1,3.5 x,=,4.5 x,=,=,=
+,,angle2,4 x,=,5 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,freshwater-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,22 %,=,=,=,=,=
+,,radius2,22 %,=,=,=,=,=
+,,angle1,4 x,=,5 x,=,=,=
+,,angle2,5 x,=,6 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,freshwater-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 22 %,=,=,=,=,11 r
+,,angle1,4 x,=,5 x,=,=,=
+,,angle2,5 x,=,6 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,land-systems-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,24 %,=,=,=,=,=
+,,radius2,24 %,=,=,=,=,=
+,,angle1,5 x,=,6 x,=,=,=
+,,angle2,6 x,=,7 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,land-systems-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 24 %,=,=,=,=,12 r
+,,angle1,5 x,=,6 x,=,=,=
+,,angle2,6 x,=,7 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,biosphere-1,40,yes,yes,yes,yes,yes,yes
+,,radius1,0 40 %,=,=,=,=,18.5 r
+,,radius2,0 160 %,=,=,130 %,=,51.5 r
+,,angle1,6 x,=,7 x,=,=,=
+,,angle2,7 x,=,8 x,=,=,=
+,,colour,def-rockred,=,=,def-stockorange,=,=
+,,opacity,0.6,=,=,1,=,=
+arc,biosphere-1-i,40,yes,yes,yes,yes,yes,yes
+,,radius1,0,=,=,=,=,=
+,,radius2,0 40 %,=,=,=,=,18.5 r
+,,angle1,6 x,=,7 x,=,=,=
+,,angle2,7 x,=,8 x,=,=,=
+,,colour,def-rockred,=,=,#009B2F,=,=
+,,opacity,0.6,=,=,=,=,=
+arc,aerosol-1,40,,,,yes,yes,yes
+,,radius1,,,,0,=,=
+,,radius2,,,,0 120 0 %,=,70 r
+,,angle1,,,,2 x,=,=
+,,angle2,,,,3 x,=,=
+,,colour,,,,def-stockgrey,=,=
+,,opacity,,,,0.6,=,=
+arc,aerosol-1-i,40,,,,yes,yes,yes
+,,radius1,,,,0,=,=
+,,radius2,,,,0,=,=
+,,angle1,,,,2 x,=,=
+,,angle2,,,,3 x,=,=
+,,colour,,,,#009B2F,=,=
+,,opacity,,,,=,=,=
+arc,novel-1,40,,,,yes,yes,yes
+,,radius1,,,,0,=,=
+,,radius2,,,,0 120 0 %,=,70 r
+,,angle1,,,,9 x,=,=
+,,angle2,,,,10 x,=,=
+,,colour,,,,def-stockgrey,=,=
+,,opacity,,,,0.6,=,=
+arc,novel-1-i,40,,,,yes,yes,yes
+,,radius1,,,,0,=,=
+,,radius2,,,,0,=,=
+,,angle1,,,,9 x,=,=
+,,angle2,,,,10 x,=,=
+,,colour,,,,#009B2F,=,=
+,,opacity,,,,=,=,=
+arcline,default,,yes,yes,yes,yes,yes,yes
+,,stroke,red,=,=,=,=,=
+,,strokeWidth,0.7,=,=,=,=,=
+,,opacity,0 0.9 0,=,=,=,=,=
+,,angle1,0,=,=,=,=,=
+,,angle2,360,=,=,=,=,=
 arcline,zone-1,30,yes,yes,yes,,,
 ,,stroke,#A6D800,=,=,,,
 ,,radius,20 %,=,=,,,
-arcline,zone-2,30,yes,yes,yes,yes,yes,
-,,stroke,#A6D800,=,=,black,=,
-,,radius,40 %,=,=,=,=,
-,,strokeDasharray,2-0,=,=,2,=,
+arcline,zone-2,30,yes,yes,yes,yes,yes,yes
+,,stroke,#A6D800,=,=,black,=,=
+,,radius,40 %,=,=,=,=,18.5 r
+,,strokeDasharray,2-0,=,=,2,=,=
 arcline,zone-3,30,yes,yes,yes,,,
 ,,radius,60 %,=,=,,,
 arcline,zone-4,30,yes,yes,yes,,,
 ,,radius,80 %,=,=,,,
 arcline,zone-5,30,yes,yes,yes,,,
 ,,radius,100 %,=,=,,,
-spoke,default,,yes,yes,yes,yes,yes,
-,,stroke,black,=,=,=,=,
-,,strokeWidth,0.7,=,=,=,=,
-spoke,spoke1a,20,yes,yes,yes,yes,yes,
-,,angle,0,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,default,,yes,yes,yes,yes,yes,yes
+,,stroke,black,=,=,=,=,=
+,,strokeWidth,0.7,=,=,=,=,=
+,,radius1,0,=,=,=,=,=
+,,radius2,100 %,=,=,135 %,=,54 r
+spoke,spoke1a,20,yes,yes,yes,yes,yes,yes
+,,angle,0,=,=,=,=,=
 spoke,spoke1b,20,yes,yes,yes,,,
 ,,angle,0,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke2a,20,yes,yes,yes,yes,yes,
-,,angle,1 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke2a,20,yes,yes,yes,yes,yes,yes
+,,angle,1 x,=,=,=,=,=
 spoke,spoke2b,20,yes,yes,yes,,,
 ,,angle,1 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke3a,20,yes,yes,yes,yes,yes,
-,,angle,2 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke3a,20,yes,yes,yes,yes,yes,yes
+,,angle,2 x,=,=,=,=,=
 spoke,spoke3b,20,yes,yes,yes,,,
 ,,angle,2 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke4a,20,yes,yes,yes,yes,yes,
-,,angle,3 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke4a,20,yes,yes,yes,yes,yes,yes
+,,angle,3 x,=,=,=,=,=
 spoke,spoke4b,20,yes,yes,yes,,,
 ,,angle,3 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke5a,20,yes,yes,yes,yes,yes,
-,,angle,4 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke5a,20,yes,yes,yes,yes,yes,yes
+,,angle,4 x,=,=,=,=,=
 spoke,spoke5b,20,yes,yes,yes,,,
 ,,angle,4 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke6a,20,yes,yes,yes,yes,yes,
-,,angle,5 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke6a,20,yes,yes,yes,yes,yes,yes
+,,angle,5 x,=,=,=,=,=
 spoke,spoke6b,20,yes,yes,yes,,,
 ,,angle,5 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke7a,20,yes,yes,yes,yes,yes,
-,,angle,6 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke7a,20,yes,yes,yes,yes,yes,yes
+,,angle,6 x,=,=,=,=,=
 spoke,spoke7b,20,yes,yes,yes,,,
 ,,angle,6 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke8a,20,yes,yes,yes,yes,yes,
-,,angle,7 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke8a,20,yes,yes,yes,yes,yes,yes
+,,angle,7 x,=,=,=,=,=
 spoke,spoke8b,20,yes,yes,yes,,,
 ,,angle,7 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-spoke,spoke9a,20,yes,yes,yes,yes,yes,
-,,angle,8 x,=,=,=,=,
-,,radius1,0,=,=,=,=,
-,,radius2,100 %,=,=,135 %,=,
+spoke,spoke9a,20,yes,yes,yes,yes,yes,yes
+,,angle,8 x,=,=,=,=,=
 spoke,spoke9b,20,yes,yes,yes,,,
 ,,angle,8 x,=,=,,,
 ,,radius1,100 100 120 %,=,=,,,
 ,,radius2,120 %,=,=,,,
 ,,strokeDasharray,1,=,=,,,
-text,default,,yes,yes,yes,yes,yes,
-,,radius,103 %,=,=,=,110 %,
-,,fontSize,9,=,=,=,7,
-,,fontWeight,,,,,900,
-,,fontFilter,whiteOutline,=,=,=,none,
-,,opacity,0 1 0,=,=,=,=,
-,,textPathStyle,,,,,line,
+text,default,,yes,yes,yes,yes,yes,yes
+,,radius,103 %,=,=,=,110 %,45 r
+,,fontSize,9,=,=,=,7,7
+,,fontWeight,,,,,900,900
+,,fontFilter,whiteOutline,=,=,=,none,none
+,,opacity,0 1 0,=,=,=,=,=
+,,textPathStyle,,,,,line,line
 text,climate-1,10,yes,yes,yes,yes,,
 ,,text,Climate change,=,=,=,,
 ,,angle,9.5 x,=,8.5 x,=,,
-text,climate-s-1,10,,,,,yes,
-,,text,,,,,CLIMATE CHANGE,
-,,angle,,,,,8.5 x,
+text,climate-s-1,10,,,,,yes,yes
+,,text,,,,,CLIMATE CHANGE,CLIMATE CHANGE
+,,angle,,,,,8.5 x,8.5 x
 text,ocean-1,10,yes,yes,yes,yes,,
 ,,text,Ocean acidification,=,=,=,,
 ,,angle,1.5 x,=,3.5 x,=,,
-text,ocean-s-1-a,10,,,,,yes,
-,,text,,,,,OCEAN,
-,,angle,,,,,3.5 x,
-,,textOffset,,,,,1 x,
-text,ocean-s-1-b,10,,,,,yes,
-,,text,,,,,ACIDIFICATION,
-,,angle,,,,,3.5 x,
+text,ocean-s-1-a,10,,,,,yes,yes
+,,text,,,,,OCEAN,OCEAN
+,,angle,,,,,3.5 x,3.5 x
+,,textOffset,,,,,1 x,1 x
+text,ocean-s-1-b,10,,,,,yes,yes
+,,text,,,,,ACIDIFICATION,ACIDIFICATION
+,,angle,,,,,3.5 x,3.5 x
 text,ozone-1-a,10,yes,yes,yes,yes,,
 ,,text,Stratospheric,=,=,=,,
 ,,angle,2.5 x,=,1.5 x,1.5 x,,
 ,,textOffset,1 x,=,=,=,,
-text,ozone-s-1-a,10,,,,,yes,
-,,text,,,,,STRATOSPHERIC OZONE,
-,,angle,,,,,1.5 x,
-,,textOffset,,,,,1 x,
-text,ozone-s-1-b,10,,,,,yes,
-,,text,,,,,DEPLETION,
-,,angle,,,,,1.5 x,
+text,ozone-s-1-a,10,,,,,yes,yes
+,,text,,,,,STRATOSPHERIC OZONE,STRATOSPHERIC OZONE
+,,angle,,,,,1.5 x,1.5 x
+,,textOffset,,,,,1 x,1 x
+text,ozone-s-1-b,10,,,,,yes,yes
+,,text,,,,,DEPLETION,DEPLETION
+,,angle,,,,,1.5 x,1.5 x
 text,ozone-1-b,10,yes,yes,yes,yes,,
 ,,text,ozone depletion,=,=,=,,
 ,,angle,2.5 x,=,1.5 x,=,,
@@ -320,10 +304,10 @@ text,biochem-1-a,10,yes,yes,yes,yes,,
 ,,text,Nitrogen,=,=,=,,
 ,,textOffset,3.3 x,=,=,=,,
 ,,angle,3.25 x,=,4.25 x,4.25 x,,
-text,biochem-s-1-a,10,,,,,yes,
-,,text,,,,,N,
-,,angle,,,,,4.25 x,
-,,radius,,,,,100 %,
+text,biochem-s-1-a,10,,,,,yes,yes
+,,text,,,,,N,N
+,,angle,,,,,4.25 x,4.25 x
+,,radius,,,,,100 %,39 r
 text,biochem-1-b,10,yes,yes,yes,yes,,
 ,,text,cycle,=,=,=,,
 ,,textOffset,2.3 x,=,=,=,,
@@ -332,10 +316,10 @@ text,biochem-2-a,10,yes,yes,yes,yes,,
 ,,text,Phosphorous,=,=,=,,
 ,,textOffset,3.3 x,=,=,=,,
 ,,angle,3.75 x,=,4.75 x,4.75 x,,
-text,biochem-s-2-a,10,,,,,yes,
-,,text,,,,,P,
-,,angle,,,,,4.75 x,
-,,radius,,,,,100 %,
+text,biochem-s-2-a,10,,,,,yes,yes
+,,text,,,,,P,P
+,,angle,,,,,4.75 x,4.75 x
+,,radius,,,,,100 %,39 r
 text ,biochem-2-b,10,yes,yes,yes,yes,,
 ,,text,cycle,=,=,=,,
 ,,textOffset,2.3 x,=,=,=,,
@@ -344,18 +328,18 @@ text,biochem-0-a,10,yes,yes,yes,yes,,
 ,,text,(biogeochemical,=,=,=,,
 ,,textOffset,1 x,=,=,=,,
 ,,angle,3.5 x,=,4.5 x,4.5 x,,
-text,biochem-s-0-a,10,,,,,yes,
-,,text,,,,,BIOCHEMICAL,
-,,angle,,,,,4.5 x,
-,,radius,,,,,115 %,
+text,biochem-s-0-a,10,,,,,yes,yes
+,,text,,,,,BIOCHEMICAL,BIOCHEMICAL
+,,angle,,,,,4.5 x,4.5 x
+,,radius,,,,,115 %,47 r
 text,biochem-0-b,10,yes,yes,yes,yes,,
 ,,text,flow boundary),=,=,=,,
 ,,angle,3.5 x,=,4.5 x,=,,
-text,biochem-s-0-b,10,,,,,yes,
-,,text,,,,,FLOWS,
-,,angle,,,,,4.5 x,
-,,radius,,,,,115 %,
-,,textOffset,,,,,-1 x,
+text,biochem-s-0-b,10,,,,,yes,yes
+,,text,,,,,FLOWS,FLOWS
+,,angle,,,,,4.5 x,4.5 x
+,,radius,,,,,115 %,47 r
+,,textOffset,,,,,-1 x,-1 x
 text,freshwater-1-a,10,yes,yes,yes,yes,,
 ,,text,Global,=,=,=,,
 ,,textOffset,1 x,=,=,=,,
@@ -363,98 +347,98 @@ text,freshwater-1-a,10,yes,yes,yes,yes,,
 text,freshwater-1-b,10,yes,yes,yes,yes,,
 ,,text,freshwater use,=,=,=,,
 ,,angle ,4.5 x,=,5.5 x,5.5 x,,
-text,freshwater-s-1-a,10,,,,,yes,
-,,text,,,,,FRESHWATER USE,
-,,angle,,,,,5.5 x,
+text,freshwater-s-1-a,10,,,,,yes,yes
+,,text,,,,,FRESHWATER USE,FRESHWATER USE
+,,angle,,,,,5.5 x,5.5 x
 text,land-systems-1,10,yes,yes,yes,yes,,
 ,,text,Change in land use,=,=,=,,
 ,,angle,5.5 x,=,6.5 x,6.5 x,,
-text,land-systems-s-1-a,10,,,,,yes,
-,,text,,,,,LAND-SYSTEM,
-,,angle,,,,,6.5 x,
+text,land-systems-s-1-a,10,,,,,yes,yes
+,,text,,,,,LAND-SYSTEM,LAND-SYSTEM
+,,angle,,,,,6.5 x,6.5 x
 ,,textOffset,,,,,,
-text,land-systems-s-2-a,10,,,,,yes,
-,,text,,,,,CHANGE,
-,,angle,,,,,6.5 x,
-,,textOffset,,,,,1 x,
+text,land-systems-s-2-a,10,,,,,yes,yes
+,,text,,,,,CHANGE,CHANGE
+,,angle,,,,,6.5 x,6.5 x
+,,textOffset,,,,,1 x,1 x
 text,biosphere-1,10,yes,yes,yes,yes,,
 ,,text,Biodiversity loss,=,=,=,,
 ,,angle,6.5 x,=,7.5 x,7.5 x,,
-text,biosphere-s-1-a,10,,,,,yes,
-,,text,,,,,BIOSPHERE,
-,,angle,,,,,7.5 x,
-text,biosphere-s-1-b,10,,,,,yes,
-,,text,,,,,INTEGRITY,
-,,angle,,,,,7.5 x,
-,,textOffset,,,,,-1 x,
+text,biosphere-s-1-a,10,,,,,yes,yes
+,,text,,,,,BIOSPHERE,BIOSPHERE
+,,angle,,,,,7.5 x,7.5 x
+text,biosphere-s-1-b,10,,,,,yes,yes
+,,text,,,,,INTEGRITY,INTEGRITY
+,,angle,,,,,7.5 x,7.5 x
+,,textOffset,,,,,-1 x,-1 x
 text,aerosol-1-a,10,yes,yes,yes,yes,,
 ,,text,Atmospheric,=,=,=,,
 ,,textOffset,2 x,=,=,=,,
 ,,angle,7.5 x,=,2.5 x,=,,
-text,aerosol-s-1-a,10,,,,,yes,
-,,text,,,,,ATMOSPHERIC,
-,,angle,,,,,2.5 x,
-,,textOffset,,,,,1.5 x,
+text,aerosol-s-1-a,10,,,,,yes,yes
+,,text,,,,,ATMOSPHERIC,ATMOSPHERIC
+,,angle,,,,,2.5 x,2.5 x
+,,textOffset,,,,,1.5 x,1.5 x
 text,aerosol-1-b,10,yes,yes,yes,yes,,
 ,,text,aerosol loading,=,=,=,,
 ,,textOffset,1 x,=,=,=,,
 ,,angle,7.5 x,=,2.5 x,2.5 x,,
-text,aerosol-s-1-b,10,,,,,yes,
-,,text,,,,,AEROSOL,
-,,angle,,,,,2.5 x,
-,,textOffset,,,,,0.5 x,
-text,aerosol-s-1-c,10,,,,,yes,
-,,text,,,,,LOADING,
-,,angle,,,,,2.5 x,
-,,textOffset,,,,,-0.5 x,
+text,aerosol-s-1-b,10,,,,,yes,yes
+,,text,,,,,AEROSOL,AEROSOL
+,,angle,,,,,2.5 x,2.5 x
+,,textOffset,,,,,0.5 x,0.5 x
+text,aerosol-s-1-c,10,,,,,yes,yes
+,,text,,,,,LOADING,LOADING
+,,angle,,,,,2.5 x,2.5 x
+,,textOffset,,,,,-0.5 x,-0.5 x
 text,aerosol-1-c,10,yes,yes,yes,yes,,
 ,,text,(not yet quantified),=,=,=,,
 ,,angle,7.5 x,=,2.5 x,=,,
-text,aerosol-s-1-d,10,,,,,yes,
-,,text,,,,,(Not yet quantified),
-,,angle,,,,,2.5 x,
-,,fontSize,,,,,6,
-,,fontStyle,,,,,italic,
-,,fontWeight,,,,,400,
-,,textOffset,,,,,-1.5 x,
+text,aerosol-s-1-d,10,,,,,yes,yes
+,,text,,,,,(Not yet quantified),(Not yet quantified)
+,,angle,,,,,2.5 x,2.5 x
+,,fontSize,,,,,6,6
+,,fontStyle,,,,,italic,italic
+,,fontWeight,,,,,400,400
+,,textOffset,,,,,-1.5 x,-1.5 x
 text,novel-1-a,10,yes,yes,yes,yes,,
 ,,text,Chemical pollution,=,=,=,,
 ,,textOffset,1 x,=,=,=,,
 ,,angle,8.5 x,=,9.5 x,9.5 x,,
-text,novel-s-1-a,10,,,,,yes,
-,,text,,,,,NOVEL ENTITIES,
-,,angle,,,,,0.5 x,
+text,novel-s-1-a,10,,,,,yes,yes
+,,text,,,,,NOVEL ENTITIES,NOVEL ENTITIES
+,,angle,,,,,0.5 x,0.5 x
 text,novel-1-b,10,yes,yes,yes,yes,,
 ,,text,(not yet quantified),=,=,=,,
 ,,angle,8.5 x,=,9.5 x,9.5 x,,
-text,novel-s-1-b,10,,,,,yes,
-,,text,,,,,(Not yet quantified),
-,,angle,,,,,0.5 x,
-,,fontSize,,,,,6,
-,,fontStyle,,,,,italic,
-,,fontWeight,,,,,400,
-,,textOffset,,,,,-1 x,
-text,safe-space,10,,,,yes,yes,
-,,text,,,,Safe operating space,=,
-,,radius,,,,35 %,=,
-,,angle,,,,9 x,=,
-,,fontSize,,,,7,=,
+text,novel-s-1-b,10,,,,,yes,yes
+,,text,,,,,(Not yet quantified),(Not yet quantified)
+,,angle,,,,,0.5 x,0.5 x
+,,fontSize,,,,,6,6
+,,fontStyle,,,,,italic,italic
+,,fontWeight,,,,,400,400
+,,textOffset,,,,,-1 x,-1 x
+text,safe-space,10,,,,yes,yes,yes
+,,text,,,,Safe operating space,=,=
+,,radius,,,,35 %,=,16 r
+,,angle,,,,9 x,=,=
+,,fontSize,,,,7,=,=
 ,,fontColour,,,,white,,
-,,fontFilter,,,,greyOutline,=,
-,,opacity,,,,0 1,=,
-,,textPathStyle,,,,arc,=,
-,,fontWeight,,,,400,=,
-text,increasing-risk,10,,,,yes,yes,
-,,text,,,,Increasing risk,=,
-,,radius,,,,95,=,
-,,angle,,,,357,=,
-,,textAlign,,,,start,=,
-,,rot,,,,-90,=,
-,,fontSize,,,,7,=,
-,,fontColour,,,,"rgb(80,80,80)",=,
-,,textSpacing,,,,0.3,=,
-,,textPathStyle,,,,line,=,
-,,fontWeight,,,,500,=,
+,,fontFilter,,,,greyOutline,=,=
+,,opacity,,,,0 1,=,=
+,,textPathStyle,,,,arc,=,=
+,,fontWeight,,,,400,=,=
+text,increasing-risk,10,,,,yes,yes,yes
+,,text,,,,Increasing risk,=,=
+,,radius,,,,95,=,30 r
+,,angle,,,,357,=,=
+,,textAlign,,,,start,=,=
+,,rot,,,,-90,=,=
+,,fontSize,,,,7,=,5
+,,fontColour,,,,"rgb(80,80,80)",=,=
+,,textSpacing,,,,0.3,=,1
+,,textPathStyle,,,,line,=,=
+,,fontWeight,,,,500,=,=
 arrow,risk,15,,,,yes,yes,yes
 ,,radius,,,,0,=,=
 ,,angle,,,,0,=,=

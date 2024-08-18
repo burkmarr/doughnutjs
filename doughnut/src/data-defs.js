@@ -192,7 +192,7 @@ const properties = [
   },
   {
     name: 'opacity',
-    optionalOn: ['images', 'arclines', 'arcs', 'texts', 'arrows'],
+    optionalOn: ['images', 'arclines', 'arcs', 'spokes', 'texts', 'arrows'],
     mandatoryOn: [],
     formats: f.zeroToOne,
     default: 1,

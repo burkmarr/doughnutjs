@@ -2,12 +2,12 @@
 chart,metric,,,,,,,,
 ,,width_px,600,=,=,=,=,=,=
 ,,height_px,400,=,=,=,=,=,=
-,,duration,1000,=,=,=,=,1000,1000
+,,duration,1000,500,1000,1000,2000,2000,2000
 chart,def,,,,,,,,
 ,,whiteOutline,"<filter id=""whiteOutline"" color-interpolation-filters=""sRGB""><feMorphology in=""SourceAlpha"" result=""MORPH"" operator=""dilate"" radius=""1"" /><feColorMatrix in=""MORPH"" result=""WHITENED"" type=""matrix"" values=""-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0""/><feMerge><feMergeNode in=""WHITENED""/><feMergeNode in=""SourceGraphic""/></feMerge></filter>",=,=,,,,
 ,,rockred,"<radialGradient id=""rockred"" cx=""0"" cy=""0"" fr=""170"" r=""220"" gradientUnits=""userSpaceOnUse""><stop offset=""0%"" stop-color=""red"" /><stop offset=""100%"" stop-color=""white"" /></radialGradient>",=,=,,,,
 ,,greyOutline,,,,"<filter id=""greyOutline""><feMorphology in=""SourceAlpha"" result=""MORPH"" operator=""dilate"" radius=""0.5"" /><feColorMatrix in=""MORPH"" result=""OUTLINE"" type=""matrix"" values=""0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 0 0.3, 0 0 0 1 0""/><feMerge><feMergeNode in=""OUTLINE"" /><feMergeNode in=""SourceGraphic"" /></feMerge></filter>",=,=,=
-,,stockorange,,,,"<radialGradient id=""stockorange"" cx=""0"" cy=""0"" fr=""0"" r=""120"" gradientUnits=""userSpaceOnUse""><stop offset=""30%"" stop-color=""#FBA733"" /><stop offset=""100%"" stop-color=""#FD6F43"" /></radialGradient>",=,=,=
+,,stockorange,,,,"<radialGradient id=""stockorange"" cx=""0"" cy=""0"" fr=""0"" r=""160"" gradientUnits=""userSpaceOnUse""><stop offset=""30%"" stop-color=""#FBA733"" /><stop offset=""90%"" stop-color=""#EA4B2E"" /><stop offset=""100%"" stop-color=""white"" /></radialGradient>",=,=,=
 ,,stockgrey,,,,"<radialGradient id=""stockgrey"" cx=""0"" cy=""0"" fr=""0"" r=""190"" gradientUnits=""userSpaceOnUse""><stop offset=""30%"" stop-color=""rgb(210,210,210)"" /><stop offset=""90%"" stop-color=""white"" /></radialGradient>",=,=,=
 chart,default,,,,,,,,
 ,,angle0,-20,0,=,=,=,=,=
@@ -17,7 +17,7 @@ chart,default,,,,,,,,
 ,,textOffsetSpanPx,9,=,=,8,=,=,=
 image,earth,50,yes,yes,yes,,,,
 ,,location,images/rockstrom-earth.png,=,=,,,,
-,,width,127 127 80 r,=,=,,,,
+,,width,127  r,=,=,,,,
 ,,opacity,0 1 0,=,=,,,,
 ,,rot,0,=,=,,,,
 ,,angle,0,=,=,,,,
@@ -41,7 +41,7 @@ arc,climate-1,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,0 38.1 r,=,=,27 r,=,=,33 r
 ,,angle1,9 x,=,8 x,=,=,=,=
 ,,angle2,10 x,=,9 x,=,=,=,8.5 x
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,climate-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -76,7 +76,7 @@ arc,ozone-1,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,0 12 r,=,=,=,=,=,=
 ,,angle1,2 x,=,1 x,=,=,=,=
 ,,angle2,3 x,=,2 x,=,=,=,=
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,ozone-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -90,7 +90,7 @@ arc,biochem-1,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,0 85 r,=,=,52.8 r,=,=,43.5 r
 ,,angle1,3 x,=,4 x,=,=,=,=
 ,,angle2,3.5 x,=,4.5 x,=,=,=,=
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,biochem-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -104,7 +104,7 @@ arc,biochem-2,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,22 r,=,=,16.5 r,=,44 r,42 r
 ,,angle1,3.5 x,=,4.5 x,=,=,=,=
 ,,angle2,4 x,=,5 x,=,=,=,=
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,biochem-2-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -146,7 +146,7 @@ arc,land-systems-1,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,16 r,=,=,12 r,=,30 r,30 r
 ,,angle1,5 x,=,6 x,=,=,=,=
 ,,angle2,6 x,=,7 x,=,=,=,=
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,land-systems-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -160,7 +160,7 @@ arc,biosphere-1,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius2,0 105 r,=,=,51.5 r,=,=,47.5 r
 ,,angle1,6 x,=,7 x,=,=,7.5 x,7.5 x
 ,,angle2,7 x,=,8 x,=,=,=,=
-,,colour,def-rockred,=,=,def-stockorange,=,=,=
+,,colour,def-rockred,=,=,=,def-stockorange,=,=
 ,,opacity,0.6,=,=,1,=,=,=
 arc,biosphere-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,radius1,0,=,=,=,=,=,=
@@ -169,13 +169,13 @@ arc,biosphere-1-i,40,yes,yes,yes,yes,yes,yes,yes
 ,,angle2,7 x,=,8 x,=,=,=,=
 ,,colour,def-rockred,=,=,#009B2F,=,=,=
 ,,opacity,0.6,=,=,=,=,=,=
-arc,biosphere-nyq,40,,,,,,yes,
-,,radius1,,,,,,0 0 46 r,
-,,radius2,,,,,,0 70 r,
-,,angle1,,,,,,7 x,
-,,angle2,,,,,,7 7.5 x,
-,,colour,,,,,,def-stockgrey,
-,,opacity,,,,,,0.6,
+arc,biosphere-nyq,40,,,,,yes,yes,
+,,radius1,,,,,0,0 0 46 r,
+,,radius2,,,,,0,0 70 r,
+,,angle1,,,,,7 x,=,
+,,angle2,,,,,7 x,7 7.5 x,
+,,colour,,,,,def-stockgrey,=,
+,,opacity,,,,,0.6,=,
 arc,biosphere-2,40,,,,,,,yes
 ,,radius1,,,,,,,0 18.5 0 r
 ,,radius2,,,,,,,0 46 0 r
@@ -213,7 +213,7 @@ arc,novel-nyq,40,,,,yes,yes,yes,
 ,,opacity,,,,0 0.6 0,=,=,
 arc,novel-1,40,,,,,,,yes
 ,,radius1,,,,,,,0 18.5 0 r
-,,radius2,,,,,,,0 49 0 r
+,,radius2,,,,,,,0 51 0 r
 ,,angle1,,,,,,,9 x
 ,,angle2,,,,,,,10 x
 ,,colour,,,,,,,def-stockorange
@@ -284,6 +284,12 @@ spoke,spoke5b,20,yes,yes,yes,,,,
 ,,radius1,63.5 63.5 79 r,=,=,,,,
 ,,radius2,79 r,=,=,,,,
 ,,strokeDasharray,1,=,=,,,,
+spoke,spoke55,20,,,,yes,yes,yes,yes
+,,angle,,,,4.5 x,=,=,=
+,,radius2,,,,70 r,=,=,=
+,,stroke,,,,white,=,=,=
+,,strokeWidth,,,,0.2,=,=,=
+,,opacity,,,,0 1 0,=,=,=
 spoke,spoke6a,20,yes,yes,yes,yes,yes,yes,yes
 ,,angle,5 x,=,=,=,=,=,=
 spoke,spoke6b,20,yes,yes,yes,,,,
@@ -291,6 +297,12 @@ spoke,spoke6b,20,yes,yes,yes,,,,
 ,,radius1,63.5 63.5 79 r,=,=,,,,
 ,,radius2,79 r,=,=,,,,
 ,,strokeDasharray,1,=,=,,,,
+spoke,spoke65,20,,,,,,,yes
+,,angle,,,,,,,5 5.5 5 x
+,,radius2,,,,,,,0 70 0 r
+,,stroke,,,,,,,white
+,,strokeWidth,,,,,,,0.2
+,,opacity,,,,,,,0 1 0
 spoke,spoke7a,20,yes,yes,yes,yes,yes,yes,yes
 ,,angle,6 x,=,=,=,=,=,=
 spoke,spoke7b,20,yes,yes,yes,,,,
@@ -305,6 +317,12 @@ spoke,spoke8b,20,yes,yes,yes,,,,
 ,,radius1,63.5 63.5 79 r,=,=,,,,
 ,,radius2,79 r,=,=,,,,
 ,,strokeDasharray,1,=,=,,,,
+spoke,spoke85,20,,,,,,,yes
+,,angle,,,,,,,7.5 x
+,,radius2,,,,,,,0 70 0 r
+,,stroke,,,,,,,white
+,,strokeWidth,,,,,,,0.2
+,,opacity,,,,,,,0 1 0
 spoke,spoke9a,20,yes,yes,yes,yes,yes,yes,yes
 ,,angle,8 x,=,=,=,=,=,=
 spoke,spoke9b,20,yes,yes,yes,,,,
@@ -312,11 +330,17 @@ spoke,spoke9b,20,yes,yes,yes,,,,
 ,,radius1,63.5 63.5 79 r,=,=,,,,
 ,,radius2,79 r,=,=,,,,
 ,,strokeDasharray,1,=,=,,,,
+spoke,spoke95,20,,,,,,,yes
+,,angle,,,,,,,9 8.5 9 x
+,,radius2,,,,,,,0 70 0 r
+,,stroke,,,,,,,white
+,,strokeWidth,,,,,,,0.2
+,,opacity,,,,,,,0 1 0
 text,default,,yes,yes,yes,yes,yes,yes,yes
 ,,radius,67 r,=,=,45.8 r,42 r,=,=
 ,,fontSize,8.5,=,=,=,6,=,=
 ,,fontWeight,,,,,900,=,=
-,,fontFilter,whiteOutline,=,=,=,none,=,=
+,,fontFilter,whiteOutline,=,=,=,,,
 ,,opacity,0 1 0,=,=,=,=,=,=
 ,,textPathStyle,,,,,line,=,=
 text,climate-1,10,yes,yes,yes,yes,,,
@@ -457,7 +481,7 @@ text,land-systems-s-1-a,10,,,,,yes,yes,yes
 text,land-systems-s-2-a,10,,,,,yes,yes,yes
 ,,text,,,,,CHANGE,=,=
 ,,angle,,,,,6.5 x,=,=
-,,textOffset,,,,,1 x,=,=
+,,textOffset,,,,,-1 x,=,=
 text,biosphere-1,10,yes,yes,yes,yes,,,
 ,,text,Biodiversity loss,=,=,=,,,
 ,,angle,6.5 x,=,7.5 x,7.5 x,,,
@@ -532,13 +556,13 @@ text,novel-s-1-a,10,,,,,yes,yes,yes
 text,novel-1-b,10,yes,yes,yes,yes,,,
 ,,text,(not yet quantified),=,=,=,,,
 ,,angle,8.5 x,=,9.5 x,9.5 x,,,
-text,novel-s-1-b,10,,,,,yes,yes,yes
-,,text,,,,,(Not yet quantified),=,=
-,,angle,,,,,0.5 x,=,=
-,,fontSize,,,,,6,=,=
-,,fontStyle,,,,,italic,=,=
-,,fontWeight,,,,,400,=,=
-,,textOffset,,,,,-1 x,=,=
+text,novel-s-1-b,10,,,,,yes,yes,
+,,text,,,,,(Not yet quantified),=,
+,,angle,,,,,0.5 x,=,
+,,fontSize,,,,,6,=,
+,,fontStyle,,,,,italic,=,
+,,fontWeight,,,,,400,=,
+,,textOffset,,,,,-1 x,=,
 text,safe-space,10,,,,yes,yes,yes,yes
 ,,text,,,,Safe operating space,=,=,=
 ,,radius,,,,16 r,=,=,=
@@ -560,6 +584,7 @@ text,increasing-risk,10,,,,yes,yes,yes,yes
 ,,textSpacing,,,,0.5,=,=,=
 ,,textPathStyle,,,,line,=,=,=
 ,,fontWeight,,,,500,=,=,=
+,,fontFilter,,,,none,=,=,=
 arrow,risk,15,,,,yes,yes,yes,yes
 ,,radius,,,,0,=,=,=
 ,,angle,,,,0,=,=,=

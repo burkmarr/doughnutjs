@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 
-export function createTextElements(g, texts, trans, currentTextParams, globals) {
+export function createTextElements(g, texts, trans, currentTextParams) {
 
   // Text paths
   g.selectAll('.path-text')
@@ -52,7 +52,7 @@ export function createTextElements(g, texts, trans, currentTextParams, globals) 
   function pathForTextCommonAttrs(selection, i) {
 
     if (i === 0) {
-      selection.attr('d', d => getTextPath(d, getTextParams(d,i), globals))
+      selection.attr('d', d => getTextPath(d, getTextParams(d,i)))
     } else {
       selection.attrTween('d', d => {
         return textPathTween(d, i)
@@ -85,7 +85,7 @@ export function createTextElements(g, texts, trans, currentTextParams, globals) 
         textOffset: iTextOffset(t),
       }
       currentTextParams[d.id] = d.currentTextParams
-      return getTextPath(d, d.currentTextParams, globals)
+      return getTextPath(d, d.currentTextParams)
     }
   }
 
@@ -128,7 +128,7 @@ export function getTextParams (d, i) {
   }
 }
 
-function getTextPath(d, textParams, globals) {
+function getTextPath(d, textParams) {
 
   // Todo - path style tan
   // https://www.bbc.co.uk/bitesize/guides/zc62srd/revision/6
@@ -136,7 +136,7 @@ function getTextPath(d, textParams, globals) {
   if (d.textPathStyle === 'arc') {
     return getArcPath(d, textParams)
   } else {
-    return getLinePath(d, textParams, globals)
+    return getLinePath(d, textParams)
   }
 }
 
@@ -185,7 +185,7 @@ function getArcPath(d, textParams) {
   return path
 }
 
-function getLinePath(d, textParams, globals) {
+function getLinePath(d, textParams) {
 
   const x0 = textParams.radius * Math.cos(textParams.angle)
   const y = textParams.radius * Math.sin(textParams.angle) - textParams.textOffset

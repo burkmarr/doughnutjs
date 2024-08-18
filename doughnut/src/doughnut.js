@@ -18,7 +18,6 @@ export async function doughnut({
   let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gTexts, gArrows
   let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}, arrows: {}}
-  let rc
 
   const errorDiv = d3.select(selector).append('div')
     .style('display', 'none')
@@ -26,10 +25,10 @@ export async function doughnut({
   const csvErrorDiv = d3.select(selector).append('div')
     .style('display', 'none')
 
-  async function updateChart(iChart) {
+  function updateChart(iChart) {
 
-    if (!recipeParsed) return
-
+    if (!recipeParsed) return Promise.resolve()
+      
     svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
     svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
     
@@ -44,12 +43,19 @@ export async function doughnut({
         .style('overflow', 'visible')
 
       gAll = svg.append('g')
-      gImages = gAll.append('g') // Not centred because that is done indepedently
+      gImages = gAll.append('g')
       gArcs = gAll.append('g')
       gArclines = gAll.append('g')
       gSpokes = gAll.append('g')
       gTexts = gAll.append('g')
       gArrows = gAll.append('g')
+
+      ////////////
+      // grps = []
+      // data.charts.forEach(c => {
+
+      // })
+
     } else {
       svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     }
@@ -69,26 +75,26 @@ export async function doughnut({
     initialiseTextParameters(recipe.charts[iChart].texts, currentParams.texts)
     initialiseArrowParameters(recipe.charts[iChart].arrows, currentParams.arrows)
     
-    const trans = svg.transition().duration(0).ease(d3.easeLinear) 
-    //.ease(d3.easeElasticOut.amplitude(1).period(0.4))
-    if (recipe.charts[iChart].metrics.duration) {
-      trans.duration(recipe.charts[iChart].metrics.duration)
-    } else {
-
-    }
-   
     // Remember current chart as the last chart
     iLastChart = iChart
+
+    // Set trans duration for chart
+    let trans = svg.transition().duration(0).ease(d3.easeLinear) 
+    if (recipe.charts[iChart].metrics.duration) {
+      trans.duration(recipe.charts[iChart].metrics.duration)
+    }
 
     // Create elements
     createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
     createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
     createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
     createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
-    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts, recipe.globals)
+    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts)
     createArrowElements(gArrows, recipe.charts[iChart].arrows, trans, currentParams.arrows)
+  
+    return trans.end()
   }
-
+  
   // API //
   function displayChart(i) {
     let iChart
@@ -102,7 +108,7 @@ export async function doughnut({
     } else {
       iChart = i-1
     }
-    updateChart(iChart)
+    return updateChart(iChart)
   }
 
   function displayNextChart() {
@@ -115,7 +121,7 @@ export async function doughnut({
     } else {
       iChart = iLastChart + 1
     }
-    updateChart(iChart)
+    return updateChart(iChart)
   }
 
   function displayPreviousChart() {
@@ -127,7 +133,7 @@ export async function doughnut({
     } else {
       iChart = iLastChart - 1
     }
-    updateChart(iChart)
+    return updateChart(iChart)
   }
 
   async function loadRecipe(file) {

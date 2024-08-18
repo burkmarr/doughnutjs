@@ -61,11 +61,17 @@ export async function parseRecipe(data, errHtmlEl) {
 
 function cleanCsv(data) {
 
-  const fixType = function (val) {
-    if (String(Number(val)) === val) {
-      return Number(val)
+  const cleanValue = function (val) {
+    // Trim any spaces from around values
+    let newVal = val.trim()
+    // Remove any multiple spaces
+    newVal = newVal.replace(/\s+/g, ' ')
+    // Change from string to number (fixType)
+    // where appropriate
+    if (String(Number(newVal)) === newVal) {
+      return Number(newVal)
     } else {
-      return val
+      return newVal
     }
   }
 
@@ -76,10 +82,7 @@ function cleanCsv(data) {
   const cleanData = data.map(d => {
     const dn = {}
     columns.forEach(k => {
-      // Trim any spaces from around values
-      // Also change from string to number (fixType)
-      // where appropriate.
-      dn[k] = fixType(d[k].trim())
+      dn[k] = cleanValue(d[k])
     })
     return dn
   })
@@ -143,6 +146,21 @@ function checkRows(data, errHtmlEl) {
   errTableHdrRow.append('th').text('Row number')
   errTableHdrRow.append('th').text('Column')
   errTableHdrRow.append('th').text('Problem')
+
+  const charts = Object.keys(data[0]).slice(3)
+
+  // Data cannot include any blank rows
+  data.forEach((d,i) => {
+    let blank = true
+    Object.keys(d).forEach(column => {
+      if (d[column] !== '') {
+        blank = false
+      }
+    })
+    if (blank) {
+      errMsg(i+1,'all', `No columns have values. CSV should not have blank rows.`)
+    }
+  })
 
   // Type can only be one of chart, image, arc, arcline, spoke, arrow
   const types = ['chart', 'image', 'arc', 'arcline', 'spoke', 'text', 'arrow']
@@ -210,11 +228,27 @@ function checkRows(data, errHtmlEl) {
     }
     // Each type & entity must have a value of either 'yes' or '' against every
     // chart column unless it is of type 'chart'
-    const charts = Object.keys(data[0]).slice(3)
     if (d.type && d.entity && d.type !== 'chart') {
       charts.forEach(c => {
         if (d[c] !== 'yes' && d[c] !== '') {
-          errMsg(i+1,c, `Type/entity rows must have either no value or the value 'yes' against each chart column`)
+          errMsg(i+1,c, `Type/entity rows must have either no value or the value 'yes' against each chart column.`)
+        }
+      })
+    }
+  })
+
+  // Any cell with a value of '=' under one of the charts, must come after a chart with a value
+  data.forEach((d,i) => {
+    if (!d.type && !d.entity) {
+      charts.forEach((name, iChart) => {
+        if (d[name] === '=') {
+          if (iChart === 0) {
+            errMsg(i+1, name, `First chart cannot have entity values of '='.`)
+          }
+          if (d[charts[iChart-1]] === '') {
+            errMsg(i+1, name, `Entity values of '=' cannot follow a blank value for the previous chart.`)
+          }
+          
         }
       })
     }

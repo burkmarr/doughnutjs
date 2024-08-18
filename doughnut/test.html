@@ -23,7 +23,6 @@
   <button type="button" onclick="nextChart()">Next</button>
   <button type="button" onclick="previousChart()">Previous</button>
   <button type="button" onclick="displayChart()">Chart</button>
-
   <input type="number" id="chartno" name="chartno" min="0" />
 
   <br><br>
@@ -32,6 +31,11 @@
   <button type="button" onclick="loadRecipe(2)">Recipe 2</button>
   <button type="button" onclick="loadRecipe(3)">Recipe 3</button> 
   <button type="button" onclick="loadRockstrom()">Rockstrom</button>
+
+  <br><br>
+
+  <button type="button" onclick="demo(true)">Forward</button>
+  <button type="button" onclick="demo(false)">Backward</button>
 
   <div id="donut-div" style="width: 100%"></div>
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
@@ -54,9 +58,70 @@
   <script type="module">
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
+    let ichart = 0
+
+    window.demo = async function(forward) {
+
+      switch(ichart) {
+        case 0:
+          if (forward) {
+            await chart.displayChart(1)
+            ichart=1
+          }
+          break
+        case 1:
+          if (forward) {
+            await chart.displayChart(2)
+            await chart.displayChart(3)
+            ichart=3
+          }
+          break
+        case 3:
+          if (forward) {
+            await chart.displayChart(4)
+            await chart.displayChart(5)
+            ichart=5
+          } else {
+            await chart.displayChart(2)
+            await chart.displayChart(1)
+            ichart=1
+          }
+          break
+        case 5:
+          if (forward) {
+            await chart.displayChart(6)
+            ichart=6
+          } else {
+            await chart.displayChart(4)
+            await chart.displayChart(3)
+            ichart=3
+          }
+          break
+        case 6:
+          if (forward) {
+            await chart.displayChart(7)
+            ichart=7
+          } else {
+            await chart.displayChart(5)
+            ichart=5
+          }
+          break
+        case 7:
+          if (!forward) {
+            await chart.displayChart(6)
+            ichart=6
+          }
+          break
+        default:
+          // Do nothing
+      }
+    }
 
     window.nextChart = function() {
-      chart.displayNextChart()
+      (async () => {
+        await chart.displayNextChart()
+        console.log('promise ended')
+      })()
     }
     window.previousChart = function() {
       chart.displayPreviousChart()

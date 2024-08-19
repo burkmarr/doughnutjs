@@ -51,10 +51,10 @@ export async function doughnut({
       gArrows = gAll.append('g')
 
       ////////////
-      // grps = []
-      // data.charts.forEach(c => {
+      recipe.grps.forEach(g => {
+        g.g = gAll.append('g')
+      })
 
-      // })
 
     } else {
       svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
@@ -85,12 +85,34 @@ export async function doughnut({
     }
 
     // Create elements
-    createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
-    createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
-    createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
-    createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
-    createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts)
-    createArrowElements(gArrows, recipe.charts[iChart].arrows, trans, currentParams.arrows)
+    //createImageElements(gImages, recipe.charts[iChart].images, trans, currentParams.images)
+    //createArcElements(gArcs, recipe.charts[iChart].arcs, trans, currentParams.arcs)
+    //createArclineElements(gArclines, recipe.charts[iChart].arclines, trans, currentParams.arclines)
+    //createSpokeElements(gSpokes, recipe.charts[iChart].spokes, trans, currentParams.spokes)
+    //createTextElements(gTexts, recipe.charts[iChart].texts, trans, currentParams.texts)
+    //createArrowElements(gArrows, recipe.charts[iChart].arrows, trans, currentParams.arrows)
+
+    recipe.grps.forEach(grp => {
+      const elements = recipe.charts[iChart][grp.type].filter(e => e.z === grp.z)
+      if (grp.type === 'images') {
+        createImageElements(grp.g, elements, trans, currentParams.images)
+      }
+      if (grp.type === 'arcs') {
+        createArcElements(grp.g, elements, trans, currentParams.arcs)
+      }
+      if (grp.type === 'arclines') {
+        createArclineElements(grp.g, elements, trans, currentParams.arclines)
+      }
+      if (grp.type === 'spokes') {
+        createSpokeElements(grp.g, elements, trans, currentParams.spokes)
+      }
+      if (grp.type === 'texts') {
+        createTextElements(grp.g, elements, trans, currentParams.texts)
+      }
+      if (grp.type === 'arrows') {
+        createArrowElements(grp.g, elements, trans, currentParams.arrows)
+      }
+    })
   
     return trans.end()
   }

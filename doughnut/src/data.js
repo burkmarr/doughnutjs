@@ -113,16 +113,19 @@ function checkCols(data, errHtmlEl) {
   if (cols[1] !== 'entity') {
     errMsg(cols[1], "The header of the second column of the CSV must be 'entity'.")
   }
-  if (cols[2] !== 'property_z') {
-    errMsg(cols[2], "The header of the fourth column of the CSV must be 'property_z'.")
+  if (cols[2] !== 'z') {
+    errMsg(cols[2], "The header of the fourth column of the CSV must be 'r'.")
   }
-  if (!cols.length > 3) {
-    errMsg('', 'There must be at least four columns. The fourth and subsequent columns are named with unique chart identifiers.')
+  if (cols[3] !== 'property') {
+    errMsg(cols[2], "The header of the fourth column of the CSV must be 'property'.")
+  }
+  if (!cols.length > 4) {
+    errMsg('', 'There must be at least five columns. The fifth and subsequent columns are named with unique chart identifiers.')
   }
 
   // Check charts are correctly named - they must be unique names and consist
   // only of non-white characters.
-  const charts = cols.filter((c,i) => i >= 3 && c.length > 0) 
+  const charts = cols.filter((c,i) => i >= 4 && c.length > 0) 
   charts.forEach((c,i) => {
     if (!c.match(/^\S+$/)) {
       errMsg(c, `The chart id (header) for this column is not valid - it cannot contain any spaces.`)
@@ -147,7 +150,7 @@ function checkRows(data, errHtmlEl) {
   errTableHdrRow.append('th').text('Column')
   errTableHdrRow.append('th').text('Problem')
 
-  const charts = Object.keys(data[0]).slice(3)
+  const charts = Object.keys(data[0]).slice(4)
 
   // Data cannot include any blank rows
   data.forEach((d,i) => {
@@ -161,7 +164,6 @@ function checkRows(data, errHtmlEl) {
       errMsg(i+1,'all', `No columns have values. CSV should not have blank rows.`)
     }
   })
-
   // Type can only be one of chart, image, arc, arcline, spoke, arrow
   const types = ['chart', 'image', 'arc', 'arcline', 'spoke', 'text', 'arrow']
   data.forEach((d,i) => {
@@ -184,12 +186,30 @@ function checkRows(data, errHtmlEl) {
   })
 
   // Each type must have an entity and visa versa
+  // and each type and entity must have a z value
+  // and no row can have a value if not type and entity specified
+  // z values must be numeric
   data.forEach((d,i) => {
     if ((d.type && !d.entity)) {
       errMsg(i+1,'entity', 'A value is required for entity if there is a value for type.')
     }
     if (!d.type && d.entity) {
       errMsg(i+1,'type', 'A value is required for type if there is a value for entity.')
+    }
+    if (d.type && d.entity && d.type !== 'chart' && d.entity !== 'default' && !d.z) {
+      errMsg(i+1,'z', `A value is required for z if there is a value for type and entity (unless type is 'chart' or entity is 'default').`)
+    }
+    if (!d.type && !d.entity && d.z) {
+      errMsg(i+1,'z', `A value for z is only required where for type and entity are set (unless type is 'chart' or entity is 'default').`)
+    }
+    if (d.type === 'chart' && d.z) {
+      errMsg(i+1,'z', `A value for z is not required where type is 'chart'.`)
+    }
+    if (d.entity === 'default' && d.z) {
+      errMsg(i+1,'z', `A value for z is not required where entity is 'default'.`)
+    }
+    if (d.z && typeof d.z !== 'number') {
+      errMsg(i+1,'property', `The z value '<b>${d.property}</b>' is not valid, it must be a number.`)
     }
   })
 
@@ -210,30 +230,19 @@ function checkRows(data, errHtmlEl) {
     })
   })
 
-  // Check other cell values for rows where type/entity specified
+  // Each type & entity must have a value of either 'yes' or '' against every
+  // chart column unless it is of type 'chart'
+  // and no value for property
   data.forEach((d,i) => {
-    // Each type & entity must have a numeric z value in the property_z
-    // unless it is of type 'chart' or entity 'default'
-    if (d.type && d.entity && d.type !== 'chart' && d.entity !== 'default') {
-      if (typeof d.property_z !== 'number') {
-        errMsg(i+1,'property_z', `The z value '<b>${d.property_z}</b>' is not valid, it must be a number.`)
-      }
-    }
-    // Type/entity rows that are either of type 'chart' or entity 'default' must not have a z value
-    if (d.type && d.entity && d.type === 'chart' && d.property_z !== '') {
-      errMsg(i+1,'property_z', `There should be no z value for type 'chart' but it is set to '<b>${d.property_z}</b>'.`)
-    }
-    if (d.type && d.entity && d.entity === 'default' && d.property_z !== '') {
-      errMsg(i+1,'property_z', `There should be no z value for entity 'default' but it is set to '<b>${d.property_z}</b>'.`)
-    }
-    // Each type & entity must have a value of either 'yes' or '' against every
-    // chart column unless it is of type 'chart'
     if (d.type && d.entity && d.type !== 'chart') {
       charts.forEach(c => {
         if (d[c] !== 'yes' && d[c] !== '') {
           errMsg(i+1,c, `Type/entity rows must have either no value or the value 'yes' against each chart column.`)
         }
       })
+    }
+    if (d.type && d.entity && d.property !== '') {
+      errMsg(i+1, 'property', `Type/entity rows must not have a value in the property column.`)
     }
   })
 
@@ -258,10 +267,10 @@ function checkRows(data, errHtmlEl) {
 }
 
 function restructureCsv(data) {
-  //const charts = data.columns.filter((c,i) => i >= 3)
-  const charts = Object.keys(data[0]).slice(3)
+  //const charts = data.columns.filter((c,i) => i >= 4)
+  const charts = Object.keys(data[0]).slice(4)
   const typeAndEntity = data.filter(d => d.type && d.type !== 'chart').map(d => {
-    return {type: d.type, entity: d.entity}
+    return {type: d.type, entity: d.entity, z: d.z}
   })
 
   // Propagate type and entity downward through csv data
@@ -304,26 +313,26 @@ function restructureCsv(data) {
   })
 
   // Chart-metric to chart metrics collection
-  data.filter(d => d.type === 'chart' && d.entity === 'metric' && d.property_z).forEach(d => {
+  data.filter(d => d.type === 'chart' && d.entity === 'metric' && d.property).forEach(d => {
     charts.forEach(chartName => {
       const chart = tdata.charts.find(c => c.id === chartName)
-      chart.metrics[d.property_z] = d[chartName]
+      chart.metrics[d.property] = d[chartName]
     })
   })
   // Chart-def to chart defs collection
-  data.filter(d => d.type === 'chart' && d.entity === 'def' && d.property_z).forEach(d => {
+  data.filter(d => d.type === 'chart' && d.entity === 'def' && d.property).forEach(d => {
     charts.forEach(chartName => {
       const chart = tdata.charts.find(c => c.id === chartName)
       if (d[chartName]) {
-        chart.defs[d.property_z] = d[chartName]
+        chart.defs[d.property] = d[chartName]
       }
     })
   })
   // Defaults to defaults for chart
-  data.filter(d => d.type === 'chart' && d.entity === 'default' && d.property_z).forEach(d => {
+  data.filter(d => d.type === 'chart' && d.entity === 'default' && d.property).forEach(d => {
     charts.forEach(chartName => {
       const chart = tdata.charts.find(c => c.id === chartName)
-      chart.defaults[d.property_z] = d[chartName]
+      chart.defaults[d.property] = d[chartName]
     })
   })
   // Now populate the chart entities
@@ -333,13 +342,13 @@ function restructureCsv(data) {
     const forCharts = charts.filter(name => header[name] === 'yes')
     const properties = rows.slice(1)
     properties.forEach((p,i) => {
-      const propName = p.property_z
+      const propName = p.property
       forCharts.forEach(name => {
         const tChart = tdata.charts.find(c => c.id === name)
         const tEntityArray = tChart[`${te.type}s`]
         let tEntity = tEntityArray.find(e => e.id === te.entity)
         if (!tEntity) {
-          tEntity = {id: te.entity}
+          tEntity = {id: te.entity, z: te.z}
           tEntityArray.push(tEntity)
         }
         if (p[name] !== null && p[name] !== '') {
@@ -351,6 +360,24 @@ function restructureCsv(data) {
       })
     })
   })
+
+  // Add an element to the transformed data which contains all the unique
+  // combinations of element type and z value. This will be used to
+  // create SVG g elements - the z value being used to order them.
+  let grps = data.filter(d => d.type && d.z).map(d => `${d.z}-${d.type}s`)
+  grps = grps.filter((d,i) => grps.indexOf(d) === i).map(g => {
+    const ag = g.split('-')
+    return {type: ag[1], z: Number(ag[0])}
+  }).sort((a,b) => {
+    if (a.z < b.z) {
+      return 1
+    } else if (a.z > b.z) {
+      return -1
+    } else {
+      return 0
+    }
+  })
+  tdata.grps = grps
 
   return tdata
 }
@@ -525,14 +552,14 @@ function validateProps(data, errHtmlEl) {
   errTableHdrRow.append('th').text('Row')
   errTableHdrRow.append('th').text('type')
   errTableHdrRow.append('th').text('entity')
-  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('property')
   errTableHdrRow.append('th').text('chart')
   errTableHdrRow.append('th').text('value')
   errTableHdrRow.append('th').text('Permitted formats')
 
   let cType, cEntity
   const propDefs = getProperties()
-  const charts = Object.keys(data[0]).slice(3)
+  const charts = Object.keys(data[0]).slice(4)
 
   data.forEach((d,irow) => {
     if (d.type) {
@@ -542,7 +569,7 @@ function validateProps(data, errHtmlEl) {
       // Check property value for each chart
       charts.forEach(chart => {
         if (cEntity !== 'def' && cEntity !== 'metric' && d[chart] !== '=' && d[chart] !== '') {
-          const propDef = propDefs.find(propdef => propdef.name === d.property_z)
+          const propDef = propDefs.find(propdef => propdef.name === d.property)
           if (propDef) {
             let permittedFormat = false
             for (let i=0; i<propDef.formats.re.length; i++) {
@@ -557,10 +584,10 @@ function validateProps(data, errHtmlEl) {
                 err = `${err}<li><b>${d}</b> - e.g. <b>${propDef.formats.example[i]}</b></li>`
               })
               err = `${err}</ul> ${propDef.formats.expl}`
-              errMsg(irow+1, cType, cEntity, d.property_z, chart, d[chart], err)
+              errMsg(irow+1, cType, cEntity, d.property, chart, d[chart], err)
             }
           } else {
-            errMsg(irow+1, cType, cEntity, d.property_z, chart, d[chart], 'No definition')
+            errMsg(irow+1, cType, cEntity, d.property, chart, d[chart], 'No definition')
           }
         }
       })
@@ -588,7 +615,7 @@ function missingProps(data, errHtmlEl) {
   errTableHdrRow.append('th').text('row')
   errTableHdrRow.append('th').text('type')
   errTableHdrRow.append('th').text('entity')
-  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('property')
   errTableHdrRow.append('th').text('chart')
   errTableHdrRow.append('th').text('Problem')
 
@@ -649,7 +676,7 @@ function unpermittedProps(data, errHtmlEl) {
   errTableHdrRow.append('th').text('Row')
   errTableHdrRow.append('th').text('type')
   errTableHdrRow.append('th').text('entity')
-  errTableHdrRow.append('th').text('property_z')
+  errTableHdrRow.append('th').text('property')
   errTableHdrRow.append('th').text('Permitted formats')
 
   let cType, cEntity
@@ -661,10 +688,10 @@ function unpermittedProps(data, errHtmlEl) {
       cEntity = d.entity
     } else {
       if (cType !== 'chart') {
-        const propDef = propDefs.find(propdef => propdef.name === d.property_z)
+        const propDef = propDefs.find(propdef => propdef.name === d.property)
         let permitted = [...propDef.mandatoryOn, ...propDef.optionalOn]
         if (!permitted.find(type => type === `${cType}s`)) {
-          errMsg (irow+1, cType, cEntity, d.property_z, 'Property not allowed on this element type.')
+          errMsg (irow+1, cType, cEntity, d.property, 'Property not allowed on this element type.')
         }
       }
     }

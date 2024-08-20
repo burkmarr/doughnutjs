@@ -25,14 +25,16 @@ export async function doughnut({
   const csvErrorDiv = d3.select(selector).append('div')
     .style('display', 'none')
 
-  function updateChart(iChart) {
+  function updateChart(iChart, delay) {
+
+    console.log(iChart, 'duration', delay)
 
     if (!recipeParsed) return Promise.resolve()
       
     svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
     svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
     
-    if (svg && !recipe.charts[iChart].metrics.duration) {
+    if (svg && !recipe.charts[iChart].metrics.transition) {
       svg.remove()
       svg = null
     }
@@ -78,10 +80,14 @@ export async function doughnut({
     // Remember current chart as the last chart
     iLastChart = iChart
 
-    // Set trans duration for chart
-    let trans = svg.transition().duration(0).ease(d3.easeLinear) 
-    if (recipe.charts[iChart].metrics.duration) {
-      trans.duration(recipe.charts[iChart].metrics.duration)
+    // Set transition duration for chart (transition in metrics)
+    // Set delay (from duration in metrics)
+    let trans = svg.transition().delay(0).duration(0).ease(d3.easeLinear) 
+    if (recipe.charts[iChart].metrics.transition) {
+      trans.duration(recipe.charts[iChart].metrics.transition)
+    }
+    if (delay) {
+      trans.delay(delay)
     }
 
     // Create elements
@@ -117,6 +123,18 @@ export async function doughnut({
     return trans.end()
   }
   
+  async function nextChart(iChart, forward) {
+    let ret
+    let i = iChart
+    let duration = 0
+    do {
+      ret = await updateChart(i, duration)
+      duration = recipe.charts[i].metrics.duration
+      i = forward ? i+1 : i-1
+    } while(typeof duration !== 'undefined')
+    return ret
+  }
+
   // API //
   function displayChart(i) {
     let iChart
@@ -130,7 +148,7 @@ export async function doughnut({
     } else {
       iChart = i-1
     }
-    return updateChart(iChart)
+    return  updateChart(iChart)
   }
 
   function displayNextChart() {
@@ -143,7 +161,7 @@ export async function doughnut({
     } else {
       iChart = iLastChart + 1
     }
-    return updateChart(iChart)
+    return nextChart(iChart, true)
   }
 
   function displayPreviousChart() {
@@ -155,7 +173,7 @@ export async function doughnut({
     } else {
       iChart = iLastChart - 1
     }
-    return updateChart(iChart)
+    return nextChart(iChart, false)
   }
 
   async function loadRecipe(file) {

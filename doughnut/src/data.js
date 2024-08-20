@@ -316,7 +316,9 @@ function restructureCsv(data) {
   data.filter(d => d.type === 'chart' && d.entity === 'metric' && d.property).forEach(d => {
     charts.forEach(chartName => {
       const chart = tdata.charts.find(c => c.id === chartName)
-      chart.metrics[d.property] = d[chartName]
+      if (d[chartName] !== ''){
+        chart.metrics[d.property] = d[chartName]
+      }
     })
   })
   // Chart-def to chart defs collection

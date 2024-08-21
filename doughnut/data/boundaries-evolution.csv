@@ -2,7 +2,7 @@
 chart,metric,,,,,,,,,
 ,,,width_px,600,=,=,=,=,=,=
 ,,,height_px,400,=,=,=,=,=,=
-,,,transition,1000,500,1000,1000,1000,2000,2000
+,,,transition,1000,500,1000,1000,1000,1500,1500
 ,,,duration,,200,,200,,,
 chart,def,,,,,,,,,
 ,,,whiteOutline,"<filter id=""whiteOutline"" color-interpolation-filters=""sRGB""><feMorphology in=""SourceAlpha"" result=""MORPH"" operator=""dilate"" radius=""1"" /><feColorMatrix in=""MORPH"" result=""WHITENED"" type=""matrix"" values=""-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0""/><feMerge><feMergeNode in=""WHITENED""/><feMergeNode in=""SourceGraphic""/></feMerge></filter>",=,=,,,,

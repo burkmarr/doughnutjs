@@ -24,13 +24,9 @@
   <button type="button" onclick="previousChart()">Previous</button>
   <button type="button" onclick="displayChart()">Chart</button>
   <input type="number" id="chartno" name="chartno" min="0" />
-
   <br><br>
-
-  <button type="button" onclick="loadRecipe(1)">Recipe 1</button>
-  <button type="button" onclick="loadRecipe(2)">Recipe 2</button>
-  <button type="button" onclick="loadRecipe(3)">Recipe 3</button> 
-  <button type="button" onclick="loadRockstrom()">Rockstrom</button>
+  <button type="button" onclick="loadRecipe('./data/doughnut1.csv')">Doughnut</button>
+  <button type="button" onclick="loadRecipe('./data/boundaries-evolution.csv')">Rockstrom</button>
 
   <div id="donut-div" style="width: 100%"></div>
   <!-- <script src="./build/js/doughnutjs.umd.js"></script> -->
@@ -80,12 +76,8 @@
       })()
     }
 
-    window.loadRecipe = function(n) {
-      chart.loadRecipe(`./data/test${n}.yaml`)
-    }
-
-    window.loadRockstrom = function () {
-      chart.loadRecipe(`./data/boundaries-evolution.csv`)
+    window.loadRecipe = function(file) {
+      chart.loadRecipe(file)
     }
   </script>
 </body>

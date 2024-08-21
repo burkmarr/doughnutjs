@@ -9,11 +9,13 @@ import { createTextElements, initialiseTextParameters } from './texts.js'
 import { createArrowElements, initialiseArrowParameters } from './arrows.js'
 
 export async function doughnut({
-  selector = 'body'
+  selector = 'body',
+  wrap = false
 } = {}) {
 
   let recipe, recipeCsv
   let iLastChart = null
+  let transitioning = false
   let svg, svgWidth, svgHeight
   let recipeParsed = false
   let gAll, gImages, gArcs, gArclines, gSpokes, gTexts, gArrows
@@ -25,7 +27,7 @@ export async function doughnut({
   const csvErrorDiv = d3.select(selector).append('div')
     .style('display', 'none')
 
-  function updateChart(iChart, delay) {
+  function updateChart(iChart, delay, transition) {
 
     console.log(iChart, 'duration', delay)
 
@@ -34,7 +36,8 @@ export async function doughnut({
     svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
     svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
     
-    if (svg && !recipe.charts[iChart].metrics.transition) {
+    //if (svg && !recipe.charts[iChart].metrics.transition) {
+    if (svg && !transition) {
       svg.remove()
       svg = null
     }
@@ -83,8 +86,10 @@ export async function doughnut({
     // Set transition duration for chart (transition in metrics)
     // Set delay (from duration in metrics)
     let trans = svg.transition().delay(0).duration(0).ease(d3.easeLinear) 
-    if (recipe.charts[iChart].metrics.transition) {
-      trans.duration(recipe.charts[iChart].metrics.transition)
+    //if (recipe.charts[iChart].metrics.transition) {
+    if (transition) {
+      //trans.duration(recipe.charts[iChart].metrics.transition)
+      trans.duration(transition)
     }
     if (delay) {
       trans.delay(delay)
@@ -124,19 +129,35 @@ export async function doughnut({
   }
   
   async function nextChart(iChart, forward) {
+    // The duration of a chart is how long it is displayed for (during automatic forwarding)
+    // before the transition to the next chart starts. This is implemented by using the 
+    // d3 transition.delay of the chart being to transitioned to, so the value of duration is
+    // actually used fo the transition.delay of the next chart - whether that is going forwards
+    // or backwards.
+    // The transition of a chart is a value that indicates how long the transition to it will
+    // last from the previous chart. When moving forward to the next chart, the transition value
+    // is used on the chart on which it was defined (i.e. the chart being transitioned to)m, but
+    // when we are going backwards, the destination chart must use the transition value of the
+    // chart it is transitioning from. That is so that the transition between two charts takes
+    // the same amount of time whether we are moving forwards or backwards.
+    if (transitioning) return
+    transitioning = true
     let ret
     let i = iChart
     let duration = 0
+    let transition
     do {
-      ret = await updateChart(i, duration)
+      transition =  forward ? recipe.charts[i].metrics.transition : recipe.charts[i+1].metrics.transition
+      ret = await updateChart(i, duration, transition)
       duration = recipe.charts[i].metrics.duration
       i = forward ? i+1 : i-1
     } while(typeof duration !== 'undefined')
-    return ret
+    transitioning=false
+    return iLastChart
   }
 
   // API //
-  function displayChart(i) {
+  async function displayChart(i) {
     let iChart
 
     if (i === null) {
@@ -148,20 +169,29 @@ export async function doughnut({
     } else {
       iChart = i-1
     }
-    return  updateChart(iChart)
+    await  updateChart(iChart, 0, recipe.charts[iChart].metrics.transition)
+    return iChart
   }
 
   function displayNextChart() {
     let iChart
-
+    
     if (iLastChart === null) {
       iChart = 0
     } else if (iLastChart === recipe.charts.length - 1 ) {
-      iChart = 0
+      if (wrap) {
+        iChart = 0
+      } else {
+        iChart = iLastChart
+      }
     } else {
       iChart = iLastChart + 1
     }
-    return nextChart(iChart, true)
+    if (iChart !== iLastChart) {
+      return nextChart(iChart, true)
+    } else {
+      return iChart
+    }
   }
 
   function displayPreviousChart() {
@@ -169,11 +199,19 @@ export async function doughnut({
     if (iLastChart === null) {
       iChart = 0
     } else if (iLastChart === 0 ) {
-      iChart = recipe.charts.length - 1
+      if (wrap) {
+        iChart = recipe.charts.length - 1
+      } else {
+        iChart = 0
+      } 
     } else {
       iChart = iLastChart - 1
     }
-    return nextChart(iChart, false)
+    if (iChart !== iLastChart) {
+      return nextChart(iChart, false)
+    } else {
+      return iChart
+    }
   }
 
   async function loadRecipe(file) {

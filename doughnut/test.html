@@ -57,18 +57,27 @@
 
     window.nextChart = function() {
       (async () => {
-        await chart.displayNextChart()
-        console.log('promise ended')
+        const ret = await chart.displayNextChart()
+        if (ret) {
+          console.log('Transition ended, Current chart index:', ret)
+        }  
       })()
     }
     window.previousChart = function() {
       (async () => {
-        await chart.displayPreviousChart()
-        console.log('promise ended')
+        const ret = await chart.displayPreviousChart()
+        if (ret) {
+          console.log('Transition ended, Current chart index:', ret)
+        }  
       })()
     }
     window.displayChart = function() {
-      chart.displayChart(document.getElementById("chartno").value)
+      (async () => {
+        const ret = await chart.displayChart(document.getElementById("chartno").value)
+        if (ret) {
+          console.log('Transition ended, Current chart index:', ret)
+        }  
+      })()
     }
 
     window.loadRecipe = function(n) {

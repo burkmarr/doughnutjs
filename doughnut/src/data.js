@@ -164,8 +164,8 @@ function checkRows(data, errHtmlEl) {
       errMsg(i+1,'all', `No columns have values. CSV should not have blank rows.`)
     }
   })
-  // Type can only be one of chart, image, arc, arcline, spoke, arrow
-  const types = ['chart', 'image', 'arc', 'arcline', 'spoke', 'text', 'arrow']
+  // Type can only be one of default, chart, image, arc, arcline, spoke, arrow
+  const types = ['default', 'chart', 'image', 'arc', 'arcline', 'spoke', 'text', 'arrow']
   data.forEach((d,i) => {
     if (d.type && !types.includes(d.type)) {
       errMsg(i+1,'type', `${d.type} is not a valid type. Must be one of ${types.join(', ')}.`)
@@ -196,7 +196,8 @@ function checkRows(data, errHtmlEl) {
     if (!d.type && d.entity) {
       errMsg(i+1,'type', 'A value is required for type if there is a value for entity.')
     }
-    if (d.type && d.entity && d.type !== 'chart' && d.entity !== 'default' && !d.z) {
+    //if (d.type && d.entity && d.type !== 'chart' && d.type !== 'default' && d.entity !== 'default' && !d.z) {
+    if (d.type && d.entity && d.type !== 'chart' && d.type !== 'default' && !d.entity.startsWith('default') && !d.z) {
       errMsg(i+1,'z', `A value is required for z if there is a value for type and entity (unless type is 'chart' or entity is 'default').`)
     }
     if (!d.type && !d.entity && d.z) {
@@ -269,7 +270,7 @@ function checkRows(data, errHtmlEl) {
 function restructureCsv(data) {
   //const charts = data.columns.filter((c,i) => i >= 4)
   const charts = Object.keys(data[0]).slice(4)
-  const typeAndEntity = data.filter(d => d.type && d.type !== 'chart').map(d => {
+  const typeAndEntity = data.filter(d => d.type && d.type !== 'chart'  && d.type !== 'default').map(d => {
     return {type: d.type, entity: d.entity, z: d.z}
   })
 
@@ -298,7 +299,7 @@ function restructureCsv(data) {
 
   // Transform structure from that read in from CSV
   // to that expected by the code (originally from yaml)
-  const tdata = {charts:[]}
+  const tdata = {charts:[], }
   tdata.charts = charts.map(c => {
     const chart = {
       id: c,
@@ -338,6 +339,7 @@ function restructureCsv(data) {
     })
   })
   // Now populate the chart entities
+  //console.log('typeAndEntity', typeAndEntity)
   typeAndEntity.forEach(te => {
     const rows = data.filter(d => d.type === te.type && d.entity === te.entity)
     const header = rows[0]
@@ -473,25 +475,32 @@ function resolveNumericFormats (obj) {
 }
 
 function propogateDefaultProps(data) {
-  // Works by propagating all defaults whether or not they are permitted on
-  // on an element type.
-  // Another way of doing it would be to limit the propogation of defaults to those elements
-  // that are allowed to have them. 
   const propDefs = getProperties()
   data.charts.forEach(chart => {
     const chartDefaults = chart.defaults ? chart.defaults : {}
     elementTypes.forEach(elementType => {
       if (chart[elementType]) {
-        // Get the chart element type defaults for this element type
+        // Get the chart element type defaults which apply to all elements of this entity type
         const elementDefaults = chart[elementType].find(e => e.id === 'default')
         // Identify properties allowed on this element type that have a default value
         const propDefDefaults = propDefs.filter(propDef => {
           return propDef.optionalOn.find(et => et === elementType) && propDef.hasOwnProperty('default')
         })
         // Now update any elements with defaults from these levels
-        chart[elementType].filter(element => element.id !== 'default').forEach(element => {
-          
-          // First element collection defaults (highest priority)
+        chart[elementType].filter(element => element.id !== 'default' && !element.id.startsWith('default-')).forEach(element => {
+          // First element collection targeted defaults (highest priority)
+          chart[elementType].filter(e => e.id.startsWith('default-')).forEach(targetedDefaults => {
+            const target = targetedDefaults.id.substring(8)
+            if (element.id.startsWith(`${target}-`)) {
+              Object.keys(targetedDefaults).filter(prop => prop !== 'z' && prop !== 'id').forEach(elementDefault => {
+                // If the default does not exist on the element then add.
+                if (!element[elementDefault]) {
+                  element[elementDefault] = targetedDefaults[elementDefault]
+                }
+              })
+            }
+          })
+          // Now element collection defaults 
           if (elementDefaults) {
             Object.keys(elementDefaults).forEach(elementDefault => {
               // If the default does not exist on the element then add.
@@ -523,14 +532,12 @@ function propogateDefaultProps(data) {
       }
     })
   })
-  // Remove all objects with id 'default'
+  // Remove all objects with id 'default' or id that startswith 'default-id'
   data.charts.forEach(chart => {
     elementTypes.forEach(type => {
       if (chart[type]) {
-        const i = chart[type].findIndex(e => e.id === 'default')
-        if (i > -1) {
-          chart[type].splice(i, 1)
-        }
+        const reduce = chart[type].filter(e => e.id !== 'default' && !e.id.startsWith('default-'))
+        chart[type] = reduce
       }
     })
   })
@@ -633,27 +640,29 @@ function missingProps(data, errHtmlEl) {
         // Remove duplicates from the list
         mandatoryProps = [...new Set(mandatoryProps)]
         chart[elementType].forEach(element => {
-          mandatoryProps.forEach(mandatoryProp => {
-            if (!Object.keys(element).find(prop => prop === mandatoryProp)) {
-              const msg = `
-                Mandatory prop not found. Specify it either:
-                <ul>
-                <li>directly on the element (type <i>${elementType}</i> and entity <i>${element.id}</i>),</li>
-                <li>or the element with type <i>${elementType}</i> and entity <i>default</i>,</li>
-                <li>or under type <i>charts</i> and entity <i>defaults</i>.
-                </ul>
-              `
-              // Find the row in CSV corresponding to element
-              let iRow
-              for (let i=0; i < dataCsv.length; i++) {
-                if (`${dataCsv[i].type}s` === elementType && dataCsv[i].entity === element.id) {
-                  iRow = i+1
-                  break
+          if (!element.id.startsWith('default-')) { // Doesn't apply to special entities that define a default group
+            mandatoryProps.forEach(mandatoryProp => {
+              if (!Object.keys(element).find(prop => prop === mandatoryProp)) {
+                const msg = `
+                  Mandatory prop not found. Specify it either:
+                  <ul>
+                  <li>directly on the element (type <i>${elementType}</i> and entity <i>${element.id}</i>),</li>
+                  <li>or the element with type <i>${elementType}</i> and entity <i>default</i>,</li>
+                  <li>or under type <i>charts</i> and entity <i>defaults</i>.
+                  </ul>
+                `
+                // Find the row in CSV corresponding to element
+                let iRow
+                for (let i=0; i < dataCsv.length; i++) {
+                  if (`${dataCsv[i].type}s` === elementType && dataCsv[i].entity === element.id) {
+                    iRow = i+1
+                    break
+                  }
                 }
+                errMsg(iRow, elementType, element.id, mandatoryProp, chart.id, msg)
               }
-              errMsg(iRow, elementType, element.id, mandatoryProp, chart.id, msg)
-            }
-          })
+            })
+          }
         })
       }
     })
@@ -689,7 +698,7 @@ function unpermittedProps(data, errHtmlEl) {
       cType = d.type
       cEntity = d.entity
     } else {
-      if (cType !== 'chart') {
+      if (cType !== 'chart' && cType !== 'default') {
         const propDef = propDefs.find(propdef => propdef.name === d.property)
         let permitted = [...propDef.mandatoryOn, ...propDef.optionalOn]
         if (!permitted.find(type => type === `${cType}s`)) {

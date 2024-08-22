@@ -7,34 +7,37 @@ chart,metric,,,
 chart,def,,,
 ,,,salmoninner,"<radialGradient id=""salmoninner"" cx=""0"" cy=""0"" r=""100"" gradientUnits=""userSpaceOnUse""><stop offset=""0%"" stop-color=""white"" stop-opacity=""0"" /><stop offset=""60%"" stop-color=""#F6C8B1"" stop-opacity=""1""/></radialGradient>"
 ,,,salmonouter,"<radialGradient id=""salmonouter"" cx=""0"" cy=""0"" r=""220"" gradientUnits=""userSpaceOnUse""><stop offset=""75%"" stop-color=""#F6C8B1"" stop-opacity=""1"" /><stop offset=""100%"" stop-color=""white"" stop-opacity=""0""/></radialGradient>"
+,,,background,"<radialGradient id=""background"" cx=""0"" cy=""0"" r=""220"" gradientUnits=""userSpaceOnUse""><stop offset=""0%"" stop-color=""white"" stop-opacity=""0"" /><stop offset=""30%"" stop-color=""#F6C8B1"" stop-opacity=""1""/><stop offset=""75%"" stop-color=""#F6C8B1"" stop-opacity=""1"" /><stop offset=""100%"" stop-color=""white"" stop-opacity=""0""/></radialGradient>"
 chart,default,,,
 ,,,angle0,0
-,,,angleSpan,30
 ,,,radiusSpanPx,150
 ,,,radiusSpanReal,63
 ,,,textOffsetSpanPx,10
 arc,default,,,yes
-,,,colour,def-salmoninner
-,,,radius1,0
-,,,radius2,37 r
+,,,colour,def-background
+,,,opacity,0 1
 arc,social-foundation,40,,yes
 ,,,angle1,0
 ,,,angle2,360
-,,,radius1,37 r
-,,,radius2,42 r
+,,,radius1,49 37 r
+,,,radius2,49 42 r
 ,,,colour,#077140
 arc,ecological-ceiling,40,,yes
 ,,,angle1,0
 ,,,angle2,360
-,,,radius1,57 r
-,,,radius2,62 r
+,,,radius1,49 57 r
+,,,radius2,49 62 r
 ,,,colour,#077140
 arc,safe-just-space,40,,yes
 ,,,angle1,0
 ,,,angle2,360
-,,,radius1,42 r
-,,,radius2,57 r
+,,,radius1,49 42 r
+,,,radius2,49 57 r
 ,,,colour,#6EB646
+arc,default-sf,,,yes
+,,,angleSpan,30
+,,,radius1,0
+,,,radius2,49 37 r
 arc,sf-food,40,,yes
 ,,,angle1,0
 ,,,angle2,1 x
@@ -71,83 +74,45 @@ arc,sf-energy,40,,yes
 arc,sf-water,40,,yes
 ,,,angle1,11 x
 ,,,angle2,12 x
-arc,ec-climate-change,40,,yes
-,,,colour,def-salmonouter
+arc,default-ec,,,yes
 ,,,angleSpan,40
 ,,,angle0,-20
+,,,radius1,49 62 r
+,,,radius2,220
+arc,ec-climate-change,40,,yes
 ,,,angle1,0
 ,,,angle2,1 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-ocean-adicification,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,1 x
 ,,,angle2,2 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-chem-pollution,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,2 x
 ,,,angle2,3 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-nk,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,3 x
 ,,,angle2,4 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-freshwater,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,4 x
 ,,,angle2,5 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-lanc-conversion,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,5 x
 ,,,angle2,6 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-biodiversity,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,6 x
 ,,,angle2,7 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-air-pollution,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,7 x
 ,,,angle2,8 x
-,,,radius1,62 r
-,,,radius2,220
 arc,ec-ozone,40,,yes
-,,,colour,def-salmonouter
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle1,8 x
 ,,,angle2,9 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,default,,,yes
 ,,,stroke,white
 ,,,strokeWidth,2
+spoke,default-sf,,,yes
 ,,,radius1,0
-,,,radius2,37 r
+,,,radius2,49 37 r
+,,,angleSpan,30
 spoke,sf-spoke1,20,,yes
 ,,,angle,0
 spoke,sf-spoke2,20,,yes
@@ -172,67 +137,43 @@ spoke,sf-spoke11,20,,yes
 ,,,angle,10 x
 spoke,sf-spoke12,20,,yes
 ,,,angle,11 x
+spoke,default-ec,,,yes
+,,,angleSpan,40
+,,,angle0,-20
+,,,radius1,49 62 r
+,,,radius2,220
 spoke,ec-spoke1,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,0
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke2,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,1 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke3,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,2 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke4,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,3 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke5,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,4 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke6,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,5 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke7,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,6 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke8,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,7 x
-,,,radius1,62 r
-,,,radius2,220
 spoke,ec-spoke9,20,,yes
-,,,angleSpan,40
-,,,angle0,-20
 ,,,angle,8 x
-,,,radius1,62 r
-,,,radius2,220
-arrow,shortfall,15,,yes
-,,,radius,37 r
+arrow,default,,,yes
 ,,,angle,60
 ,,,rot,0
 ,,,colour,#526A76
 ,,,strokeWidth,0
-,,,opacity,1
+,,,al1,0 -37 r
+,,,al5,0
+,,,al37,0 -32 r
+,,,al28,0 -32 r
+,,,aw28,4 r
+,,,aw46,2 r
+,,,aw37,2 r
+arrow,shortfall,15,,yes
+,,,radius,49 37 r
 ,,,al1,0 -37 r
 ,,,al5,0
 ,,,al37,0 -32 r
@@ -241,13 +182,8 @@ arrow,shortfall,15,,yes
 ,,,aw46,2 r
 ,,,aw37,2 r
 arrow,overshoot,15,,yes
-,,,radius,62 r
-,,,angle,60
-,,,rot,0
-,,,colour,#526A76
-,,,strokeWidth,0
-,,,opacity,1
-,,,al1, 0 28 r
+,,,radius,49 62 r
+,,,al1,0 28 r
 ,,,al5,0
 ,,,al37,0 23 r
 ,,,al28,0 23 r

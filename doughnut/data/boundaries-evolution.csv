@@ -3,7 +3,7 @@ chart,metric,,,,,,,,,
 ,,,width_px,600,=,=,=,=,=,=
 ,,,height_px,400,=,=,=,=,=,=
 ,,,transition,1000,500,1000,1000,1000,1500,1500
-,,,duration,,200,,200,,,
+,,,duration,,200,200,200,,,
 chart,def,,,,,,,,,
 ,,,whiteOutline,"<filter id=""whiteOutline"" color-interpolation-filters=""sRGB""><feMorphology in=""SourceAlpha"" result=""MORPH"" operator=""dilate"" radius=""1"" /><feColorMatrix in=""MORPH"" result=""WHITENED"" type=""matrix"" values=""-1 0 0 0 1, 0 -1 0 0 1, 0 0 -1 0 1, 0 0 0 1 0""/><feMerge><feMergeNode in=""WHITENED""/><feMergeNode in=""SourceGraphic""/></feMerge></filter>",=,=,,,,
 ,,,rockred,"<radialGradient id=""rockred"" cx=""0"" cy=""0"" fr=""170"" r=""220"" gradientUnits=""userSpaceOnUse""><stop offset=""0%"" stop-color=""red"" /><stop offset=""100%"" stop-color=""white"" /></radialGradient>",=,=,,,,
@@ -40,7 +40,7 @@ arc,earth-boundary,35,,,,,,,,yes
 ,,,opacity,,,,,,,0 1 0
 arc,safe-zone,40,,yes,yes,yes,,,,
 ,,,radius1,0,=,=,,,,
-,,,radius2,25.4 25.4 0 r,=,=,,,,
+,,,radius2,25.4 25.4 0 r,=,0 25.4 0 r,,,,
 ,,,angle1,0,=,=,,,,
 ,,,angle2,360,=,=,,,,
 ,,,colour,#6D9100,=,=,,,,
@@ -141,7 +141,7 @@ arc,freshwater-1-i,40,,yes,yes,yes,yes,yes,yes,yes
 ,,,radius2,0 14 r,=,=,11 r,=,=,18.5 r
 ,,,angle1,4 x,=,5 x,=,=,=,5.5 x
 ,,,angle2,5 x,=,6 x,=,=,=,=
-,,,colour,def-rockred,=,=,#009B2F,=,=,=
+,,,colour,red,=,=,#009B2F,=,=,=
 ,,,opacity,0.6,=,=,=,=,=,=
 arc,freshwater-2,40,,,,,,,,yes
 ,,,radius1,,,,,,,0 18.5 0 r

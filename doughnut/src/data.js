@@ -494,7 +494,7 @@ function propogateDefaultProps(data) {
             if (element.id.startsWith(`${target}-`)) {
               Object.keys(targetedDefaults).filter(prop => prop !== 'z' && prop !== 'id').forEach(elementDefault => {
                 // If the default does not exist on the element then add.
-                if (!element[elementDefault]) {
+                if (typeof element[elementDefault] === 'undefined') {
                   element[elementDefault] = targetedDefaults[elementDefault]
                 }
               })
@@ -504,7 +504,7 @@ function propogateDefaultProps(data) {
           if (elementDefaults) {
             Object.keys(elementDefaults).forEach(elementDefault => {
               // If the default does not exist on the element then add.
-              if (!element[elementDefault]) {
+              if (typeof element[elementDefault] === 'undefined') {
                 element[elementDefault] = elementDefaults[elementDefault]
               }
             })
@@ -515,7 +515,7 @@ function propogateDefaultProps(data) {
             // is allowed on this element type
             const propDef = propDefs.find(pd => pd.name === chartDefault)
             const allowed =  [...propDef.mandatoryOn, ...propDef.optionalOn].includes(elementType)
-            if (allowed && !element[chartDefault]) {
+            if (allowed && typeof element[chartDefault] === 'undefined') {
               element[chartDefault] = chartDefaults[chartDefault]
             }
           })
@@ -524,7 +524,7 @@ function propogateDefaultProps(data) {
           // that have a default value defined in the defition and if
           // not defined on element, set it with the default value.
           propDefDefaults.forEach(propDef => {
-            if (!element[propDef.name]) {
+            if (typeof element[propDef.name] === 'undefined') {
               element[propDef.name] = propDef.default
             }
           })

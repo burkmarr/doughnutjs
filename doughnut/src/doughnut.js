@@ -29,9 +29,11 @@ export async function doughnut({
 
   function updateChart(iChart, delay, transition) {
 
-    console.log(iChart, 'duration', delay)
+    //console.log(iChart, 'duration', delay)
 
     if (!recipeParsed) return Promise.resolve()
+
+    console.log('iChart', iChart)
       
     svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
     svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
@@ -151,7 +153,7 @@ export async function doughnut({
       ret = await updateChart(i, duration, transition)
       duration = recipe.charts[i].metrics.duration
       i = forward ? i+1 : i-1
-    } while(typeof duration !== 'undefined')
+    } while(typeof duration !== 'undefined' && i !== -1)
     transitioning=false
     return iLastChart
   }

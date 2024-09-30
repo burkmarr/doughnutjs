@@ -29,17 +29,22 @@ export async function parseRecipe(data, errHtmlEl) {
   if (!unpermittedProps(data, errHtmlEl)) return
 
   // At this point restructure the CSV structure into the format that
-  // we will use with D3. It is must easier to propagate default
+  // we will use with D3. It is much easier to propagate default
   // properties after this point. To do it in the CSV structure
   // we would need to insert rows.
-  dataCsv = cloneObj(data)
+  dataCsv = cloneObj(data) // Required for reporting row numbers
   data = restructureCsv(data)
+
+  // Now deal with creating defs from proprietary patterns. This
+  // has to be done after restructuring because '=' values need
+  // to be resolved for chart defaults. Definitions may resolve
+  // differently for different charts depending on these values.
+  resolveDefs(data)
 
   console.log('Transformed CSV recipe', cloneObj(data))
 
   // Propagate default values
   propogateDefaultProps(data)
-  // console.log('Propogated recipe', data)
 
   // Find missing values
   if (!missingProps(data, errHtmlEl)) return
@@ -57,6 +62,44 @@ export async function parseRecipe(data, errHtmlEl) {
   console.log('Parsed recipe', data)
   // Return the new data object
   return data
+}
+
+function resolveDefs(data) {
+  const propDefs = getProperties()
+  data.charts.forEach(c => {
+    Object.keys(c.defs).forEach(defName => {
+      const def = c.defs[defName]
+      if (def.startsWith('radialGradient')) {
+        // It's a radial gradient defined with our proprietary pattern and
+        // must be used to build a proper def.
+        // e.g. radialGradient; 87 r, red, 1; 112 r, white, 0
+        // In our proprietary definitions, we use our own modifiers to specify stop distances, but in proper
+        // definitions, these are expressed as a percentage of the r attribute specified in the radialGradient tag.
+        // We set this value to the svgWidth and convert our values to percentages based on that.
+        const svgWidth = c.metrics.width_px ? c.metrics.width_px : 500
+        let defHtml=`<radialGradient id="${defName}" cx="0" cy="0" r=${svgWidth} gradientUnits="userSpaceOnUse">`
+  
+        // The stop values are separated by a colon
+        const stops = def.split(';') 
+        stops.shift() // First element is 'radialGradient' so remove
+        stops.forEach(s => {
+          // Each stop value must consist of three parts separated by commas: radius, stop-colour, stop-opacity
+          const ss = s.split(',')
+          // The radius can use a modifier which is used with the chart default span values
+          const sraw = ss[0].trim().replace(/\s+/g, ' ').split(' ')
+          const val = sraw[0]
+          const mod = sraw[1]
+          const propMatch = propDefs.find(pd => pd.name === 'radius')
+          const cval = convertValue(val, mod, propMatch, c.defaults)
+          // cval is in pixels, so convert that to percentage of svgWidth
+          const stop = `<stop offset="${cval/svgWidth*100}%" stop-color="${ss[1].trim()}" stop-opacity="${ss[2].trim()}" />`
+          defHtml=`${defHtml}${stop}`
+        })
+        defHtml=`${defHtml}</radialGradient>`
+        c.defs[defName] = defHtml
+      }
+    })
+  })
 }
 
 function cleanCsv(data) {
@@ -414,17 +457,17 @@ function resolveNumericFormats (obj) {
         // If anything else, act as if it is one.
         const newVal = []
         if (vals.length === 3) {
-          newVal[0] = convertValue(vals[0], modifier, propMatch)
-          newVal[1] = convertValue(vals[1], modifier, propMatch)
-          newVal[2] = convertValue(vals[2], modifier, propMatch)
+          newVal[0] = convertValue(vals[0], modifier, propMatch, obj)
+          newVal[1] = convertValue(vals[1], modifier, propMatch, obj)
+          newVal[2] = convertValue(vals[2], modifier, propMatch, obj)
         } else if (vals.length === 2) {
-          newVal[0] = convertValue(vals[0], modifier, propMatch)
-          newVal[1] = convertValue(vals[1], modifier, propMatch)
-          newVal[2] = convertValue(vals[1], modifier, propMatch)
+          newVal[0] = convertValue(vals[0], modifier, propMatch, obj)
+          newVal[1] = convertValue(vals[1], modifier, propMatch, obj)
+          newVal[2] = convertValue(vals[1], modifier, propMatch, obj)
         } else {
-          newVal[0] = convertValue(vals[0], modifier, propMatch)
-          newVal[1] = convertValue(vals[0], modifier, propMatch)
-          newVal[2] = convertValue(vals[0], modifier, propMatch)
+          newVal[0] = convertValue(vals[0], modifier, propMatch, obj)
+          newVal[1] = convertValue(vals[0], modifier, propMatch, obj)
+          newVal[2] = convertValue(vals[0], modifier, propMatch, obj)
         }
         // Update value
         obj[key] = newVal
@@ -437,41 +480,45 @@ function resolveNumericFormats (obj) {
     }
   })
 
-  function convertValue(val, modifier, propMatch) {
 
-    // This function converts values based on their modifier (if any)
-    // and their type.
-    // Modifiers:
-    //   r: values expressed in real world units (for radius only)
-    //   %: values expressed as percentage
-    //   x: values expressed as multipliers
+}
 
-    let ret
-    let span = Number(obj[propMatch.span])
-    if (modifier === 'r') {
-      span = span/Number(obj.radiusSpanReal)
-    }
+function convertValue(val, modifier, propMatch, obj) {
 
-    if (modifier === '%' && span) {
-      // Value expressed as % of span
-      ret = Number(val) / 100 * span
-    } else if (modifier === 'x' && span) {
-      // Value expressed as a multiple of span
-      ret = Number(val) * span
-    } else if (modifier === 'r' && span) {
-      // Value expressed in real units
-      ret = Number(val) * span
-    } else if (propMatch.number) {
-      ret =  Number(val)
-    } else {
-      ret =  val
-    }
-    // For angles, add the offset angle
-    if (propMatch.name === 'angle' || propMatch.name === 'angle1' || propMatch.name === 'angle2') {
-      ret = ret + Number(obj.angle0)
-    }
-    return ret
+  // This function converts values based on their modifier (if any)
+  // and their type.
+  // Modifiers:
+  //   r: values expressed in real world units (for radius only)
+  //   %: values expressed as percentage
+  //   x: values expressed as multipliers
+
+  //console.log(obj)
+
+  let ret
+  let span = Number(obj[propMatch.span])
+  if (modifier === 'r') {
+    span = span/Number(obj.radiusSpanReal)
   }
+
+  if (modifier === '%' && span) {
+    // Value expressed as % of span
+    ret = Number(val) / 100 * span
+  } else if (modifier === 'x' && span) {
+    // Value expressed as a multiple of span
+    ret = Number(val) * span
+  } else if (modifier === 'r' && span) {
+    // Value expressed in real units
+    ret = Number(val) * span
+  } else if (propMatch.number) {
+    ret =  Number(val)
+  } else {
+    ret =  val
+  }
+  // For angles, add the offset angle
+  if (propMatch.name === 'angle' || propMatch.name === 'angle1' || propMatch.name === 'angle2') {
+    ret = ret + Number(obj.angle0)
+  }
+  return ret
 }
 
 function propogateDefaultProps(data) {

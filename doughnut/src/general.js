@@ -2,6 +2,7 @@ import * as yaml from 'js-yaml'
 import * as d3 from 'd3'
 
 export function addDef(el, name, def) {
+
   let defs = el.select('defs')
   if (!defs.size()) {
     defs = el.append('defs')

@@ -47,6 +47,7 @@
   </script> -->
 
   <script type="module">
+    import * as d3 from 'd3'
     import { doughnut } from "./src/main.js"
     const chart = await doughnut({selector:'#donut-div'})
     let ichart = 0
@@ -76,7 +77,16 @@
       })()
     }
 
-    window.loadRecipe = function(file) {
+    window.loadRecipe = async function(file) {
+
+      // The loadRecipe method will accept either
+      // a string specifying the path of the CSV
+      // or a JSON object of the file already loaded
+      // with d3.csv
+
+      //const recipeCsv = await d3.csv(file)
+      //chart.loadRecipe(recipeCsv)
+
       chart.loadRecipe(file)
     }
   </script>

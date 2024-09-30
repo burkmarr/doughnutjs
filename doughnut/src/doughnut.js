@@ -18,7 +18,7 @@ export async function doughnut({
   let transitioning = false
   let svg, svgWidth, svgHeight
   let recipeParsed = false
-  let gAll, gImages, gArcs, gArclines, gSpokes, gTexts, gArrows
+  let gAll
   let currentParams = {arcs: {}, arclines: {}, images: {}, spokes: {}, texts: {}, arrows: {}}
 
   const errorDiv = d3.select(selector).append('div')
@@ -28,12 +28,9 @@ export async function doughnut({
     .style('display', 'none')
 
   function updateChart(iChart, delay, transition) {
-
     //console.log(iChart, 'duration', delay)
-
     if (!recipeParsed) return Promise.resolve()
-
-    console.log('iChart', iChart)
+    //console.log('iChart', iChart)
       
     svgWidth = recipe.charts[iChart].metrics.width_px ? recipe.charts[iChart].metrics.width_px : 500
     svgHeight = recipe.charts[iChart].metrics.height_px ? recipe.charts[iChart].metrics.height_px: 500
@@ -50,22 +47,25 @@ export async function doughnut({
         .style('overflow', 'visible')
 
       gAll = svg.append('g')
-      gImages = gAll.append('g')
-      gArcs = gAll.append('g')
-      gArclines = gAll.append('g')
-      gSpokes = gAll.append('g')
-      gTexts = gAll.append('g')
-      gArrows = gAll.append('g')
-
-      ////////////
+      // Create g element for each group
       recipe.grps.forEach(g => {
         g.g = gAll.append('g')
       })
-
-
     } else {
       svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     }
+
+    // const gExisting = gAll.selectAll('g').nodes()
+    // recipe.grps.forEach(g => {
+    //   const gFind = gExisting.find(ge => ge.z === g.z && ge.type === g.type)
+    //   if (gFind) {
+    //     g.g = d3.select(gFind)
+    //   } else {
+    //     g.g = gAll.append('g')
+    //     g.g.node().type = g.type
+    //     g.g.node().z = g.z
+    //   }
+    // })
 
     // Add any defined defs to SVG
     const defs = recipe.charts[iChart].defs
@@ -216,12 +216,20 @@ export async function doughnut({
     }
   }
 
-  async function loadRecipe(file) {
+  async function loadRecipe(csv) {
 
     iLastChart = null
     recipeParsed = false
 
-    recipeCsv = await fetchCsv(file)
+    if (typeof csv === 'string') {
+      // CSV passed as a string to file path
+      recipeCsv = await fetchCsv(csv)
+    } else {
+      // CSV has already been loaded into JSON object
+      recipeCsv = csv
+    }
+
+    //recipeCsv = await fetchCsv(file)
     
     const errHtmlEl = csvErrorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
@@ -240,6 +248,12 @@ export async function doughnut({
       recipeParsed = true
       
       recipe = recipeCsv
+    }
+
+    if (svg) {
+      svg.remove()
+      svg = null
+      iLastChart = null
     }
   }
 

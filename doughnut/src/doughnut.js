@@ -138,7 +138,7 @@ export async function doughnut({
     // or backwards.
     // The transition of a chart is a value that indicates how long the transition to it will
     // last from the previous chart. When moving forward to the next chart, the transition value
-    // is used on the chart on which it was defined (i.e. the chart being transitioned to)m, but
+    // is used on the chart on which it was defined (i.e. the chart being transitioned to), but
     // when we are going backwards, the destination chart must use the transition value of the
     // chart it is transitioning from. That is so that the transition between two charts takes
     // the same amount of time whether we are moving forwards or backwards.
@@ -149,6 +149,8 @@ export async function doughnut({
     let duration = 0
     let transition
     do {
+      console.log('forward', forward)
+      console.log('i', i)
       transition =  forward ? recipe.charts[i].metrics.transition : recipe.charts[i+1].metrics.transition
       ret = await updateChart(i, duration, transition)
       duration = recipe.charts[i].metrics.duration
@@ -189,6 +191,8 @@ export async function doughnut({
     } else {
       iChart = iLastChart + 1
     }
+
+    console.log('displayNextChart', iChart)
     if (iChart !== iLastChart) {
       return nextChart(iChart, true)
     } else {
@@ -229,8 +233,6 @@ export async function doughnut({
       recipeCsv = csv
     }
 
-    //recipeCsv = await fetchCsv(file)
-    
     const errHtmlEl = csvErrorDiv.append('table')
     errHtmlEl.attr('id', 'recipe-errors')
 

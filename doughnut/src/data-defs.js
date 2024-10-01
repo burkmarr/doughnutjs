@@ -68,7 +68,7 @@ const f = {
     example: ['Change in land use'],
     expl: ''
   },
-  strokeDasharry: {
+  strokeDasharray: {
     re: ['^[1-9]$', '^[1-9]-[0-9]$'],
     disp: ['Either a single digit or two separated by a dash'],
     example: ['2', '2-1'],
@@ -229,7 +229,7 @@ const properties = [
     name: 'strokeDasharray',
     optionalOn: ['arcs', 'arclines', 'spokes', 'arrows'],
     mandatoryOn: [],
-    formats: f.strokeDasharry,
+    formats: f.strokeDasharray,
     number: false,
     threeable: true,
   },

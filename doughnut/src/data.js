@@ -109,10 +109,12 @@ function cleanCsv(data) {
     let newVal = val.trim()
     // Remove any multiple spaces
     newVal = newVal.replace(/\s+/g, ' ')
-    // Change from string to number (fixType)
+    // Change from string to number 
     // where appropriate
     if (String(Number(newVal)) === newVal) {
       return Number(newVal)
+    } else if(newVal === 'true' || newVal === 'false') {
+      return newVal === 'true'
     } else {
       return newVal
     }

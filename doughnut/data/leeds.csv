@@ -1,0 +1,370 @@
+type,entity,z,property,leeds
+chart,metric,,,
+,,,width_px,600
+,,,height_px,500
+chart,default,,,
+,,,angle0,0
+,,,radiusSpanPx,150
+,,,radiusSpanReal,214
+,,,textOffsetSpanPx,12
+arcline,ecological-boundary,40,,yes
+,,,angle1,0
+,,,angle2,360
+,,,radius,214 r
+,,,stroke,black
+,,,strokeWidth,0.6
+,,,strokeDasharray,3
+arc,ecological-ceiling,40,,yes
+,,,angle1,0
+,,,angle2,360
+,,,radius1,129.5 r
+,,,radius2,143.5 r
+,,,colour,#31A354
+,,,stroke,black
+,,,strokeWidth,1
+arc,social-foundation,40,,yes
+,,,angle1,0
+,,,angle2,360
+,,,radius1,69 r
+,,,radius2,82.5 r
+,,,colour,#31A354
+,,,stroke,black
+,,,strokeWidth,1
+arc,social-background,45,,yes
+,,,angle1,0
+,,,angle2,360
+,,,radius1,0
+,,,radius2,69 r
+,,,colour,#9ECAE1
+spoke,default-sf,,,yes
+,,,stroke,white
+,,,strokeWidth,0.8
+,,,radius1,0
+,,,radius2,69 r
+,,,angleSpan,32.72
+spoke,sf-1,43,,yes
+,,,angle,0
+spoke,sf-2,43,,yes
+,,,angle,1 x
+spoke,sf-3,43,,yes
+,,,angle,2 x
+spoke,sf-4,43,,yes
+,,,angle,3 x
+spoke,sf-5,43,,yes
+,,,angle,4 x
+spoke,sf-6,43,,yes
+,,,angle,5 x
+spoke,sf-7,43,,yes
+,,,angle,6 x
+spoke,sf-8,43,,yes
+,,,angle,7 x
+spoke,sf-9,43,,yes
+,,,angle,8 x
+spoke,sf-10,43,,yes
+,,,angle,9 x
+spoke,sf-11,43,,yes
+,,,angle,10 x
+arc,default-sf,,,yes
+,,,radiusSpanReal,1
+,,,radiusSpanPx,48.36
+,,,radius2,1 r
+,,,colour,#D73027
+,,,stroke,white
+,,,strokeWidth,0.8
+,,,angleSpan,32.72
+arc,sf-sa,42,,yes
+,,,radius1,0.1 r
+,,,angle1,0
+,,,angle2,1 x
+arc,sf-in,42,,yes
+,,,radius1,0.2 r
+,,,angle1,1 x
+,,,angle2,2 x
+arc,sf-en,42,,yes
+,,,radius1,0.3 r
+,,,angle1,2 x
+,,,angle2,3 x
+arc,sf-ed,42,,yes
+,,,radius1,0.4 r
+,,,angle1,3 x
+,,,angle2,4 x
+arc,sf-ss,42,,yes
+,,,radius1,0.5 r
+,,,angle1,4 x
+,,,angle2,5 x
+arc,sf-dq,42,,yes
+,,,radius1,0.6 r
+,,,angle1,5 x
+,,,angle2,6 x
+arc,sf-eq,42,,yes
+,,,radius1,0.7 r
+,,,angle1,6 x
+,,,angle2,7 x
+arc,sf-em,42,,yes
+,,,radius1,0.8 r
+,,,angle1,7 x
+,,,angle2,8 x
+arc,sf-ls,42,,yes
+,,,radius1,0.9 r
+,,,angle1,8 x
+,,,angle2,9 x
+arc,sf-le,42,,yes
+,,,radius1,1 r
+,,,angle1,9 x
+,,,angle2,10 x
+arc,sf-nu,42,,yes
+,,,radius1,0
+,,,angle1,10 x
+,,,angle2,11 x
+,,,colour,#E5E5E5
+arc,default-ec1,,,yes
+,,,radiusSpanReal,2.76
+,,,radiusSpanPx,90.77
+,,,radius1,1.76 r
+,,,colour,#A1D99B
+,,,stroke,#7A99A1
+,,,strokeWidth,0.8
+,,,angleSpan,51.42
+,,,angle0,-25.71
+arc,ec1-co2,42,,yes
+,,,radius2,2.76 r
+,,,angle1,0
+,,,angle2,1 x
+arc,ec1-phosporous,42,,yes
+,,,radius2,1.86 r
+,,,angle1,1 x
+,,,angle2,2 x
+arc,ec1-nitrogen,42,,yes
+,,,radius2,1.96 r
+,,,angle1,2 x
+,,,angle2,3 x
+arc,ec1-blue-water,42,,yes
+,,,radius2,2.06 r
+,,,angle1,3 x
+,,,angle2,4 x
+arc,ec1-land-use,42,,yes
+,,,radius2,2.16 r
+,,,angle1,4 x
+,,,angle2,5 x
+arc,ec1-ecological-footprint,42,,yes
+,,,radius2,2.26 r
+,,,angle1,5 x
+,,,angle2,6 x
+arc,ec1-material-footprint,42,,yes
+,,,radius2,2.36 r
+,,,angle1,6 x
+,,,angle2,7 x
+arc,default-ec2,,,yes
+,,,radiusSpanReal,3.04
+,,,radiusSpanPx,150
+,,,radius1,2.04 r
+,,,colour,#D73027
+,,,stroke,white
+,,,strokeWidth,0.8
+,,,angleSpan,51.42
+,,,angle0,-25.71
+arc,ec2-co2,42,,yes
+,,,radius2,3.04 r
+,,,angle1,0
+,,,angle2,1 x
+arc,ec2-phosporous,42,,yes
+,,,radius2,2.14 r
+,,,angle1,1 x
+,,,angle2,2 x
+arc,ec2-nitrogen,42,,yes
+,,,radius2,2.24 r
+,,,angle1,2 x
+,,,angle2,3 x
+arc,ec2-blue-water,42,,yes
+,,,radius2,2.34 r
+,,,angle1,3 x
+,,,angle2,4 x
+arc,ec2-land-use,42,,yes
+,,,radius2,2.44 r
+,,,angle1,4 x
+,,,angle2,5 x
+arc,ec2-ecological-footprint,42,,yes
+,,,radius2,2.54 r
+,,,angle1,5 x
+,,,angle2,6 x
+arc,ec2-material-footprint,42,,yes
+,,,radius2,2.64 r
+,,,angle1,6 x
+,,,angle2,7 x
+text,default-ecsf,,,yes
+,,,angle,0
+,,,fontFamily,Trebuchet MS
+,,,fontColour,white
+,,,fontWeight,200
+,,,fontSize,9
+text,ecsf-ec,10,,yes
+,,,text,Ecological Ceiling
+,,,radius,132.5 r
+text,ecsf-sf,10,,yes
+,,,text,Social foundation
+,,,radius,72 r
+text,default-sf1,,,yes
+,,,fontSize,9
+,,,radius,53 r
+,,,fontWeight,500
+,,,angleSpan,32.72
+,,,textSpacing,1
+text,default-sf2,,,yes
+,,,fontSize,9
+,,,radius,62 r
+,,,fontWeight,500
+,,,angleSpan,32.72
+,,,textReverse,true
+,,,textSpacing,1
+text,sf1-sa,10,,yes
+,,,text,SA
+,,,angle,0.5 x
+,,,fontColour,white
+text,sf1-in,10,,yes
+,,,text,IN
+,,,angle,1.5 x
+,,,fontColour,white
+text,sf1-en,10,,yes
+,,,text,EN
+,,,angle,2.5 x
+,,,fontColour,white
+text,sf2-ed,10,,yes
+,,,text,ED
+,,,angle,3.5 x
+,,,fontColour,white
+text,sf2-ss,10,,yes
+,,,text,SS
+,,,angle,4.5 x
+,,,fontColour,white
+text,sf2-dq,10,,yes
+,,,text,DQ
+,,,angle,5.5 x
+,,,fontColour,white
+text,sf2-eq,10,,yes
+,,,text,EQ
+,,,angle,6.5 x
+,,,fontColour,white
+text,sf2-em,10,,yes
+,,,text,EM
+,,,angle,7.5 x
+,,,fontColour,white
+text,sf1-ls,10,,yes
+,,,text,LS
+,,,angle,8.5 x
+,,,fontColour,black
+text,sf1-le,10,,yes
+,,,text,LE
+,,,angle,9.5 x
+,,,fontColour,black
+text,sf1-nu,10,,yes
+,,,text,NU
+,,,angle,10.5 x
+,,,fontColour,black
+text,default-sfq1,,,yes
+,,,fontSize,9
+,,,radius,30 r
+,,,fontWeight,500
+,,,angleSpan,32.72
+,,,textReverse,false
+,,,text,?
+text,default-sfq2,,,yes
+,,,fontSize,9
+,,,radius,36 r
+,,,fontWeight,500
+,,,angleSpan,32.72
+,,,textReverse,true
+,,,text,?
+text,sfq1-sa,10,,yes
+,,,angle,0.5 x
+text,sfq1-in,10,,yes
+,,,angle,1.5 x
+text,sfq1-en,10,,yes
+,,,angle,2.5 x
+text,sfq2-ed,10,,yes
+,,,angle,3.5 x
+text,sfq2-ss,10,,yes
+,,,angle,4.5 x
+text,sfq2-dq,10,,yes
+,,,angle,5.5 x
+text,sfq2-eq,10,,yes
+,,,angle,6.5 x
+text,sfq2-em,10,,yes
+,,,angle,7.5 x
+text,sfq1-ls,10,,yes
+,,,angle,8.5 x
+text,sfq1-le,10,,yes
+,,,angle,9.5 x
+text,sfq1-nu,10,,yes
+,,,angle,10.5 x
+text,default-ect1,,,yes
+,,,fontSize,10
+,,,radius,174 r
+,,,fontWeight,500
+,,,angleSpan,51.43
+,,,angle0,-25.71
+,,,textSpacing,1
+text,default-ect2,,,yes
+,,,fontSize,10
+,,,radius,180 r
+,,,fontWeight,500
+,,,angleSpan,51.43
+,,,textReverse,true
+,,,angle0,-25.71
+,,,textSpacing,1
+text,ect1-co2,10,,yes
+,,,text,CO2 Emissions
+,,,angle,0.5 x
+,,,fontColour,black
+text,ect1-phosporous,10,,yes
+,,,text,Phosphorous
+,,,angle,1.5 x
+,,,fontColour,black
+text,ect2-nitrogen,10,,yes
+,,,text,Nitrogen
+,,,angle,2.5 x
+,,,fontColour,black
+text,ect2-blue-water,10,,yes
+,,,text,Blue Water
+,,,angle,3.5 x
+,,,fontColour,black
+text,ect2-land-use,10,,yes
+,,,text,Lanc-Use Change
+,,,angle,4.5 x
+,,,fontColour,black
+text,ect2-ecological-footprint,10,,yes
+,,,text,Ecological Footprint
+,,,angle,5.5 x
+,,,fontColour,black
+text,ect1-material-footprint,10,,yes
+,,,text,Material Footprint
+,,,angle,6.5 x
+,,,fontColour,black
+text,default-ecq1,,,yes
+,,,fontSize,10
+,,,radius,100 r
+,,,fontWeight,500
+,,,angleSpan,51.43
+,,,angle0,-25.71
+,,,text,?
+text,default-ecq2,,,yes
+,,,fontSize,10
+,,,radius,110 r
+,,,fontWeight,500
+,,,angleSpan,51.43
+,,,textReverse,true
+,,,angle0,-25.71
+,,,text,?
+text,ecq1-co2,10,,yes
+,,,angle,0.5 x
+text,ecq1-phosporous,10,,yes
+,,,angle,1.5 x
+text,ecq2-nitrogen,10,,yes
+,,,angle,2.5 x
+text,ecq2-blue-water,10,,yes
+,,,angle,3.5 x
+text,ecq2-land-use,10,,yes
+,,,angle,4.5 x
+text,ecq2-ecological-footprint,10,,yes
+,,,angle,5.5 x
+text,ecq1-material-footprint,10,,yes
+,,,angle,6.5 x
